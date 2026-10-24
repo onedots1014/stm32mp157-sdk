@@ -1,0 +1,7 @@
+comment "Onedots STM32MP157 Board Support"
+
+config BR2_PACKAGE_ONEDOTS_STM32MP157_BOARD_SUPPORT
+	bool "Enable Onedots STM32MP157 board support"
+	default y
+	help
+	  Enable support for Onedots STM32MP157 board.

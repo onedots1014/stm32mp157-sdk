@@ -8,3 +8,32 @@
 *.bin
 *.stm32
 *.img
+
+# M4 ELF copied in by build.sh m4
+/boards/stm32mp157/*/M4/
+# Board config chosen by ./build.sh config
+/.config
+# wpa_supplicant tarball/source fetched by the busybox rootfs build
+/wpa_supplicant-*
+# KWS training data and intermediate models
+/tools/kws_training/data/
+/tools/kws_training/venv/
+/tools/kws_training/models/saved_model/
+/tools/kws_training/models/*.keras
+/tools/kws_training/models/*.npy
+# Prebuilt app binaries
+/app/bin/
+# Broadcom WiFi/BT firmware blobs: drop them in locally (see README)
+/boards/stm32mp157/*/rootfs-overlay/lib/firmware/**/*.bin
+/boards/stm32mp157/*/rootfs-overlay/lib/firmware/**/*.hcd
+# ALSA / i2c-tools installed into the overlay by scripts/setup-audio.sh
+/boards/stm32mp157/*/rootfs-overlay/usr/lib/
+/boards/stm32mp157/*/rootfs-overlay/usr/bin/
+/boards/stm32mp157/*/rootfs-overlay/usr/sbin/
+/boards/stm32mp157/*/rootfs-overlay/usr/include/
+/boards/stm32mp157/*/rootfs-overlay/usr/local/
+/boards/stm32mp157/*/rootfs-overlay/usr/share/alsa/
+/boards/stm32mp157/*/rootfs-overlay/usr/share/man/
+/boards/stm32mp157/*/rootfs-overlay/usr/share/sounds/
+/boards/stm32mp157/*/rootfs-overlay/usr/share/aclocal/
+/boards/stm32mp157/*/rootfs-overlay/lib/*.so*

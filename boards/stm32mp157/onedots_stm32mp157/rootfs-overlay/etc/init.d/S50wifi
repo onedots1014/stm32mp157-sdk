@@ -1,0 +1,25 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        echo "Starting WiFi..."
+        modprobe bcmdhd
+        sleep 2
+        ifconfig wlan0 up
+        mkdir -p /var/run/wpa_supplicant
+        wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+        udhcpc -i wlan0
+        echo "WiFi started."
+        ;;
+    stop)
+        echo "Stopping WiFi..."
+        kill $(cat /var/run/wpa_supplicant/wlan0.pid 2>/dev/null) 2>/dev/null
+        ifconfig wlan0 down
+        rmmod bcmdhd 2>/dev/null
+        echo "WiFi stopped."
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac

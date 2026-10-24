@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case "$1" in
+    deconfig)
+        ifconfig "$interface" 0.0.0.0
+        ;;
+    bound|renew)
+        ifconfig "$interface" "$ip" netmask "${subnet:-255.255.255.0}"
+        [ -n "$router" ] && route add default gw "$router" dev "$interface"
+        if [ -n "$dns" ]; then
+            echo -n > /etc/resolv.conf
+            for d in $dns; do
+                echo "nameserver $d" >> /etc/resolv.conf
+            done
+        fi
+        ;;
+    leasefail|nak)
+        echo "udhcpc: lease failed on $interface" >&2
+        ;;
+esac

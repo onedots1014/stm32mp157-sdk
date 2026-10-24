@@ -1,0 +1,128 @@
+# KWS Training Pipeline — Single Source of Truth
+# All parameters here are referenced by every script in this directory.
+# Feature parameters MUST match stm32_m4/CM4/Core/Src/kws_frontend.c exactly.
+
+# --- Keyword definition ---
+keywords:
+  - xiao_wang            # ASCII label used in filenames and model output
+
+classes:                 # Must start with silence, unknown
+  - silence
+  - unknown
+  - xiao_wang
+
+# Map ASCII labels to Chinese text for TTS synthesis
+text_map:
+  xiao_wang: "小王"
+
+# Trigger mask: which classes fire MSG_WAKE (bitmask, 1<<class_id)
+trigger_classes:
+  - xiao_wang
+
+# --- Audio parameters ---
+sample_rate: 16000       # Hz — must match KWS_SAMPLE_RATE in kws.h
+
+# --- Feature extraction (MUST MATCH kws_frontend.c exactly) ---
+window_ms: 30            # Hann window length (KWS_WINDOW_MS)
+stride_ms: 20            # Frame stride (KWS_STRIDE_MS)
+num_frames: 49           # Frames per inference window (KWS_NUM_FRAMES)
+num_mel_bins: 40         # Mel filterbank channels (KWS_NUM_FEATURES)
+mel_low_hz: 125.0        # cfg.filterbank.lower_band_limit
+mel_high_hz: 7500.0      # cfg.filterbank.upper_band_limit
+fft_size: 512            # Power-of-2 >= window_samples(480)
+
+noise_reduction:
+  smoothing_bits: 10     # cfg.noise_reduction.smoothing_bits
+  even_smoothing: 0.025  # cfg.noise_reduction.even_smoothing
+  odd_smoothing: 0.06    # cfg.noise_reduction.odd_smoothing
+  min_signal_remaining: 0.05  # cfg.noise_reduction.min_signal_remaining
+
+pcan:
+  enable: true
+  strength: 0.95         # cfg.pcan_gain_control.strength
+  offset: 80.0           # cfg.pcan_gain_control.offset
+  gain_bits: 21          # cfg.pcan_gain_control.gain_bits
+
+log_scale:
+  enable: true
+  scale_shift: 6         # cfg.log_scale.scale_shift
+
+# --- Detection (for kws_model_meta.h) ---
+detect_threshold: 70     # Confidence % (KWS_DETECT_THRESHOLD)
+smooth_frames: 3         # Sliding-average window (KWS_SMOOTH_FRAMES)
+
+# --- Data synthesis ---
+synth:
+  # Edge-TTS Chinese neural voices (6+ for variety)
+  voices:
+    - zh-CN-XiaoxiaoNeural
+    - zh-CN-YunxiNeural
+    - zh-CN-YunyangNeural
+    - zh-CN-XiaoyiNeural
+    - zh-CN-YunjianNeural
+    - zh-CN-YunxiaNeural
+  count_per_voice: 500   # Utterances per voice per keyword
+  # Rate variation to simulate natural speech rhythm (edge-tts: "+10%" style)
+  rate_range: [-15, +15]  # Percent range for random rate offset
+  output_dir: data/synth
+
+# Unknown-class words (synthesized with same voices)
+unknown:
+  words:
+    - "你好"
+    - "谢谢"
+    - "再见"
+    - "打开"
+    - "关闭"
+    - "播放"
+    - "停止"
+    - "音量"
+    - "向上"
+    - "向下"
+    - "确认"
+    - "取消"
+    - "开始"
+    - "结束"
+    - "帮助"
+    - "返回"
+    - "来了"
+    - "出发"
+    - "好的"
+    - "知道"
+  count_per_word: 150    # Utterances per word
+
+# --- Recording helper (record_samples.py) ---
+record:
+  output_dir: data/recorded
+  target_count: 200      # Target real recordings per keyword
+  duration_s: 1.0        # Duration of each clip
+
+# --- Data augmentation ---
+augment:
+  noise_snr_db: [-20, -15, -10, -5]   # SNR levels for noise mixing
+  speed_factors: [0.9, 0.95, 1.05, 1.1]  # Time-stretch factors
+  augment_factor: 3      # Augmented copies per source file
+  noise_dir: data/noise  # Background noise WAV files (auto-generated if missing)
+
+# --- Training ---
+train:
+  epochs: 60
+  batch_size: 64
+  learning_rate: 1.0e-3
+  lr_decay_steps: 10000
+  lr_decay_rate: 0.9
+  val_split: 0.15
+  test_split: 0.10
+  # DS-CNN filter count; use 32 for "small" variant (~10KB weights)
+  ds_cnn_filters: 64
+  model_dir: models
+
+# --- Export paths (relative to this config file) ---
+export:
+  tflite_path: models/kws_model_quantized.tflite
+  network_src_dir: ../../stm32_m4/micro_speech/
+  meta_header_dst: ../../stm32_m4/CM4/Core/Inc/kws_model_meta.h
+  labels_json_dst: ../../boards/stm32mp157/onedots_stm32mp157/rootfs-overlay/etc/kws/labels.json
+  cubeai_model_name: network
+  # Path to stedgeai or stm32ai CLI (adjust to your installation)
+  cubeai_cli: /opt/st/stm32ai/stedgeai/Utilities/linux/stedgeai

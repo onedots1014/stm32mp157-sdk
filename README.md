@@ -4,7 +4,7 @@ STM32MP157 异构多核（Cortex-A7 ×2 运行 Linux + Cortex-M4 运行 FreeRTOS
 TF-A / U-Boot / Linux 的板级补丁序列、M4 固件，以及从上电到双核协作的调试记录。
 
 目标板：百问网 100ASK STM32MP157 PRO（板级代码中命名为 `onedots-stm32mp157c-512d`），
-另带正点原子 STM32MP157D 的 U-Boot 配置。
+另带正点原子 STM32MP157D 的 U-Boot 配置。百问网 100ASK 原厂配置暂未包含。
 
 ## 系统结构
 
@@ -30,9 +30,9 @@ A7 侧 Linux 通过 remoteproc 管理 M4 固件的加载与启停，两核之间
 
 | 组件 | 基线（ST 官方 tag） | 补丁 | 主要内容 |
 | --- | --- | --- | --- |
-| TF-A | `v2.10-stm32mp-r3` | [5 个](patches/tf-a) | 修复 SP_MIN 未初始化 TAMP NVRAM、导致 Linux 唤醒第二个 A7 核（PSCI CPU_ON）时 Monitor 模式 data abort 的问题；HSE digital bypass 下 HSERDY 不置位的时钟修复；为 M4 remoteproc 实现 MCU_HOLD_BOOT 的 SCMI reset domain；板级 DTS |
-| U-Boot | `v2020.01-stm32mp-r2.2` | [5 个](patches/u-boot) | 板级支持；正点原子 STM32MP157D 配置；FIP 变大后 trusted defconfig 的 `ENV_OFFSET` 修正；新版主机工具链下 dtc 的编译修复 |
-| Linux | `v5.4-stm32mp-r2.4` | [9 个](patches/linux) | 板级 DTS 与 defconfig；M4 remoteproc（IPCC / RPMsg 保留内存、resource table）；WM8960 声卡（SAI1，SAI1_K 取自 PLL3_Q）；BCM43436 WiFi（bcmdhd） |
+| TF-A | `v2.10-stm32mp-r3` | [4 个](patches/tf-a) | 修复 SP_MIN 未初始化 TAMP NVRAM、导致 Linux 唤醒第二个 A7 核（PSCI CPU_ON）时 Monitor 模式 data abort 的问题；HSE digital bypass 下 HSERDY 不置位的时钟修复；为 M4 remoteproc 实现 MCU_HOLD_BOOT 的 SCMI reset domain；板级 DTS |
+| U-Boot | `v2020.01-stm32mp-r2.2` | [4 个](patches/u-boot) | 板级支持；正点原子 STM32MP157D 配置；FIP 变大后 trusted defconfig 的 `ENV_OFFSET` 修正；新版主机工具链下 dtc 的编译修复 |
+| Linux | `v5.4-stm32mp-r2.4` | [8 个](patches/linux) | 板级 DTS 与 defconfig；M4 remoteproc（IPCC / RPMsg 保留内存、resource table）；WM8960 声卡（SAI1，SAI1_K 取自 PLL3_Q）；BCM43436 WiFi（bcmdhd）；M4 持续采集音频时 CA7 可进入 s2idle 并被 M4 经 RPMsg 唤醒（关键时钟、IPCC wakeup-source、DMA1 归属） |
 | M4 固件 | STM32CubeIDE 工程 | [firmware/m4](firmware/m4) | FreeRTOS + OpenAMP；SAI 音频采集；TFLite Micro 关键词唤醒 |
 
 Linux 补丁 `0006` 是 Broadcom bcmdhd 驱动的原样导入（GPLv2 厂商代码，约 9 MB），
@@ -45,35 +45,69 @@ Linux 补丁 `0006` 是 Broadcom bcmdhd 驱动的原样导入（GPLv2 厂商代�
 ```bash
 git clone https://github.com/onedots1014/stm32mp157-sdk.git
 cd stm32mp157-sdk
-scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a
+scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
 ```
 
-脚本会按 ST 官方 tag 浅克隆源码，校验 tag 对应的 commit，然后用 `git am` 打上补丁，
-输出到 `sources/<组件>/`。
+脚本会按官方 tag 浅克隆 ST 的 Linux / U-Boot / TF-A 和 BusyBox 1.37.0，校验 tag 对应的 commit，
+再用 `git am` 打上补丁，输出到 `sources/<组件>/`。
 
-### 2. 构建
+### 2. 构建（build.sh）
 
-> 统一构建框架（`build.sh` + `board.conf`，覆盖 TF-A / U-Boot / Linux / rootfs / M4 固件）
-> 正在从本地开发环境整理迁入，完成后补充到这里。
-
-M4 固件目前可以单独构建（需要 STM32CubeIDE）：
+需要 `arm-linux-gnueabi-gcc` 交叉工具链、`make`、`genext2fs`；构建 M4 固件还需要 STM32CubeIDE。
 
 ```bash
-CUBEIDE_DIR=/opt/st/stm32cubeide_2.1.0 firmware/m4/build.sh
+./build.sh config                 # 选择板子（目前只有 onedots_stm32mp157）
+./build.sh all                    # TF-A → U-Boot → Linux → M4 → FIP → BusyBox → rootfs
+./build.sh kernel                 # 也可以单独构建某个模块：atf | uboot | kernel | busybox | rootfs | m4
+./build.sh flash full             # 通过 STM32CubeProgrammer 烧写（见 boards/stm32mp157/common/flash/）
 ```
+
+产物输出到 `output/<板名>/`。`build.sh` 默认从 `sources/` 读取源码，可用 `SRC_DIR` 覆盖。
+
+### 3. 仓库里没有、需要自行准备的文件
+
+为避免分发厂商二进制，下列文件没有放进仓库：
+
+| 文件 | 用途 | 放到哪里 |
+| --- | --- | --- |
+| BCM43436 / AP6236 WiFi 固件（`fw_bcm43436b0.bin`、`brcmfmac43430-sdio.bin`）和蓝牙 `BCM.hcd` | WiFi / BT | `boards/stm32mp157/onedots_stm32mp157/rootfs-overlay/lib/firmware/`（已在 .gitignore 中） |
+| ALSA 用户态（`alsa-lib`、`aplay`、`amixer` 等）和 i2c-tools | BusyBox rootfs 下的音频调试 | 运行一次 `bash boards/stm32mp157/onedots_stm32mp157/scripts/setup-audio.sh`，交叉编译后装进 rootfs overlay |
+| `stm32wrapper4dbg`（可选） | 生成带调试头的 TF-A 镜像 | 从 [STMicroelectronics/stm32wrapper4dbg](https://github.com/STMicroelectronics/stm32wrapper4dbg) 编译，放到 `boards/stm32mp157/common/build_script/tfa/` |
+
+`rootfs-overlay/etc/wpa_supplicant.conf` 里的 `YOUR_SSID` / `YOUR_PASSWORD` 需改成自己的 WiFi。
+
+### Buildroot rootfs（迁移中）
+
+`boards/stm32mp157/onedots_stm32mp157/buildroot/` 是一个 BR2_EXTERNAL 树，基于 Buildroot 2025.05，
+通过 `local.mk` 直接使用 `sources/` 中已打补丁的源码：
+
+```bash
+make -C <buildroot> O=$PWD/output/buildroot \
+     BR2_EXTERNAL=$PWD/boards/stm32mp157/onedots_stm32mp157/buildroot \
+     onedots_stm32mp157_defconfig
+make -C output/buildroot
+```
+
+> 注意：镜像布局（`genimage-tfa.cfg`）仍是 TF-A v2.2 时代的 `u-boot.stm32` 方式，
+> 尚未改成 TF-A v2.10 的 FIP 启动流程，**目前完整镜像请用 `build.sh`**。
 
 ## 目录结构
 
 ```
 stm32mp157-sdk/
+├── build.sh                  统一构建入口
+├── boards/stm32mp157/
+│   ├── common/               各组件构建脚本、烧写工具（flash.sh + TSV 布局）
+│   └── onedots_stm32mp157/   board.conf、extlinux、rootfs overlay、BR2_EXTERNAL
 ├── patches/
-│   ├── linux/      9 个补丁，基于 v5.4-stm32mp-r2.4
-│   ├── u-boot/     5 个补丁，基于 v2020.01-stm32mp-r2.2
-│   └── tf-a/       5 个补丁，基于 v2.10-stm32mp-r3
-├── firmware/m4/    Cortex-M4 FreeRTOS 固件（STM32CubeIDE 工程）
-├── scripts/
-│   └── fetch-sources.sh
-└── docs/           调试与根因分析记录
+│   ├── linux/                8 个补丁，基于 v5.4-stm32mp-r2.4
+│   ├── u-boot/               4 个补丁，基于 v2020.01-stm32mp-r2.2
+│   └── tf-a/                 4 个补丁，基于 v2.10-stm32mp-r3
+├── firmware/m4/              Cortex-M4 FreeRTOS 固件（STM32CubeIDE 工程）
+├── app/                      CA7 侧 KWS 结果侦听脚本、LED 驱动示例
+├── tools/kws_training/       唤醒词模型训练流水线（TTS 合成 → 特征 → DS-CNN → 量化 → 导出给 M4）
+├── scripts/fetch-sources.sh  拉取 ST / BusyBox 官方源码并打补丁
+└── docs/                     调试与根因分析记录
 ```
 
 ## 调试记录

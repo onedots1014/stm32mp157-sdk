@@ -1,19 +1,34 @@
-From 029839755a44b810175465ac10aa6b00d17029fb Mon Sep 17 00:00:00 2001
+From 8d2b42fa684188600d2ef9293523b4073b3a6d26 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 29 Aug 2026 06:45:51 -0700
-Subject: [PATCH 8/8] update config
+Subject: [PATCH] pm: let CA7 enter s2idle while M4 keeps capturing audio
 
+With the M4 running continuous KWS audio capture, CA7 suspend either
+froze the M4 pipeline or could not be woken by the M4. Fix the three
+root causes:
+
+- clk: mark PLL3_Q, SAI1, SAI1_K and IPCC CLK_IS_CRITICAL. No Linux
+  driver holds an enable reference on the M4-only SAI1 path, so the
+  "disable unused clocks" pass gated it; and the ipcc driver gates its
+  own clock after probe, so an M4 doorbell could not assert its IRQ.
+- dts: add wakeup-source to ipcc so the M4's RPMsg WAKE message rouses
+  CA7 from s2idle (m4_rproc's wakeup-source only arms the watchdog IRQ).
+- dts: disable dma1 for Linux. It is owned by the M4 (circular SAI1
+  DMA), and its suspend hook saw channel 0 busy and aborted suspend;
+  dmamux1 falls back to dma2.
+- defconfig: enable FAT/VFAT so the bootfs partition can be mounted and
+  updated in place.
 ---
- .../boot/dts/stm32mp157-quartzix-board.dtsi   | 22 +++++++++++++++++++
- .../configs/quartzix_stm32mp157c_defconfig    |  8 +++++++
+ .../boot/dts/stm32mp157-onedots-board.dtsi    | 22 +++++++++++++++++++
+ .../arm/configs/onedots_stm32mp157c_defconfig |  8 +++++++
  drivers/clk/clk-stm32mp1.c                    | 22 +++++++++++++++----
  3 files changed, 48 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
-index 515e1715ef..f9eef17e43 100644
---- a/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
-@@ -219,8 +219,30 @@ &iwdg2 {
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+index 515e1715e..f9eef17e4 100644
+--- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+@@ -219,8 +219,30 @@
  	status = "okay";
  };
  
@@ -44,10 +59,10 @@ index 515e1715ef..f9eef17e43 100644
  };
  
  /* SAI1_K clock config: set PLL3_Q as source via m4_rproc assigned-clocks.
-diff --git a/arch/arm/configs/quartzix_stm32mp157c_defconfig b/arch/arm/configs/quartzix_stm32mp157c_defconfig
-index f6862bd98e..677b9a9f4d 100644
---- a/arch/arm/configs/quartzix_stm32mp157c_defconfig
-+++ b/arch/arm/configs/quartzix_stm32mp157c_defconfig
+diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
+index f6862bd98..677b9a9f4 100644
+--- a/arch/arm/configs/onedots_stm32mp157c_defconfig
++++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
 @@ -49,6 +49,14 @@ CONFIG_STM32_DMA=y
  CONFIG_STM32_DMAMUX=y
  CONFIG_STM32_MDMA=y
@@ -64,7 +79,7 @@ index f6862bd98e..677b9a9f4d 100644
  CONFIG_SOUND=y
  CONFIG_SND=y
 diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 2a1de15cd9..79453d7c0d 100644
+index 2a1de15cd..e2d7644a0 100644
 --- a/drivers/clk/clk-stm32mp1.c
 +++ b/drivers/clk/clk-stm32mp1.c
 @@ -1925,7 +1925,13 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
@@ -73,7 +88,7 @@ index 2a1de15cd9..79453d7c0d 100644
  
 -	COMPOSITE(PLL3_Q, "pll3_q", PARENT("pll3"), 0,
 +	/* CLK_IS_CRITICAL: sole source of SAI1_K for the M4's continuous KWS
-+	 * audio capture (see stm32mp157-quartzix-board.dtsi). No Linux driver
++	 * audio capture (see stm32mp157-onedots-board.dtsi). No Linux driver
 +	 * holds an enable ref on this path since CA7 never opens an SAI1
 +	 * stream, so without this flag the generic "disable unused clocks"
 +	 * pass gates it off — including across suspend — silently freezing
@@ -102,7 +117,7 @@ index 2a1de15cd9..79453d7c0d 100644
 +	 * reads XMR/XCR via readl_relaxed() without re-enabling it first —
 +	 * and more importantly, an M4-initiated doorbell into a clock-gated
 +	 * IPCC block cannot latch/assert its IRQ at all, silently defeating
-+	 * the ipcc wakeup-source (see stm32mp157-quartzix-board.dtsi). Keep
++	 * the ipcc wakeup-source (see stm32mp157-onedots-board.dtsi). Keep
 +	 * it permanently clocked; cost is negligible. */
 +	PCLK(IPCC, "ipcc", "ck_mcu", CLK_IS_CRITICAL, G_IPCC),
  	PCLK(GPIOA, "gpioa", "ck_mcu", 0, G_GPIOA),

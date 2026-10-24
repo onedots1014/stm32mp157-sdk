@@ -1,0 +1,9 @@
+# STM32MP157 Kernel Only Flash Configuration (bootfs)
+#Opt	Id	Name	Type	IP	Offset	Binary
+-	0x01	fsbl1-boot	Binary	none	0x0	$OUTPUT_DIR/atf/serialboot/tf-a-onedots-stm32mp157c-evb-serialboot.stm32
+-	0x03	fip-boot	Binary	none	0x0	$OUTPUT_DIR/fip.bin
+P	0x04	fsbl1	Binary	mmc1	boot1	$OUTPUT_DIR/atf/trusted/tf-a-onedots-stm32mp157c-evb.stm32
+P	0x05	fsbl2	Binary	mmc1	boot2	$OUTPUT_DIR/atf/trusted/tf-a-onedots-stm32mp157c-evb.stm32
+P	0x06	fip	Binary	mmc1	0x00080000	$OUTPUT_DIR/fip.bin
+P	0x21	rootfs1	System	mmc1	0x00280000	$OUTPUT_DIR/bootfs.ext4
+-	0x22	rootfs2	FileSystem	mmc1	0x04280000	$OUTPUT_DIR/rootfs.ext4
