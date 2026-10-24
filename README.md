@@ -28,11 +28,12 @@ A7 侧 Linux 通过 remoteproc 管理 M4 固件的加载与启停，两核之间
 
 所有改动都以补丁序列的形式放在 `patches/`，基于 ST 官方发布 tag，`scripts/fetch-sources.sh` 可以一键复现。
 
-| 组件 | 基线（ST 官方 tag） | 补丁 | 主要内容 |
+| 组件 | 基线（官方 tag） | 补丁 | 主要内容 |
 | --- | --- | --- | --- |
 | TF-A | `v2.10-stm32mp-r3` | [4 个](patches/tf-a) | 修复 SP_MIN 未初始化 TAMP NVRAM、导致 Linux 唤醒第二个 A7 核（PSCI CPU_ON）时 Monitor 模式 data abort 的问题；HSE digital bypass 下 HSERDY 不置位的时钟修复；为 M4 remoteproc 实现 MCU_HOLD_BOOT 的 SCMI reset domain；板级 DTS |
 | U-Boot | `v2020.01-stm32mp-r2.2` | [4 个](patches/u-boot) | 板级支持；正点原子 STM32MP157D 配置；FIP 变大后 trusted defconfig 的 `ENV_OFFSET` 修正；新版主机工具链下 dtc 的编译修复 |
 | Linux | `v5.4-stm32mp-r2.4` | [8 个](patches/linux) | 板级 DTS 与 defconfig；M4 remoteproc（IPCC / RPMsg 保留内存、resource table）；WM8960 声卡（SAI1，SAI1_K 取自 PLL3_Q）；BCM43436 WiFi（bcmdhd）；M4 持续采集音频时 CA7 可进入 s2idle 并被 M4 经 RPMsg 唤醒（关键时钟、IPCC wakeup-source、DMA1 归属） |
+| BusyBox | `1_37_0` | [1 个](patches/busybox) | 回移上游修复 `bf57f732`：1.37.0 在非 x86 上开启默认的 `SHA1_HWACCEL` 会编译失败（`Upstream-Status: Backport`） |
 | M4 固件 | STM32CubeIDE 工程 | [firmware/m4](firmware/m4) | FreeRTOS + OpenAMP；SAI 音频采集；TFLite Micro 关键词唤醒 |
 
 Linux 补丁 `0006` 是 Broadcom bcmdhd 驱动的原样导入（GPLv2 厂商代码，约 9 MB），
@@ -102,7 +103,8 @@ stm32mp157-sdk/
 ├── patches/
 │   ├── linux/                8 个补丁，基于 v5.4-stm32mp-r2.4
 │   ├── u-boot/               4 个补丁，基于 v2020.01-stm32mp-r2.2
-│   └── tf-a/                 4 个补丁，基于 v2.10-stm32mp-r3
+│   ├── tf-a/                 4 个补丁，基于 v2.10-stm32mp-r3
+│   └── busybox/              1 个上游修复回移，基于 1_37_0
 ├── firmware/m4/              Cortex-M4 FreeRTOS 固件（STM32CubeIDE 工程）
 ├── app/                      CA7 侧 KWS 结果侦听脚本、LED 驱动示例
 ├── tools/kws_training/       唤醒词模型训练流水线（TTS 合成 → 特征 → DS-CNN → 量化 → 导出给 M4）

@@ -7,6 +7,7 @@
 | `patches/linux/` | GPL-2.0（与 Linux 内核一致）；`0006` 中的 Broadcom bcmdhd 驱动按其文件头所述，以 GPL-2.0 提供 |
 | `patches/u-boot/` | GPL-2.0+（与 U-Boot 一致） |
 | `patches/tf-a/` | BSD-3-Clause（与 Trusted Firmware-A 一致） |
+| `patches/busybox/` | GPL-2.0（与 BusyBox 一致） |
 | `firmware/m4/Drivers/`、`firmware/m4/Middlewares/` | 以各目录内 LICENSE 文件为准（ST CMSIS / HAL、OpenAMP、libmetal 等） |
 | `firmware/m4/**/NetworkRuntime1200_CM4_GCC.a` | ST 软件包许可协议 SLA0104（同目录 `LICENSE.txt`），**不属于**本仓库的开源许可范围，不得以任何开源许可再分发 |
 | `firmware/m4/micro_speech/`、`firmware/m4/CM4/micro_speech/` | 同目录 `LICENSE.txt` 所述（X-CUBE-AI 生成代码） |

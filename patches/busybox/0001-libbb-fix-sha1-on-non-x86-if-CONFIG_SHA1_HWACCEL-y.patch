@@ -1,0 +1,40 @@
+From 69c7b5bfb435653e55bb5f84e4df6be996ea4f91 Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sat, 24 Oct 2026 23:10:00 +0800
+Subject: [PATCH] libbb: fix sha1 on !x86 if CONFIG_SHA1_HWACCEL=y
+
+Backport of upstream commit bf57f732a5b6 ("libbb: fix sha1 on !x86 if
+CONFIG_SHA1_HWACCEL=y", Rudi Heitbaum, 2024-09-29). The fix landed two
+days after the 1.37.0 release and is not in any 1.37.x release.
+
+sha1_process_block64_shaNI() is only declared for GCC on i386/x86_64,
+but sha1_end() referenced it under ENABLE_SHA1_HWACCEL alone, so any
+non-x86 build with the (default-on) option failed:
+
+  libbb/hash_md5_sha.c:1316:35: error: 'sha1_process_block64_shaNI'
+  undeclared (first use in this function)
+
+Guard the comparison with the same condition used for the declaration.
+
+Upstream-Status: Backport [https://git.busybox.net/busybox/commit/?id=bf57f732a5b6842f6fa3e0f90385f039e5d6a92c]
+---
+ libbb/hash_md5_sha.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libbb/hash_md5_sha.c b/libbb/hash_md5_sha.c
+index 57a8014..75a61c3 100644
+--- a/libbb/hash_md5_sha.c
++++ b/libbb/hash_md5_sha.c
+@@ -1313,7 +1313,9 @@ unsigned FAST_FUNC sha1_end(sha1_ctx_t *ctx, void *resbuf)
+ 	hash_size = 8;
+ 	if (ctx->process_block == sha1_process_block64
+ #if ENABLE_SHA1_HWACCEL
++# if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+ 	 || ctx->process_block == sha1_process_block64_shaNI
++# endif
+ #endif
+ 	) {
+ 		hash_size = 5;
+-- 
+2.43.0
+
