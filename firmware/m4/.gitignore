@@ -1,0 +1,19 @@
+# IDE workspace metadata
+workspace/
+
+# Eclipse settings (auto-generated)
+.settings/
+CM4/.settings/
+CA7/.settings/
+
+# Build outputs
+CM4/Debug/
+CM4/Release/
+
+# Object files / generator logs
+*.o
+.build/
+micro_speech/stdout.txt
+micro_speech/stderr.txt
+CM4/micro_speech/stdout.txt
+CM4/micro_speech/stderr.txt

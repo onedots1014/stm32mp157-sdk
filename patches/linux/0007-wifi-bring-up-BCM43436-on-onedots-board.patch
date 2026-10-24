@@ -1,0 +1,339 @@
+From 56824b81eafda3b0ff39a157093ba6d354436833 Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sun, 3 May 2026 19:56:19 +0800
+Subject: [PATCH] wifi: bring up BCM43436 on onedots board
+
+Hook bcmdhd into the wireless Kconfig/Makefile, add SDMMC3 (SDIO)
+and WiFi power-control GPIO pinctrl plus board nodes, and enable the
+driver in onedots_stm32mp157c_defconfig.
+---
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+index 48dbed737a..515e1715ef 100644
+--- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+@@ -13,7 +13,7 @@
+ / {
+ 	/* Add aliases to fix device mapping */
+ 	aliases {
+-		mmc1 = &sdmmc2;  /* eMMC (main storage) */
++		mmc1 = &sdmmc2;  /* eMMC → mmcblk1 (SDMMC3/WiFi probes first as mmc0) */
+ 	};
+ 	memory@c0000000 {
+ 		device_type = "memory";
+@@ -145,6 +145,24 @@ vbus_sw: pwr_sw2 {
+ 				regulator-active-discharge = <1>;
+ 			 };
+ 	};
++
++	wifi_fixed: fixedregulator@1 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_fixed_pins_a>;
++		compatible = "regulator-fixed";
++		regulator-name = "wifi_fixed";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		startup-delay-us = <70000>;
++		regulator-boot-on;
++		regulator-pull-down;
++	};
++
++	wifi_pwrseq: wifi-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpioi 3 GPIO_ACTIVE_LOW>;
++		post-power-on-delay-ms = <150>;
++	};
+ };
+ 
+ &cpu0{
+@@ -193,7 +211,7 @@ &sdmmc2 {
+ &gpioi { status = "okay"; };
+ &gpioj { status = "okay"; };
+ &gpiok { status = "okay"; };
+-&pinctrl_z { status = "disabled";};
++&pinctrl_z { status = "okay"; };
+ 
+ /* Watchdog configuration */
+ &iwdg2 {
+@@ -241,3 +259,38 @@ m4_led: m4_led {
+     };
+ };
+ 
++/* WiFi - BCM43438 via SDIO (SDMMC3) */
++&sdmmc3 {
++	arm,primecell-periphid = <0x10153180>;
++	pinctrl-names = "default", "opendrain", "sleep";
++	pinctrl-0 = <&sdmmc3_b4_pins_a>;
++	pinctrl-1 = <&sdmmc3_b4_od_pins_a>;
++	pinctrl-2 = <&sdmmc3_b4_sleep_pins_a>;
++	non-removable;
++	st,neg-edge;
++	bus-width = <4>;
++	vmmc-supply = <&wifi_fixed>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	keep-power-in-suspend;
++	max-frequency = <25000000>;
++	status = "okay";
++};
++
++/* Bluetooth - BCM43438 via UART (USART1) */
++&usart1 {
++	pinctrl-names = "default", "sleep", "idle";
++	pinctrl-0 = <&usart1_pins_z_mx>;
++	pinctrl-1 = <&usart1_sleep_pins_z_mx>;
++	pinctrl-2 = <&usart1_idle_pins_z_mx>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		shutdown-gpios = <&gpioa 14 GPIO_ACTIVE_HIGH>;
++		compatible = "brcm,bcm43438-bt";
++		max-speed = <3000000>;
++	};
++};
++
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
+index 55ecf501e9..72dbd71592 100755
+--- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
+@@ -177,6 +177,107 @@ pins {
+ 		};
+ 	};
+ 
+-	
++	/* WiFi power control GPIOs */
++	wifi_fixed_pins_a: wifi_fixed {
++		gpio {
++			pinmux = <STM32_PINMUX('H', 4, GPIO)>,
++				 <STM32_PINMUX('F', 3, GPIO)>;
++			drive-push-down;
++			bias-pull-up;
++			output-low;
++			slew-rate = <0>;
++		};
++	};
++
++	/* SDMMC3 - WiFi SDIO interface */
++	sdmmc3_b4_pins_a: sdmmc3-b4-0 {
++		pins1 {
++			pinmux = <STM32_PINMUX('F', 0, AF9)>,  /* SDMMC3_D0 */
++				 <STM32_PINMUX('F', 4, AF9)>,  /* SDMMC3_D1 */
++				 <STM32_PINMUX('F', 5, AF9)>,  /* SDMMC3_D2 */
++				 <STM32_PINMUX('D', 7, AF10)>, /* SDMMC3_D3 */
++				 <STM32_PINMUX('F', 1, AF9)>;  /* SDMMC3_CMD */
++			slew-rate = <1>;
++			drive-push-pull;
++			bias-pull-up;
++		};
++		pins2 {
++			pinmux = <STM32_PINMUX('G', 15, AF10)>; /* SDMMC3_CK */
++			slew-rate = <2>;
++			drive-push-pull;
++			bias-pull-up;
++		};
++	};
++
++	sdmmc3_b4_od_pins_a: sdmmc3-b4-od-0 {
++		pins1 {
++			pinmux = <STM32_PINMUX('F', 0, AF9)>,  /* SDMMC3_D0 */
++				 <STM32_PINMUX('F', 4, AF9)>,  /* SDMMC3_D1 */
++				 <STM32_PINMUX('F', 5, AF9)>,  /* SDMMC3_D2 */
++				 <STM32_PINMUX('D', 7, AF10)>; /* SDMMC3_D3 */
++			slew-rate = <1>;
++			drive-push-pull;
++			bias-pull-up;
++		};
++		pins2 {
++			pinmux = <STM32_PINMUX('G', 15, AF10)>; /* SDMMC3_CK */
++			slew-rate = <2>;
++			drive-push-pull;
++			bias-pull-up;
++		};
++		pins3 {
++			pinmux = <STM32_PINMUX('F', 1, AF9)>; /* SDMMC3_CMD */
++			slew-rate = <1>;
++			drive-open-drain;
++			bias-pull-up;
++		};
++	};
++
++	sdmmc3_b4_sleep_pins_a: sdmmc3-b4-sleep-0 {
++		pins {
++			pinmux = <STM32_PINMUX('F', 0, ANALOG)>,  /* SDMMC3_D0 */
++				 <STM32_PINMUX('F', 4, ANALOG)>,  /* SDMMC3_D1 */
++				 <STM32_PINMUX('F', 5, ANALOG)>,  /* SDMMC3_D2 */
++				 <STM32_PINMUX('D', 7, ANALOG)>,  /* SDMMC3_D3 */
++				 <STM32_PINMUX('G', 15, ANALOG)>, /* SDMMC3_CK */
++				 <STM32_PINMUX('F', 1, ANALOG)>;  /* SDMMC3_CMD */
++		};
++	};
++};
++
++/* Bluetooth UART pins (GPIO Z bank) */
++&pinctrl_z {
++	usart1_pins_z_mx: usart1_mx-0 {
++		pins1 {
++			pinmux = <STM32_PINMUX('Z', 2, AF7)>, /* USART1_TX */
++				 <STM32_PINMUX('Z', 5, AF7)>; /* USART1_RTS */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <0>;
++		};
++		pins2 {
++			pinmux = <STM32_PINMUX('Z', 1, AF7)>, /* USART1_RX */
++				 <STM32_PINMUX('Z', 3, AF7)>; /* USART1_CTS */
++			bias-disable;
++		};
++	};
++
++	usart1_idle_pins_z_mx: usart1_idle_mx-0 {
++		pins {
++			pinmux = <STM32_PINMUX('Z', 1, ANALOG)>, /* USART1_RX */
++				 <STM32_PINMUX('Z', 2, ANALOG)>, /* USART1_TX */
++				 <STM32_PINMUX('Z', 3, ANALOG)>, /* USART1_CTS */
++				 <STM32_PINMUX('Z', 5, ANALOG)>; /* USART1_RTS */
++		};
++	};
++
++	usart1_sleep_pins_z_mx: usart1_sleep_mx-0 {
++		pins {
++			pinmux = <STM32_PINMUX('Z', 1, ANALOG)>, /* USART1_RX */
++				 <STM32_PINMUX('Z', 2, ANALOG)>, /* USART1_TX */
++				 <STM32_PINMUX('Z', 3, ANALOG)>, /* USART1_CTS */
++				 <STM32_PINMUX('Z', 5, ANALOG)>; /* USART1_RTS */
++		};
++	};
+ };
+ 
+diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
+index 47ba56b6d6..f6862bd98e 100644
+--- a/arch/arm/configs/onedots_stm32mp157c_defconfig
++++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
+@@ -4,6 +4,15 @@ CONFIG_ARM_SCMI_PROTOCOL=y
+ CONFIG_MODULES=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
++
++# Networking
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IPV6=m
++CONFIG_NETDEVICES=y
++CONFIG_DUMMY=m
+ CONFIG_SERIAL_STM32=y
+ CONFIG_SERIAL_STM32_CONSOLE=y
+ CONFIG_HW_RANDOM=y
+@@ -56,3 +65,26 @@ CONFIG_SND_SOC_I2C_AND_SPI=y
+ CONFIG_SND_SIMPLE_CARD_UTILS=y
+ CONFIG_SND_SIMPLE_CARD=y
+ CONFIG_SND_AUDIO_GRAPH_CARD=y
++
++# WiFi - BCM43438 (SDIO), vendor BCMDHD driver (same as 100ask)
++CONFIG_WIRELESS=y
++CONFIG_CFG80211=y
++CONFIG_CFG80211_DEFAULT_PS=y
++CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=n
++CONFIG_CFG80211_WEXT=y
++CONFIG_WLAN=y
++CONFIG_BCMDHD=m
++CONFIG_BCMDHD_FW_PATH="/lib/firmware/fw_bcm43436b0.bin"
++CONFIG_BCMDHD_NVRAM_PATH="/lib/firmware/nvram_ap6236.txt"
++CONFIG_BCMDHD_SDIO=y
++CONFIG_BCMDHD_SDIO_IRQ=y
++
++# Bluetooth - BCM43438 (UART)
++CONFIG_BT=y
++CONFIG_BT_BREDR=y
++CONFIG_BT_LE=y
++CONFIG_BT_BCM=m
++CONFIG_BT_HCIUART=m
++CONFIG_BT_HCIUART_SERDEV=y
++CONFIG_BT_HCIUART_H4=y
++CONFIG_BT_HCIUART_BCM=y
+diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+index 1c98d781ae..9f7333d4f7 100644
+--- a/drivers/net/wireless/Kconfig
++++ b/drivers/net/wireless/Kconfig
+@@ -123,3 +123,66 @@ config VIRT_WIFI
+ 	  are wifi connections through a special rtnetlink device.
+ 
+ endif # WLAN
++
++config BCMDHD
++	tristate "Broadcom FullMAC wireless cards support"
++	---help---
++	  This module adds support for wireless adapters based on
++	  Broadcom FullMAC chipset.
++
++config BCMDHD_FW_PATH
++	depends on BCMDHD
++	string "Firmware path"
++	default "/system/etc/firmware/fw_bcmdhd.bin"
++	---help---
++	  Path to the firmware file.
++
++config BCMDHD_NVRAM_PATH
++	depends on BCMDHD
++	string "NVRAM path"
++	default "/system/etc/firmware/nvram.txt"
++	---help---
++	  Path to the calibration file.
++
++config BCMDHD_WEXT
++	bool "Enable WEXT support"
++	depends on BCMDHD && CFG80211 = n
++	select WIRELESS_EXT
++	select WEXT_PRIV
++	help
++	  Enables WEXT support
++
++choice
++	prompt "Enable Chip Interface"
++	depends on BCMDHD
++	---help---
++		Enable Chip Interface.
++config BCMDHD_SDIO
++		bool "SDIO bus interface support"
++		depends on BCMDHD && MMC
++config BCMDHD_PCIE
++		bool "PCIe bus interface support"
++		depends on BCMDHD && PCI
++config BCMDHD_USB
++		bool "USB bus interface support"
++		depends on BCMDHD && USB
++endchoice
++
++
++choice
++	depends on BCMDHD && BCMDHD_SDIO
++	prompt "Interrupt type"
++	---help---
++		Interrupt type
++config BCMDHD_OOB
++	depends on BCMDHD && BCMDHD_SDIO
++	bool "Out-of-Band Interrupt"
++	---help---
++		Interrupt from WL_HOST_WAKE.
++
++config BCMDHD_SDIO_IRQ
++	depends on BCMDHD && BCMDHD_SDIO
++	bool "In-Band Interrupt"
++	---help---
++	  Interrupt from SDIO DAT[1]
++endchoice
+diff --git a/drivers/net/wireless/Makefile b/drivers/net/wireless/Makefile
+index 6cfe74515c..2e72749dbb 100644
+--- a/drivers/net/wireless/Makefile
++++ b/drivers/net/wireless/Makefile
+@@ -29,3 +29,4 @@ obj-$(CONFIG_USB_NET_RNDIS_WLAN)	+= rndis_wlan.o
+ obj-$(CONFIG_MAC80211_HWSIM)	+= mac80211_hwsim.o
+ 
+ obj-$(CONFIG_VIRT_WIFI)	+= virt_wifi.o
++obj-$(CONFIG_BCMDHD) += bcmdhd/
+
+-- 
+2.43.0
+

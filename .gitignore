@@ -1,0 +1,10 @@
+# Sources fetched by scripts/fetch-sources.sh
+/sources/
+
+# Build outputs
+/output/
+*.o
+*.elf
+*.bin
+*.stm32
+*.img

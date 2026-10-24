@@ -1,0 +1,122 @@
+From 029839755a44b810175465ac10aa6b00d17029fb Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sat, 29 Aug 2026 06:45:51 -0700
+Subject: [PATCH 8/8] update config
+
+---
+ .../boot/dts/stm32mp157-quartzix-board.dtsi   | 22 +++++++++++++++++++
+ .../configs/quartzix_stm32mp157c_defconfig    |  8 +++++++
+ drivers/clk/clk-stm32mp1.c                    | 22 +++++++++++++++----
+ 3 files changed, 48 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
+index 515e1715ef..f9eef17e43 100644
+--- a/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
+@@ -219,8 +219,30 @@ &iwdg2 {
+ 	status = "okay";
+ };
+ 
++/* wakeup-source arms ipcc->irqs[IPCC_IRQ_RX] via dev_pm_set_wake_irq()
++ * (stm32-ipcc.c). Without it, the M4's rpmsg WAKE message reaches this
++ * IRQ line but s2idle never rouses the CPU for it — m4_rproc's own
++ * "wakeup-source"/EXTI 68 only arms the M4 watchdog IRQ (stm32_rproc.c
++ * names it wdg_irq), unrelated to rpmsg traffic. */
+ &ipcc {
+ 	status = "okay";
++	wakeup-source;
++};
++
++/* DMA1 is exclusively driven by the M4 firmware (DMA1_Stream0/1, circular
++ * mode, for continuous SAI1 audio capture — see stm32mp1xx_hal_msp.c) and
++ * never releases channel 0's EN bit. If Linux also probes dma1, its s2idle
++ * suspend hook does a raw register scan of all 8 channels and permanently
++ * sees channel 0 busy, aborting suspend with "Suspend is prevented by Chan
++ * 0". Disable it for Linux; dmamux1 falls back to dma2 for any CA7 client
++ * (currently only the unused sai1a playback path). */
++&dma1 {
++	status = "disabled";
++};
++
++&dmamux1 {
++	dma-masters = <&dma2>;
++	dma-channels = <8>;
+ };
+ 
+ /* SAI1_K clock config: set PLL3_Q as source via m4_rproc assigned-clocks.
+diff --git a/arch/arm/configs/quartzix_stm32mp157c_defconfig b/arch/arm/configs/quartzix_stm32mp157c_defconfig
+index f6862bd98e..677b9a9f4d 100644
+--- a/arch/arm/configs/quartzix_stm32mp157c_defconfig
++++ b/arch/arm/configs/quartzix_stm32mp157c_defconfig
+@@ -49,6 +49,14 @@ CONFIG_STM32_DMA=y
+ CONFIG_STM32_DMAMUX=y
+ CONFIG_STM32_MDMA=y
+ 
++# FAT (bootfs.vfat is a separate FAT partition, not the ext4 rootfs's own
++# /boot — without this Linux can't mount it to update dtb/uImage in place
++# and every boot-partition change requires a full USB DFU reflash)
++CONFIG_FAT_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ISO8859_1=y
++
+ # Audio
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 2a1de15cd9..79453d7c0d 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1925,7 +1925,13 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 		  _NO_MUX,
+ 		  _DIV(RCC_PLL3CFGR2, 0, 7, 0, NULL)),
+ 
+-	COMPOSITE(PLL3_Q, "pll3_q", PARENT("pll3"), 0,
++	/* CLK_IS_CRITICAL: sole source of SAI1_K for the M4's continuous KWS
++	 * audio capture (see stm32mp157-quartzix-board.dtsi). No Linux driver
++	 * holds an enable ref on this path since CA7 never opens an SAI1
++	 * stream, so without this flag the generic "disable unused clocks"
++	 * pass gates it off — including across suspend — silently freezing
++	 * the M4's audio pipeline. */
++	COMPOSITE(PLL3_Q, "pll3_q", PARENT("pll3"), CLK_IS_CRITICAL,
+ 		  _GATE(RCC_PLL3CR, 5, 0),
+ 		  _NO_MUX,
+ 		  _DIV_DUTY_CYCLE(RCC_PLL3CFGR2, 8, 7, 0, NULL)),
+@@ -2041,7 +2047,7 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	PCLK(SPI4, "spi4", "pclk2", 0, G_SPI4),
+ 	PCLK(SPI5, "spi5", "pclk2", 0, G_SPI5),
+ 	PCLK(USART6, "usart6", "pclk2", 0, G_USART6),
+-	PCLK(SAI1, "sai1", "pclk2", 0, G_SAI1),
++	PCLK(SAI1, "sai1", "pclk2", CLK_IS_CRITICAL, G_SAI1),
+ 	PCLK(SAI2, "sai2", "pclk2", 0, G_SAI2),
+ 	PCLK(SAI3, "sai3", "pclk2", 0, G_SAI3),
+ 	PCLK(DFSDM, "dfsdm", "pclk2", 0, G_DFSDM),
+@@ -2085,7 +2091,15 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	PCLK(RNG2, "rng2", "ck_mcu", 0, G_RNG2),
+ 	PCLK(CRC2, "crc2", "ck_mcu", 0, G_CRC2),
+ 	PCLK(HSEM, "hsem", "ck_mcu", 0, G_HSEM),
+-	PCLK(IPCC, "ipcc", "ck_mcu", 0, G_IPCC),
++	/* CLK_IS_CRITICAL: the ipcc driver's own probe() disables this clock
++	 * right after setup (clk_disable_unprepare at probe exit) and only
++	 * re-enables it around active transfers, but stm32_ipcc_suspend()
++	 * reads XMR/XCR via readl_relaxed() without re-enabling it first —
++	 * and more importantly, an M4-initiated doorbell into a clock-gated
++	 * IPCC block cannot latch/assert its IRQ at all, silently defeating
++	 * the ipcc wakeup-source (see stm32mp157-quartzix-board.dtsi). Keep
++	 * it permanently clocked; cost is negligible. */
++	PCLK(IPCC, "ipcc", "ck_mcu", CLK_IS_CRITICAL, G_IPCC),
+ 	PCLK(GPIOA, "gpioa", "ck_mcu", 0, G_GPIOA),
+ 	PCLK(GPIOB, "gpiob", "ck_mcu", 0, G_GPIOB),
+ 	PCLK(GPIOC, "gpioc", "ck_mcu", 0, G_GPIOC),
+@@ -2152,7 +2166,7 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	KCLK(UART7_K, "uart7_k", usart234578_src, 0, G_UART7, M_UART78),
+ 	KCLK(UART8_K, "uart8_k", usart234578_src, 0, G_UART8, M_UART78),
+ 	KCLK(FDCAN_K, "fdcan_k", fdcan_src, 0, G_FDCAN, M_FDCAN),
+-	KCLK(SAI1_K, "sai1_k", sai_src, 0, G_SAI1, M_SAI1),
++	KCLK(SAI1_K, "sai1_k", sai_src, CLK_IS_CRITICAL, G_SAI1, M_SAI1),
+ 	KCLK(SAI2_K, "sai2_k", sai2_src, 0, G_SAI2, M_SAI2),
+ 	KCLK(SAI3_K, "sai3_k", sai_src, 0, G_SAI3, M_SAI3),
+ 	KCLK(SAI4_K, "sai4_k", sai_src, 0, G_SAI4, M_SAI4),
+-- 
+2.43.0
+

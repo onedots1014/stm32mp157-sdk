@@ -1,0 +1,126 @@
+From 6e287b0953e2eae6786e681c748a0f23d3b90e71 Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Fri, 3 Jul 2026 23:48:18 -0700
+Subject: [PATCH 4/8] remoteproc: enable Cortex-M4 core (IPCC/RPMsg reserved
+ memory, resource table)
+
+---
+ .../boot/dts/stm32mp157-onedots-board.dtsi    | 42 ++++++++++---------
+ .../boot/dts/stm32mp157-onedots-pinctrl.dtsi  |  7 +++-
+ .../arm/configs/onedots_stm32mp157c_defconfig | 10 ++++-
+ 3 files changed, 38 insertions(+), 21 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+index aa083504e0..bc4298f2ef 100644
+--- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+@@ -194,17 +194,7 @@ &sdmmc2 {
+ &gpioi { status = "okay"; };
+ &gpioj { status = "okay"; };
+ &gpiok { status = "okay"; };
+-&pinctrl_z { status = "disabled";
+-
+-    m4_spi1_pins_z_mx: m4_spi1_mx-0 {
+-       pins {
+-           pinmux = <STM32_PINMUX('Z', 0, RSVD)>, /* SPI1_SCK */
+-                  <STM32_PINMUX('Z', 1, RSVD)>, /* SPI1_MISO */
+-                  <STM32_PINMUX('Z', 2, RSVD)>; /* SPI1_MOSI */
+-       };
+-    };
+-
+-};
++&pinctrl_z { status = "disabled";};
+ 
+ /* Watchdog configuration */
+ &iwdg2 {
+@@ -217,13 +207,27 @@ &ipcc {
+ };
+ 
+ &m4_rproc {
+-	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
+-			<&vdev0vring1>, <&vdev0buffer>;
+-	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
+-	mbox-names = "vq0", "vq1", "shutdown";
+-	interrupt-parent = <&exti>;
+-	interrupts = <68 1>;
+-	wakeup-source;
+-	status = "okay";
++    compatible = "st,stm32mp1-m4";
++
++    resets = <&scmi0_reset RST_SCMI0_MCU>, <&scmi0_reset RST_SCMI0_MCU_HOLD_BOOT>;
++    reset-names = "mcu_rst", "hold_boot";
++
++    memory-region = <&retram>, <&mcuram>, <&mcuram2>,
++                    <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
++    mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
++    mbox-names = "vq0", "vq1", "shutdown";
++    interrupt-parent = <&exti>;
++    interrupts = <68 1>;
++    wakeup-source;
++    status = "okay";
++
++    m4_system_resources {
++        m4_led: m4_led {
++            compatible = "rproc-srm-dev";
++            pinctrl-names = "default";
++            pinctrl-0 = <&m4_led_pa10_pins>;
++            status = "okay";
++        };
++    };
+ };
+ 
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
+index 1d6def582f..856d072bc4 100755
+--- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
+@@ -117,6 +117,11 @@ pins {
+ 			};
+ 	};
+ 
+-
++	/* M4 LED pin - PA10 reserved for Cortex-M4 */
++	m4_led_pa10_pins: m4-led-pa10-0 {
++		pins {
++			pinmux = <STM32_PINMUX('A', 10, RSVD)>;
++		};
++	};
+ };
+ 
+diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
+index 203c2ce5c8..7d3deff109 100644
+--- a/arch/arm/configs/onedots_stm32mp157c_defconfig
++++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
+@@ -1,9 +1,12 @@
+ CONFIG_ARCH_STM32=y
++CONFIG_SMP=y
+ CONFIG_ARM_SCMI_PROTOCOL=y
++CONFIG_MODULES=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_SERIAL_STM32=y
+ CONFIG_SERIAL_STM32_CONSOLE=y
++CONFIG_HW_RANDOM=y
+ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_WATCHDOG=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+@@ -11,11 +14,16 @@ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_ARMMMCI=y
+ CONFIG_MMC_SDHCI=y
+-# CONFIG_VIRTIO_MENU is not set
++CONFIG_VIRTIO_BALLOON=y
++CONFIG_VIRTIO_INPUT=y
++CONFIG_VIRTIO_MMIO=y
++CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES=y
+ CONFIG_COMMON_CLK_SCMI=y
+ CONFIG_ARM_SMC_MBOX=y
+ CONFIG_STM32_IPCC=y
+ CONFIG_REMOTEPROC=y
+ CONFIG_STM32_RPROC=y
+ CONFIG_RPMSG_VIRTIO=y
++CONFIG_RPMSG_TTY=y
+ CONFIG_EXT4_FS=y
++CONFIG_CRYPTO_DEV_VIRTIO=y
+-- 
+2.43.0
+

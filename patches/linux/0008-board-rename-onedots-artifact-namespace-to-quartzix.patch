@@ -1,0 +1,122 @@
+From 47a1159f8597fc38ee50586588ecdb5b85e4bd1f Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sat, 4 Jul 2026 07:53:01 -0700
+Subject: [PATCH 7/8] board: rename onedots artifact namespace to quartzix
+
+Renames the board-specific dts/dtsi/defconfig files and their internal
+references (Makefile dtb-y entry, #include chain, model/compatible/
+ALSA-label strings) from the onedots prefix to quartzix, matching the
+project's current brand. Verified: dtb recompiles with only the
+expected model/compatible/label string changes (byte-diffed against
+the pre-rename build), everything else in the flattened tree is
+unchanged.
+---
+ arch/arm/boot/dts/Makefile                           |  2 +-
+ ...ots-audio.dtsi => stm32mp157-quartzix-audio.dtsi} |  2 +-
+ ...ots-board.dtsi => stm32mp157-quartzix-board.dtsi} |  0
+ ...pinctrl.dtsi => stm32mp157-quartzix-pinctrl.dtsi} |  4 ++--
+ ...32mp157-onedots.dtsi => stm32mp157-quartzix.dtsi} |  0
+ ...-512d-v1.dts => stm32mp157c-quartzix-512d-v1.dts} | 12 ++++++------
+ ...157c_defconfig => quartzix_stm32mp157c_defconfig} |  0
+ 7 files changed, 10 insertions(+), 10 deletions(-)
+ rename arch/arm/boot/dts/{stm32mp157-onedots-audio.dtsi => stm32mp157-quartzix-audio.dtsi} (99%)
+ rename arch/arm/boot/dts/{stm32mp157-onedots-board.dtsi => stm32mp157-quartzix-board.dtsi} (100%)
+ rename arch/arm/boot/dts/{stm32mp157-onedots-pinctrl.dtsi => stm32mp157-quartzix-pinctrl.dtsi} (98%)
+ rename arch/arm/boot/dts/{stm32mp157-onedots.dtsi => stm32mp157-quartzix.dtsi} (100%)
+ rename arch/arm/boot/dts/{stm32mp157c-onedots-512d-v1.dts => stm32mp157c-quartzix-512d-v1.dts} (66%)
+ rename arch/arm/configs/{onedots_stm32mp157c_defconfig => quartzix_stm32mp157c_defconfig} (100%)
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 2b7813574f..d2d3c93906 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1040,7 +1040,7 @@ dtb-$(CONFIG_ARCH_STM32) += \
+ 	stm32mp157c-ev1-m4-examples.dtb \
+ 	stm32mp157f-ev1-a7-examples.dtb \
+ 	stm32mp157f-ev1-m4-examples.dtb \
+-	stm32mp157c-onedots-512d-v1.dtb
++	stm32mp157c-quartzix-512d-v1.dtb
+ 
+ dtb-$(CONFIG_MACH_SUN4I) += \
+ 	sun4i-a10-a1000.dtb \
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix-audio.dtsi
+similarity index 99%
+rename from arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi
+rename to arch/arm/boot/dts/stm32mp157-quartzix-audio.dtsi
+index b06616bf4f..f597a00c82 100644
+--- a/arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-quartzix-audio.dtsi
+@@ -17,7 +17,7 @@
+ / {
+ 	sound_wm8960: sound {
+ 		compatible = "audio-graph-card";
+-		label = "WM8960-onedots";
++		label = "WM8960-quartzix";
+ 		dais = <&sai1a_port>;
+ 		widgets =
+ 			"Headphone", "Headphone Jack",
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
+similarity index 100%
+rename from arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
+rename to arch/arm/boot/dts/stm32mp157-quartzix-board.dtsi
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix-pinctrl.dtsi
+similarity index 98%
+rename from arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
+rename to arch/arm/boot/dts/stm32mp157-quartzix-pinctrl.dtsi
+index 72dbd71592..5450e69612 100755
+--- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-quartzix-pinctrl.dtsi
+@@ -2,12 +2,12 @@
+ /*
+  * Copyright (C) STMicroelectronics 2017 - All Rights Reserved
+  * Author: Ludovic Barre <ludovic.barre@st.com> for STMicroelectronics.
+- * Modified for Onedots board configuration
++ * Modified for Quartzix board configuration
+  */
+ #include <dt-bindings/pinctrl/stm32-pinfunc.h>
+ 
+ /*
+- * Pin control configuration for STM32MP157 Onedots board
++ * Pin control configuration for STM32MP157 Quartzix board
+  * This file contains pin multiplexing definitions for various peripherals
+  */
+ 
+diff --git a/arch/arm/boot/dts/stm32mp157-onedots.dtsi b/arch/arm/boot/dts/stm32mp157-quartzix.dtsi
+similarity index 100%
+rename from arch/arm/boot/dts/stm32mp157-onedots.dtsi
+rename to arch/arm/boot/dts/stm32mp157-quartzix.dtsi
+diff --git a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts b/arch/arm/boot/dts/stm32mp157c-quartzix-512d-v1.dts
+similarity index 66%
+rename from arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
+rename to arch/arm/boot/dts/stm32mp157c-quartzix-512d-v1.dts
+index 68dccaef7f..154dc97d1e 100755
+--- a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-quartzix-512d-v1.dts
+@@ -10,14 +10,14 @@
+ #include "stm32mp157.dtsi"
+ #include "stm32mp15xa.dtsi"
+ #include <dt-bindings/pinctrl/stm32-pinfunc.h>
+-#include "stm32mp157-onedots.dtsi"
+-#include "stm32mp157-onedots-pinctrl.dtsi"
+-#include "stm32mp157-onedots-board.dtsi"
+-#include "stm32mp157-onedots-audio.dtsi"
++#include "stm32mp157-quartzix.dtsi"
++#include "stm32mp157-quartzix-pinctrl.dtsi"
++#include "stm32mp157-quartzix-board.dtsi"
++#include "stm32mp157-quartzix-audio.dtsi"
+ 
+ / {
+-	model = "Onedots STM32MP157C Development Board";
+-	compatible = "st,stm32mp157c-onedots-512d-v1", "st,stm32mp157";
++	model = "Quartzix STM32MP157C Development Board";
++	compatible = "st,stm32mp157c-quartzix-512d-v1", "st,stm32mp157";
+ 	
+ 	/* Package type specification to eliminate warnings */
+ 	st,package = <STM32MP_PKG_AC>;
+diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/quartzix_stm32mp157c_defconfig
+similarity index 100%
+rename from arch/arm/configs/onedots_stm32mp157c_defconfig
+rename to arch/arm/configs/quartzix_stm32mp157c_defconfig
+-- 
+2.43.0
+

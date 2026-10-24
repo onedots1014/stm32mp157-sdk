@@ -1,0 +1,61 @@
+# Microfrontend compilation check
+# Run from stm32_m4/ directory:
+#   make -f microfrontend/Makefile.check
+#
+# Uses host GCC. Creates a stub tensorflow/ directory tree so the
+# TF-style include paths ("tensorflow/lite/.../foo.h") resolve correctly.
+
+MFDIR  := $(CURDIR)/microfrontend
+TFSTUB := $(CURDIR)/tensorflow/lite/experimental/microfrontend/lib
+BUILD  := $(CURDIR)/microfrontend/.build
+
+CC     := gcc
+CFLAGS := -std=c99 -Wall -Wextra -Wno-unused-parameter \
+          -I$(CURDIR)
+
+# All .c files that should be present
+SRCS := frontend.c window.c noise_reduction.c log_lut.c \
+        fft.c filterbank.c log_scale.c pcan_gain_control.c \
+        frontend_util.c window_util.c fft_util.c filterbank_util.c \
+        noise_reduction_util.c log_scale_util.c pcan_gain_control_util.c
+
+PRESENT := $(wildcard $(addprefix $(MFDIR)/, $(SRCS)))
+MISSING := $(filter-out $(notdir $(PRESENT)), $(SRCS))
+
+OBJS := $(patsubst %.c, $(BUILD)/%.o, $(notdir $(PRESENT)))
+
+.PHONY: all setup check-missing clean
+
+all: check-missing setup $(OBJS)
+	@echo ""
+	@echo "=== Compilation check complete ==="
+	@echo "Compiled: $(words $(OBJS)) file(s)"
+
+check-missing:
+	@if [ -n "$(MISSING)" ]; then \
+	    echo ""; \
+	    echo "ERROR: Missing source files:"; \
+	    for f in $(MISSING); do echo "  microfrontend/$$f"; done; \
+	    echo ""; \
+	    echo "Get them from the tflite-micro repo:"; \
+	    echo "  tensorflow/lite/experimental/microfrontend/lib/"; \
+	    echo ""; \
+	fi
+
+# Create the directory structure that mirrors TF include paths,
+# then symlink each .h file into it so #include "tensorflow/..." works.
+setup:
+	@mkdir -p $(TFSTUB) $(BUILD)
+	@for h in $(MFDIR)/*.h; do \
+	    name=$$(basename $$h); \
+	    if [ ! -e $(TFSTUB)/$$name ]; then \
+	        ln -sf $$h $(TFSTUB)/$$name; \
+	    fi; \
+	done
+
+$(BUILD)/%.o: $(MFDIR)/%.c | setup
+	@echo "  CC  $<"
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf $(BUILD) $(CURDIR)/tensorflow/

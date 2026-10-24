@@ -1,0 +1,35 @@
+From 7849451bacb5dcf27985f401293f7a596d948a9d Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sat, 14 Mar 2026 22:25:56 +0800
+Subject: [PATCH 2/5] fix(clk): clear HSEBYP in digbyp mode to allow HSERDY to
+ assert
+
+---
+ drivers/st/clk/stm32mp1_clk.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/st/clk/stm32mp1_clk.c b/drivers/st/clk/stm32mp1_clk.c
+index f0201f3..05f13e7 100644
+--- a/drivers/st/clk/stm32mp1_clk.c
++++ b/drivers/st/clk/stm32mp1_clk.c
+@@ -1642,8 +1642,16 @@ static void stm32mp1_hse_enable(bool bypass, bool digbyp, bool css)
+ 		mmio_write_32(rcc_base + RCC_OCENSETR, RCC_OCENR_DIGBYP);
+ 	}
+ 
+-	if (bypass || digbyp) {
++	if (bypass) {
++		/* Analog bypass: external analog clock signal, HSEBYP must be set */
+ 		mmio_write_32(rcc_base + RCC_OCENSETR, RCC_OCENR_HSEBYP);
++	} else if (digbyp) {
++		/*
++		 * Digital bypass: per RM0436, DIGBYP and HSEBYP must not both be set.
++		 * Explicitly clear HSEBYP so only DIGBYP is active, otherwise HSERDY
++		 * never asserts and clock initialization hangs.
++		 */
++		mmio_write_32(rcc_base + RCC_OCENCLRR, RCC_OCENR_HSEBYP);
+ 	}
+ 
+ 	stm32mp1_hs_ocs_set(true, RCC_OCENR_HSEON);
+-- 
+2.43.0
+
