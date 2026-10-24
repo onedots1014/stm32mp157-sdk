@@ -56,7 +56,7 @@ scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
 需要 `arm-linux-gnueabi-gcc` 交叉工具链、`make`、`genext2fs`；构建 M4 固件还需要 STM32CubeIDE。
 
 ```bash
-./build.sh config                 # 选择板子（目前只有 onedots_stm32mp157）
+./build.sh config                 # 选择板子；只有一块板时可省略，自动选中 onedots_stm32mp157
 ./build.sh all                    # TF-A → U-Boot → Linux → M4 → FIP → BusyBox → rootfs
 ./build.sh kernel                 # 也可以单独构建某个模块：atf | uboot | kernel | busybox | rootfs | m4
 ./build.sh flash full             # 通过 STM32CubeProgrammer 烧写（见 boards/stm32mp157/common/flash/）

@@ -132,7 +132,16 @@ load_board_config() {
     fi
 
     if [[ ! -f "$CONFIG_FILE" ]]; then
-        die "No board configured. Run '$SCRIPT_NAME config' first."
+        # Only one board available: use it without requiring 'config'
+        local boards=()
+        mapfile -t boards < <(list_boards)
+        if [[ ${#boards[@]} -eq 1 ]]; then
+            BOARD_NAME="${boards[0]}"
+            BOARD_DIR="$BOARDS_BASE_DIR/$BOARD_NAME"
+            log INFO "No board configured; using the only available board: $BOARD_NAME"
+            return 0
+        fi
+        die "No board configured. Run '$SCRIPT_NAME config' or pass -b <board> (available: ${boards[*]:-none})."
     fi
 
     source "$CONFIG_FILE"
