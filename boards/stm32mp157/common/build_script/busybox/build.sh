@@ -62,6 +62,17 @@ configure_busybox() {
     sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config
     sed -i 's/# CONFIG_INIT is not set/CONFIG_INIT=y/' .config
 
+    # SHA1/SHA256 HW acceleration only exists on x86 (SHA-NI). defconfig enables
+    # it, and BusyBox 1.37.0 then fails to cross-compile for ARM:
+    # hash_md5_sha.c references sha1_process_block64_shaNI, which is only
+    # declared for x86. Disabling it costs nothing on ARM.
+    sed -i 's/^CONFIG_SHA1_HWACCEL=y/# CONFIG_SHA1_HWACCEL is not set/; s/^CONFIG_SHA256_HWACCEL=y/# CONFIG_SHA256_HWACCEL is not set/' .config
+
+    # tc (traffic control) uses CBQ definitions that were removed from the
+    # kernel UAPI headers in Linux 6.8, so it fails with newer toolchains.
+    # The board doesn't need it.
+    sed -i 's/^CONFIG_TC=y/# CONFIG_TC is not set/' .config
+
     # Apply configuration changes without prompting
     yes "" | make oldconfig >/dev/null 2>&1 || true
 
