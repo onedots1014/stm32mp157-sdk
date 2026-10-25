@@ -77,10 +77,10 @@ scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
 
 `rootfs-overlay/etc/wpa_supplicant.conf` 里的 `YOUR_SSID` / `YOUR_PASSWORD` 需改成自己的 WiFi。
 
-### Buildroot rootfs（迁移中）
+### Buildroot（可选）
 
 `boards/stm32mp157/onedots_stm32mp157/buildroot/` 是一个 BR2_EXTERNAL 树，基于 Buildroot 2025.05，
-通过 `local.mk` 直接使用 `sources/` 中已打补丁的源码：
+通过 `local.mk` 直接使用 `sources/` 中已打补丁的源码，生成和 `build.sh` 相同的启动链：
 
 ```bash
 make -C <buildroot> O=$PWD/output/buildroot \
@@ -89,8 +89,15 @@ make -C <buildroot> O=$PWD/output/buildroot \
 make -C output/buildroot
 ```
 
-> 注意：镜像布局（`genimage-tfa.cfg`）仍是 TF-A v2.2 时代的 `u-boot.stm32` 方式，
-> 尚未改成 TF-A v2.10 的 FIP 启动流程，**目前完整镜像请用 `build.sh`**。
+`output/buildroot/images/` 中的产物：
+
+| 文件 | 用途 |
+| --- | --- |
+| `tf-a-onedots-stm32mp157c-evb.stm32`、`fip.bin`、`bootfs.ext4`、`rootfs.ext4` | 烧写 eMMC：`./build.sh flash buildroot`（USB 启动用的 serialboot TF-A 需先 `./build.sh atf` 生成） |
+| `sdcard.img` | SD 卡镜像：fsbl1 → fsbl2 → fip → bootfs → rootfs，可直接 `dd` 写卡 |
+
+> 已验证到出镜像这一步：FIP 与 `build.sh` 生成的条目一致，`sdcard.img` 各分区与对应镜像逐字节一致。
+> SD 卡启动尚未上板验证。
 
 ## 目录结构
 
