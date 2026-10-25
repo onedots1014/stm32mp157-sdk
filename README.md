@@ -30,7 +30,7 @@ A7 侧 Linux 通过 remoteproc 管理 M4 固件的加载与启停，两核之间
 
 | 组件 | 基线（官方 tag） | 补丁 | 主要内容 |
 | --- | --- | --- | --- |
-| TF-A | `v2.10-stm32mp-r3` | [4 个](patches/tf-a) | 修复 SP_MIN 未初始化 TAMP NVRAM、导致 Linux 唤醒第二个 A7 核（PSCI CPU_ON）时 Monitor 模式 data abort 的问题；HSE digital bypass 下 HSERDY 不置位的时钟修复；为 M4 remoteproc 实现 MCU_HOLD_BOOT 的 SCMI reset domain；板级 DTS |
+| TF-A | `v2.10-stm32mp-r3` | [4 个](patches/tf-a) | 修复 SP_MIN 未初始化 TAMP NVRAM、导致 Linux 无法通过 PSCI CPU_ON 启动第二个 A7 核的问题（该问题在 ST 最新版本和 TF-A 主线中仍然存在）；HSE digital bypass 下 HSERDY 不置位的时钟修复；为 M4 remoteproc 实现 MCU_HOLD_BOOT 的 SCMI reset domain；板级 DTS |
 | U-Boot | `v2020.01-stm32mp-r2.2` | [4 个](patches/u-boot) | 板级支持；正点原子 STM32MP157D 配置；FIP 变大后 trusted defconfig 的 `ENV_OFFSET` 修正；新版主机工具链下 dtc 的编译修复 |
 | Linux | `v5.4-stm32mp-r2.4` | [8 个](patches/linux) | 板级 DTS 与 defconfig；M4 remoteproc（IPCC / RPMsg 保留内存、resource table）；WM8960 声卡（SAI1，SAI1_K 取自 PLL3_Q）；BCM43436 WiFi（bcmdhd）；M4 持续采集音频时 CA7 可进入 s2idle 并被 M4 经 RPMsg 唤醒（关键时钟、IPCC wakeup-source、DMA1 归属） |
 | BusyBox | `1_37_0` | [1 个](patches/busybox) | 回移上游修复 `bf57f732`：1.37.0 在非 x86 上开启默认的 `SHA1_HWACCEL` 会编译失败（`Upstream-Status: Backport`） |
