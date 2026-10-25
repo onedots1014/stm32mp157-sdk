@@ -1,7 +1,7 @@
-From d052b7b27366db4daa84c5588e542fee5545d800 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Fri, 3 Jul 2026 23:48:30 -0700
-Subject: [PATCH 5/8] audio: enable WM8960 codec via SAI1 (SAI1_K on PLL3_Q)
+Subject: [PATCH] audio: enable WM8960 codec via SAI1 (SAI1_K on PLL3_Q)
 
 ---
  .../boot/dts/stm32mp157-onedots-audio.dtsi    | 112 ++++++++++++++++++
@@ -14,7 +14,7 @@ Subject: [PATCH 5/8] audio: enable WM8960 codec via SAI1 (SAI1_K on PLL3_Q)
 
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi
 new file mode 100644
-index 0000000000..b06616bf4f
+index 000000000..b06616bf4
 --- /dev/null
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-audio.dtsi
 @@ -0,0 +1,112 @@
@@ -131,10 +131,10 @@ index 0000000000..b06616bf4f
 +	};
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-index bc4298f2ef..48dbed737a 100644
+index bc4298f2e..48dbed737 100644
 --- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-@@ -163,7 +163,6 @@ &uart4 {
+@@ -163,7 +163,6 @@
  	status = "okay";
  };
  
@@ -142,7 +142,7 @@ index bc4298f2ef..48dbed737a 100644
  /* eMMC Configuration */
  &sdmmc2 {
          pinctrl-names = "default", "opendrain", "sleep";
-@@ -206,6 +205,14 @@ &ipcc {
+@@ -206,6 +205,14 @@
  	status = "okay";
  };
  
@@ -157,7 +157,7 @@ index bc4298f2ef..48dbed737a 100644
  &m4_rproc {
      compatible = "st,stm32mp1-m4";
  
-@@ -221,6 +228,9 @@ &m4_rproc {
+@@ -221,6 +228,9 @@
      wakeup-source;
      status = "okay";
  
@@ -168,10 +168,10 @@ index bc4298f2ef..48dbed737a 100644
          m4_led: m4_led {
              compatible = "rproc-srm-dev";
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-index 856d072bc4..55ecf501e9 100755
+index 856d072bc..55ecf501e 100755
 --- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-@@ -123,5 +123,60 @@ pins {
+@@ -123,5 +123,60 @@
  			pinmux = <STM32_PINMUX('A', 10, RSVD)>;
  		};
  	};
@@ -233,7 +233,7 @@ index 856d072bc4..55ecf501e9 100755
  };
  
 diff --git a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
-index cbe92441b9..68dccaef7f 100755
+index cbe92441b..68dccaef7 100755
 --- a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 @@ -13,6 +13,7 @@
@@ -245,7 +245,7 @@ index cbe92441b9..68dccaef7f 100755
  / {
  	model = "Onedots STM32MP157C Development Board";
 diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
-index 7d3deff109..47ba56b6d6 100644
+index 7d3deff10..47ba56b6d 100644
 --- a/arch/arm/configs/onedots_stm32mp157c_defconfig
 +++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
 @@ -27,3 +27,32 @@ CONFIG_RPMSG_VIRTIO=y
@@ -281,6 +281,3 @@ index 7d3deff109..47ba56b6d6 100644
 +CONFIG_SND_SIMPLE_CARD_UTILS=y
 +CONFIG_SND_SIMPLE_CARD=y
 +CONFIG_SND_AUDIO_GRAPH_CARD=y
--- 
-2.43.0
-

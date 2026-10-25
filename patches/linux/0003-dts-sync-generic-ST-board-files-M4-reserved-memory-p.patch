@@ -1,8 +1,7 @@
-From d7b3617b259926f25d71456d9fb1eb158b5f4fb5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 24 Jan 2026 21:30:45 +0800
-Subject: [PATCH 3/8] dts: sync generic ST board files + M4 reserved-memory
- prep
+Subject: [PATCH] dts: sync generic ST board files + M4 reserved-memory prep
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -51,10 +50,10 @@ KERNEL_DEFCONFIG/DEVICE_TREE, dead weight for this SDK.
  30 files changed, 320 insertions(+), 179 deletions(-)
 
 diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
-index 4f45e71a1e..ba08624c62 100644
+index 4f45e71a1..ba08624c6 100644
 --- a/arch/arm/boot/dts/stm32429i-eval.dts
 +++ b/arch/arm/boot/dts/stm32429i-eval.dts
-@@ -112,15 +112,17 @@ blue {
+@@ -112,15 +112,17 @@
  		};
  	};
  
@@ -76,10 +75,10 @@ index 4f45e71a1e..ba08624c62 100644
  			linux,code = <KEY_RESTART>;
  			gpios = <&gpioc 13 0>;
 diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
-index 8d64b52838..2b1664884a 100644
+index 8d64b5283..2b1664884 100644
 --- a/arch/arm/boot/dts/stm32746g-eval.dts
 +++ b/arch/arm/boot/dts/stm32746g-eval.dts
-@@ -81,10 +81,12 @@ blue {
+@@ -81,10 +81,12 @@
  		};
  	};
  
@@ -95,10 +94,10 @@ index 8d64b52838..2b1664884a 100644
  			linux,code = <KEY_WAKEUP>;
  			gpios = <&gpioc 13 0>;
 diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
-index 49ae2d72af..e19d0fe7db 100644
+index 49ae2d72a..e19d0fe7d 100644
 --- a/arch/arm/boot/dts/stm32f429-disco.dts
 +++ b/arch/arm/boot/dts/stm32f429-disco.dts
-@@ -79,10 +79,12 @@ green {
+@@ -79,10 +79,12 @@
  		};
  	};
  
@@ -114,10 +113,10 @@ index 49ae2d72af..e19d0fe7db 100644
  			linux,code = <KEY_HOME>;
  			gpios = <&gpioa 0 0>;
 diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index dd41342ef0..5c8a826b31 100644
+index dd41342ef..5c8a826b3 100644
 --- a/arch/arm/boot/dts/stm32f429.dtsi
 +++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -283,6 +283,8 @@ timer@11 {
+@@ -283,6 +283,8 @@
  		};
  
  		timers13: timers@40001c00 {
@@ -126,7 +125,7 @@ index dd41342ef0..5c8a826b31 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40001C00 0x400>;
  			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM13)>;
-@@ -297,6 +299,8 @@ pwm {
+@@ -297,6 +299,8 @@
  		};
  
  		timers14: timers@40002000 {
@@ -135,7 +134,7 @@ index dd41342ef0..5c8a826b31 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40002000 0x400>;
  			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM14)>;
-@@ -619,6 +623,8 @@ timer@8 {
+@@ -619,6 +623,8 @@
  		};
  
  		timers10: timers@40014400 {
@@ -144,7 +143,7 @@ index dd41342ef0..5c8a826b31 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40014400 0x400>;
  			clocks = <&rcc 0 STM32F4_APB2_CLOCK(TIM10)>;
-@@ -633,6 +639,8 @@ pwm {
+@@ -633,6 +639,8 @@
  		};
  
  		timers11: timers@40014800 {
@@ -153,7 +152,7 @@ index dd41342ef0..5c8a826b31 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40014800 0x400>;
  			clocks = <&rcc 0 STM32F4_APB2_CLOCK(TIM11)>;
-@@ -688,7 +696,7 @@ crc: crc@40023000 {
+@@ -688,7 +696,7 @@
  			status = "disabled";
  		};
  
@@ -163,10 +162,10 @@ index dd41342ef0..5c8a826b31 100644
  			#clock-cells = <2>;
  			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
 diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
-index 0ce450123d..c6dc6d1a05 100644
+index 0ce450123..c6dc6d1a0 100644
 --- a/arch/arm/boot/dts/stm32f469-disco.dts
 +++ b/arch/arm/boot/dts/stm32f469-disco.dts
-@@ -104,10 +104,12 @@ blue {
+@@ -104,10 +104,12 @@
  		};
  	};
  
@@ -182,10 +181,10 @@ index 0ce450123d..c6dc6d1a05 100644
  			linux,code = <KEY_WAKEUP>;
  			gpios = <&gpioa 0 GPIO_ACTIVE_HIGH>;
 diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-index 60680fcf8e..d26f93f8b9 100644
+index 60680fcf8..d26f93f8b 100644
 --- a/arch/arm/boot/dts/stm32f746.dtsi
 +++ b/arch/arm/boot/dts/stm32f746.dtsi
-@@ -265,6 +265,8 @@ timer@11 {
+@@ -265,6 +265,8 @@
  		};
  
  		timers13: timers@40001c00 {
@@ -194,7 +193,7 @@ index 60680fcf8e..d26f93f8b9 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40001C00 0x400>;
  			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM13)>;
-@@ -279,6 +281,8 @@ pwm {
+@@ -279,6 +281,8 @@
  		};
  
  		timers14: timers@40002000 {
@@ -203,7 +202,7 @@ index 60680fcf8e..d26f93f8b9 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40002000 0x400>;
  			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM14)>;
-@@ -362,9 +366,9 @@ i2c2: i2c@40005800 {
+@@ -362,9 +366,9 @@
  			status = "disabled";
  		};
  
@@ -215,7 +214,7 @@ index 60680fcf8e..d26f93f8b9 100644
  			interrupts = <72>,
  				     <73>;
  			resets = <&rcc STM32F7_APB1_RESET(I2C3)>;
-@@ -529,6 +533,8 @@ timer@8 {
+@@ -529,6 +533,8 @@
  		};
  
  		timers10: timers@40014400 {
@@ -224,7 +223,7 @@ index 60680fcf8e..d26f93f8b9 100644
  			compatible = "st,stm32-timers";
  			reg = <0x40014400 0x400>;
  			clocks = <&rcc 0 STM32F7_APB2_CLOCK(TIM10)>;
-@@ -543,6 +549,8 @@ pwm {
+@@ -543,6 +549,8 @@
  		};
  
  		timers11: timers@40014800 {
@@ -234,10 +233,10 @@ index 60680fcf8e..d26f93f8b9 100644
  			reg = <0x40014800 0x400>;
  			clocks = <&rcc 0 STM32F7_APB2_CLOCK(TIM11)>;
 diff --git a/arch/arm/boot/dts/stm32f769-disco.dts b/arch/arm/boot/dts/stm32f769-disco.dts
-index a4284b761e..6f1d0ac8c3 100644
+index a4284b761..6f1d0ac8c 100644
 --- a/arch/arm/boot/dts/stm32f769-disco.dts
 +++ b/arch/arm/boot/dts/stm32f769-disco.dts
-@@ -75,10 +75,12 @@ red {
+@@ -75,10 +75,12 @@
  		};
  	};
  
@@ -253,10 +252,10 @@ index a4284b761e..6f1d0ac8c3 100644
  			linux,code = <KEY_HOME>;
  			gpios = <&gpioa 0 GPIO_ACTIVE_HIGH>;
 diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
-index 82a234c64b..c065266ee3 100644
+index 82a234c64..c065266ee 100644
 --- a/arch/arm/boot/dts/stm32h743.dtsi
 +++ b/arch/arm/boot/dts/stm32h743.dtsi
-@@ -438,6 +438,8 @@ trigger@2 {
+@@ -438,6 +438,8 @@
  		};
  
  		lptimer4: timer@58002c00 {
@@ -265,7 +264,7 @@ index 82a234c64b..c065266ee3 100644
  			compatible = "st,stm32-lptimer";
  			reg = <0x58002c00 0x400>;
  			clocks = <&rcc LPTIM4_CK>;
-@@ -452,6 +454,8 @@ pwm {
+@@ -452,6 +454,8 @@
  		};
  
  		lptimer5: timer@58003000 {
@@ -275,10 +274,10 @@ index 82a234c64b..c065266ee3 100644
  			reg = <0x58003000 0x400>;
  			clocks = <&rcc LPTIM5_CK>;
 diff --git a/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi b/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
-index b58b4b0526..3bb96ab8a2 100644
+index b58b4b052..3bb96ab8a 100644
 --- a/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
-@@ -61,15 +61,11 @@ cryp1: cryp@54001000 {
+@@ -61,15 +61,11 @@
  			clocks = <&rcc CRYP1>;
  			resets = <&rcc CRYP1_R>;
  		};
@@ -295,7 +294,7 @@ index b58b4b0526..3bb96ab8a2 100644
  
  			m4_system_resources {
  				m4_cec: cec@40016000 {
-@@ -104,6 +100,10 @@ &ddrperfm {
+@@ -104,6 +100,10 @@
  	clocks = <&rcc DDRPERFM>, <&rcc PLL2_R>;
  };
  
@@ -306,17 +305,17 @@ index b58b4b0526..3bb96ab8a2 100644
  &gpioz {
  	clocks = <&rcc GPIOZ>;
  };
-@@ -153,4 +153,5 @@ &spi6 {
+@@ -153,4 +153,5 @@
  
  &usart1 {
  	clocks = <&rcc USART1_K>;
 +	resets = <&rcc USART1_R>;
  };
 diff --git a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-index dc1c9950f1..b2ad4a2934 100644
+index dc1c9950f..b2ad4a293 100644
 --- a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-@@ -1143,6 +1143,7 @@ pins {
+@@ -1143,6 +1143,7 @@
  		};
  	};
  
@@ -324,7 +323,7 @@ index dc1c9950f1..b2ad4a2934 100644
  	uart4_pins_a: uart4-0 {
  		pins1 {
  			pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
-@@ -1172,6 +1173,7 @@ pins {
+@@ -1172,6 +1173,7 @@
  				 <STM32_PINMUX('B', 2, ANALOG)>; /* UART4_RX */
  		};
  	};
@@ -332,7 +331,7 @@ index dc1c9950f1..b2ad4a2934 100644
  
  	uart4_pins_b: uart4-1 {
  		pins1 {
-@@ -1186,6 +1188,37 @@ pins2 {
+@@ -1186,6 +1188,37 @@
  		};
  	};
  
@@ -370,7 +369,7 @@ index dc1c9950f1..b2ad4a2934 100644
  	uart7_pins_a: uart7-0 {
  		pins1 {
  			pinmux = <STM32_PINMUX('E', 8, AF7)>; /* UART4_TX */
-@@ -1210,7 +1243,7 @@ pins1 {
+@@ -1210,7 +1243,7 @@
  		};
  		pins2 {
  			pinmux = <STM32_PINMUX('E', 7, AF7)>; /* USART7_RX */
@@ -379,7 +378,7 @@ index dc1c9950f1..b2ad4a2934 100644
  		};
  	};
  
-@@ -1220,7 +1253,7 @@ pins1 {
+@@ -1220,7 +1253,7 @@
  		};
  		pins2 {
  			pinmux = <STM32_PINMUX('E', 7, AF7)>; /* USART7_RX */
@@ -388,7 +387,7 @@ index dc1c9950f1..b2ad4a2934 100644
  		};
  	};
  
-@@ -1249,15 +1282,10 @@ pins2 {
+@@ -1249,15 +1282,10 @@
  	usart2_idle_pins_a: usart2-idle-0 {
  		pins1 {
  			pinmux = <STM32_PINMUX('D', 5, ANALOG)>, /* USART2_TX */
@@ -405,7 +404,7 @@ index dc1c9950f1..b2ad4a2934 100644
  			pinmux = <STM32_PINMUX('D', 6, AF7)>; /* USART2_RX */
  			bias-disable;
  		};
-@@ -1290,15 +1318,10 @@ pins2 {
+@@ -1290,15 +1318,10 @@
  	usart3_idle_pins_a: usart3-idle-0 {
  		pins1 {
  			pinmux = <STM32_PINMUX('B', 10, ANALOG)>, /* USART3_TX */
@@ -422,7 +421,7 @@ index dc1c9950f1..b2ad4a2934 100644
  			pinmux = <STM32_PINMUX('B', 12, AF8)>; /* USART3_RX */
  			bias-disable;
  		};
-@@ -1324,24 +1347,19 @@ pins1 {
+@@ -1324,24 +1347,19 @@
  		pins2 {
  			pinmux = <STM32_PINMUX('B', 12, AF8)>, /* USART3_RX */
  				 <STM32_PINMUX('B', 13, AF7)>; /* USART3_CTS_NSS */
@@ -451,10 +450,10 @@ index dc1c9950f1..b2ad4a2934 100644
  	};
  
 diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
-index 5530176973..c516e2ed03 100644
+index 553017697..c516e2ed0 100644
 --- a/arch/arm/boot/dts/stm32mp151.dtsi
 +++ b/arch/arm/boot/dts/stm32mp151.dtsi
-@@ -106,6 +106,12 @@ scmi1_clk: protocol@14 {
+@@ -106,6 +106,12 @@
  				#clock-cells = <1>;
  			};
  		};
@@ -467,7 +466,7 @@ index 5530176973..c516e2ed03 100644
  	};
  
  	psci {
-@@ -438,11 +444,8 @@ lptimer1: timer@40009000 {
+@@ -438,11 +444,8 @@
  			#size-cells = <0>;
  			compatible = "st,stm32-lptimer";
  			reg = <0x40009000 0x400>;
@@ -479,7 +478,7 @@ index 5530176973..c516e2ed03 100644
  			status = "disabled";
  
  			pwm {
-@@ -533,10 +536,11 @@ usart2: serial@4000e000 {
+@@ -533,10 +536,11 @@
  			reg = <0x4000e000 0x400>;
  			interrupts-extended = <&exti 27 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc USART2_K>;
@@ -493,7 +492,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -546,10 +550,11 @@ usart3: serial@4000f000 {
+@@ -546,10 +550,11 @@
  			reg = <0x4000f000 0x400>;
  			interrupts-extended = <&exti 28 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc USART3_K>;
@@ -507,7 +506,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -559,10 +564,11 @@ uart4: serial@40010000 {
+@@ -559,10 +564,11 @@
  			reg = <0x40010000 0x400>;
  			interrupts-extended = <&exti 30 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc UART4_K>;
@@ -521,7 +520,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -572,10 +578,11 @@ uart5: serial@40011000 {
+@@ -572,10 +578,11 @@
  			reg = <0x40011000 0x400>;
  			interrupts-extended = <&exti 31 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc UART5_K>;
@@ -535,7 +534,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -694,10 +701,11 @@ uart7: serial@40018000 {
+@@ -694,10 +701,11 @@
  			reg = <0x40018000 0x400>;
  			interrupts-extended = <&exti 32 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc UART7_K>;
@@ -549,7 +548,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -707,10 +715,11 @@ uart8: serial@40019000 {
+@@ -707,10 +715,11 @@
  			reg = <0x40019000 0x400>;
  			interrupts-extended = <&exti 33 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc UART8_K>;
@@ -563,7 +562,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -792,10 +801,11 @@ usart6: serial@44003000 {
+@@ -792,10 +801,11 @@
  			reg = <0x44003000 0x400>;
  			interrupts-extended = <&exti 29 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&rcc USART6_K>;
@@ -577,7 +576,7 @@ index 5530176973..c516e2ed03 100644
  			dma-names = "rx", "tx";
  			status = "disabled";
  		};
-@@ -946,7 +956,7 @@ sai1a: audio-controller@4400a004 {
+@@ -946,7 +956,7 @@
  				#sound-dai-cells = <0>;
  
  				compatible = "st,stm32-sai-sub-a";
@@ -586,7 +585,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI1_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 87 0x400 0x01>;
-@@ -956,7 +966,7 @@ sai1a: audio-controller@4400a004 {
+@@ -956,7 +966,7 @@
  			sai1b: audio-controller@4400a024 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-b";
@@ -595,7 +594,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI1_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 88 0x400 0x01>;
-@@ -977,7 +987,7 @@ sai2: sai@4400b000 {
+@@ -977,7 +987,7 @@
  			sai2a: audio-controller@4400b004 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-a";
@@ -604,7 +603,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI2_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 89 0x400 0x01>;
-@@ -987,7 +997,7 @@ sai2a: audio-controller@4400b004 {
+@@ -987,7 +997,7 @@
  			sai2b: audio-controller@4400b024 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-b";
@@ -613,7 +612,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI2_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 90 0x400 0x01>;
-@@ -1008,7 +1018,7 @@ sai3: sai@4400c000 {
+@@ -1008,7 +1018,7 @@
  			sai3a: audio-controller@4400c004 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-a";
@@ -622,7 +621,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI3_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 113 0x400 0x01>;
-@@ -1018,7 +1028,7 @@ sai3a: audio-controller@4400c004 {
+@@ -1018,7 +1028,7 @@
  			sai3b: audio-controller@4400c024 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-b";
@@ -631,7 +630,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI3_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 114 0x400 0x01>;
-@@ -1355,11 +1365,8 @@ lptimer2: timer@50021000 {
+@@ -1355,11 +1365,8 @@
  			#size-cells = <0>;
  			compatible = "st,stm32-lptimer";
  			reg = <0x50021000 0x400>;
@@ -643,7 +642,7 @@ index 5530176973..c516e2ed03 100644
  			status = "disabled";
  
  			pwm {
-@@ -1385,11 +1392,8 @@ lptimer3: timer@50022000 {
+@@ -1385,11 +1392,8 @@
  			#size-cells = <0>;
  			compatible = "st,stm32-lptimer";
  			reg = <0x50022000 0x400>;
@@ -655,7 +654,7 @@ index 5530176973..c516e2ed03 100644
  			status = "disabled";
  
  			pwm {
-@@ -1408,11 +1412,8 @@ trigger@2 {
+@@ -1408,11 +1412,8 @@
  		lptimer4: timer@50023000 {
  			compatible = "st,stm32-lptimer";
  			reg = <0x50023000 0x400>;
@@ -667,7 +666,7 @@ index 5530176973..c516e2ed03 100644
  			status = "disabled";
  
  			pwm {
-@@ -1425,11 +1426,8 @@ pwm {
+@@ -1425,11 +1426,8 @@
  		lptimer5: timer@50024000 {
  			compatible = "st,stm32-lptimer";
  			reg = <0x50024000 0x400>;
@@ -679,7 +678,7 @@ index 5530176973..c516e2ed03 100644
  			status = "disabled";
  
  			pwm {
-@@ -1461,7 +1459,7 @@ sai4: sai@50027000 {
+@@ -1461,7 +1459,7 @@
  			sai4a: audio-controller@50027004 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-a";
@@ -688,7 +687,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI4_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 99 0x400 0x01>;
-@@ -1471,7 +1469,7 @@ sai4a: audio-controller@50027004 {
+@@ -1471,7 +1469,7 @@
  			sai4b: audio-controller@50027024 {
  				#sound-dai-cells = <0>;
  				compatible = "st,stm32-sai-sub-b";
@@ -697,7 +696,7 @@ index 5530176973..c516e2ed03 100644
  				clocks = <&rcc SAI4_K>;
  				clock-names = "sai_ck";
  				dmas = <&dmamux1 100 0x400 0x01>;
-@@ -1528,38 +1526,23 @@ mdma1: dma@58000000 {
+@@ -1528,38 +1526,23 @@
  			dma-requests = <48>;
  		};
  
@@ -750,7 +749,7 @@ index 5530176973..c516e2ed03 100644
  		};
  
  		qspi: spi@58003000 {
-@@ -1612,6 +1595,12 @@ crc1: crc@58009000 {
+@@ -1612,6 +1595,12 @@
  			status = "disabled";
  		};
  
@@ -763,7 +762,7 @@ index 5530176973..c516e2ed03 100644
  		ethernet0: ethernet@5800a000 {
  			compatible = "st,stm32mp1-dwmac", "snps,dwmac-4.20a";
  			reg = <0x5800a000 0x2000>;
-@@ -1636,12 +1625,6 @@ ethernet0: ethernet@5800a000 {
+@@ -1636,12 +1625,6 @@
  			snps,tso;
  			power-domains = <&pd_core>;
  			status = "disabled";
@@ -776,7 +775,7 @@ index 5530176973..c516e2ed03 100644
  		};
  
  		usbh_ohci: usbh-ohci@5800c000 {
-@@ -1720,6 +1703,7 @@ usart1: serial@5c000000 {
+@@ -1720,6 +1703,7 @@
  			reg = <0x5c000000 0x400>;
  			interrupts-extended = <&exti 26 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&scmi0_clk CK_SCMI0_USART1>;
@@ -784,7 +783,7 @@ index 5530176973..c516e2ed03 100644
  			wakeup-source;
  			power-domains = <&pd_core>;
  			status = "disabled";
-@@ -1784,9 +1768,6 @@ ts_cal1: calib@5c {
+@@ -1784,9 +1768,6 @@
  			ts_cal2: calib@5e {
  				reg = <0x5e 0x2>;
  			};
@@ -794,7 +793,7 @@ index 5530176973..c516e2ed03 100644
  		};
  
  		i2c6: i2c@5c009000 {
-@@ -1999,9 +1980,9 @@ m4_rproc: m4@10000000 {
+@@ -1999,9 +1980,9 @@
  			reg = <0x10000000 0x40000>,
  			      <0x30000000 0x40000>,
  			      <0x38000000 0x10000>;
@@ -808,7 +807,7 @@ index 5530176973..c516e2ed03 100644
  			st,syscfg-copro-state = <&tamp 0x148 0xFFFFFFFF>;
  			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-index ccd8d86452..aa083504e0 100644
+index ccd8d8645..aa083504e 100644
 --- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 @@ -3,6 +3,12 @@
@@ -824,7 +823,7 @@ index ccd8d86452..aa083504e0 100644
  
  / {
  	/* Add aliases to fix device mapping */
-@@ -13,6 +19,47 @@ memory@c0000000 {
+@@ -13,6 +19,47 @@
  		device_type = "memory";
  		reg = <0xc0000000 0x20000000>;
  	};
@@ -872,7 +871,7 @@ index ccd8d86452..aa083504e0 100644
  
  	regulators {
  			compatible = "regulator-gpio";
-@@ -147,10 +194,36 @@ &sdmmc2 {
+@@ -147,10 +194,36 @@
  &gpioi { status = "okay"; };
  &gpioj { status = "okay"; };
  &gpiok { status = "okay"; };
@@ -911,10 +910,10 @@ index ccd8d86452..aa083504e0 100644
 +};
 +
 diff --git a/arch/arm/boot/dts/stm32mp157a-avenger96.dts b/arch/arm/boot/dts/stm32mp157a-avenger96.dts
-index 4479b06a94..887b766620 100644
+index 4479b06a9..887b76662 100644
 --- a/arch/arm/boot/dts/stm32mp157a-avenger96.dts
 +++ b/arch/arm/boot/dts/stm32mp157a-avenger96.dts
-@@ -92,9 +92,6 @@ mdio0 {
+@@ -92,9 +92,6 @@
  		#address-cells = <1>;
  		#size-cells = <0>;
  		compatible = "snps,dwmac-mdio";
@@ -925,10 +924,10 @@ index 4479b06a94..887b766620 100644
  			reg = <7>;
  		};
 diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 1f265fed2c..baff3f6944 100644
+index 1f265fed2..baff3f694 100644
 --- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
 +++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -31,5 +31,14 @@ gpu_reserved: gpu@da000000 {
+@@ -31,5 +31,14 @@
  			reg = <0xda000000 0x4000000>;
  			no-map;
  		};
@@ -944,10 +943,10 @@ index 1f265fed2c..baff3f6944 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157a-ed1.dts b/arch/arm/boot/dts/stm32mp157a-ed1.dts
-index e7fad7d394..5dca956843 100644
+index e7fad7d39..5dca95684 100644
 --- a/arch/arm/boot/dts/stm32mp157a-ed1.dts
 +++ b/arch/arm/boot/dts/stm32mp157a-ed1.dts
-@@ -30,6 +30,11 @@ gpu_reserved: gpu@f6000000 {
+@@ -30,6 +30,11 @@
  			reg = <0xf6000000 0x8000000>;
  			no-map;
  		};
@@ -959,7 +958,7 @@ index e7fad7d394..5dca956843 100644
  	};
  };
  
-@@ -41,3 +46,7 @@ &gpu {
+@@ -41,3 +46,7 @@
  	contiguous-area = <&gpu_reserved>;
  	status = "okay";
  };
@@ -968,10 +967,10 @@ index e7fad7d394..5dca956843 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157c-dk2-a7-examples.dts b/arch/arm/boot/dts/stm32mp157c-dk2-a7-examples.dts
-index 372ceb2c71..1bffbc6290 100644
+index 372ceb2c7..1bffbc629 100644
 --- a/arch/arm/boot/dts/stm32mp157c-dk2-a7-examples.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-dk2-a7-examples.dts
-@@ -15,12 +15,6 @@ / {
+@@ -15,12 +15,6 @@
  
  &adc {
  	status = "okay";
@@ -984,7 +983,7 @@ index 372ceb2c71..1bffbc6290 100644
  };
  
  &i2c5 {
-@@ -50,11 +44,3 @@ &timers6 {
+@@ -50,11 +44,3 @@
  &timers12 {
  	status = "okay";
  };
@@ -997,10 +996,10 @@ index 372ceb2c71..1bffbc6290 100644
 -	status = "okay";
 -};
 diff --git a/arch/arm/boot/dts/stm32mp157c-dk2.dts b/arch/arm/boot/dts/stm32mp157c-dk2.dts
-index ba1d15de2f..a7d5e86a14 100644
+index ba1d15de2..a7d5e86a1 100644
 --- a/arch/arm/boot/dts/stm32mp157c-dk2.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-dk2.dts
-@@ -34,6 +34,11 @@ gpu_reserved: gpu@da000000 {
+@@ -34,6 +34,11 @@
  			reg = <0xda000000 0x4000000>;
  			no-map;
  		};
@@ -1012,7 +1011,7 @@ index ba1d15de2f..a7d5e86a14 100644
  	};
  
  	wifi_pwrseq: wifi-pwrseq {
-@@ -169,3 +174,11 @@ bluetooth {
+@@ -169,3 +174,11 @@
  		vddio-supply = <&v3v3>;
  	};
  };
@@ -1025,10 +1024,10 @@ index ba1d15de2f..a7d5e86a14 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index 16ddc0e9f8..bf2d7e7b7d 100644
+index 16ddc0e9f..bf2d7e7b7 100644
 --- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -30,6 +30,11 @@ gpu_reserved: gpu@f6000000 {
+@@ -30,6 +30,11 @@
  			reg = <0xf6000000 0x8000000>;
  			no-map;
  		};
@@ -1040,7 +1039,7 @@ index 16ddc0e9f8..bf2d7e7b7d 100644
  	};
  };
  
-@@ -45,3 +50,7 @@ &gpu {
+@@ -45,3 +50,7 @@
  	contiguous-area = <&gpu_reserved>;
  	status = "okay";
  };
@@ -1049,10 +1048,10 @@ index 16ddc0e9f8..bf2d7e7b7d 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157c-ev1-a7-examples.dts b/arch/arm/boot/dts/stm32mp157c-ev1-a7-examples.dts
-index 8a4eda70d4..25c9f4f2f0 100644
+index 8a4eda70d..25c9f4f2f 100644
 --- a/arch/arm/boot/dts/stm32mp157c-ev1-a7-examples.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-ev1-a7-examples.dts
-@@ -51,7 +51,3 @@ &timers8 {
+@@ -51,7 +51,3 @@
  &timers12 {
  	status = "okay";
  };
@@ -1061,7 +1060,7 @@ index 8a4eda70d4..25c9f4f2f0 100644
 -	status = "okay";
 -};
 diff --git a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
-index 76bd154df3..cbe92441b9 100755
+index 76bd154df..cbe92441b 100755
 --- a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 +++ b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 @@ -7,6 +7,8 @@
@@ -1074,10 +1073,10 @@ index 76bd154df3..cbe92441b9 100755
  #include "stm32mp157-onedots.dtsi"
  #include "stm32mp157-onedots-pinctrl.dtsi"
 diff --git a/arch/arm/boot/dts/stm32mp157d-dk1.dts b/arch/arm/boot/dts/stm32mp157d-dk1.dts
-index aa98012fd3..c7d65a65e4 100644
+index aa98012fd..c7d65a65e 100644
 --- a/arch/arm/boot/dts/stm32mp157d-dk1.dts
 +++ b/arch/arm/boot/dts/stm32mp157d-dk1.dts
-@@ -31,5 +31,14 @@ gpu_reserved: gpu@da000000 {
+@@ -31,5 +31,14 @@
  			reg = <0xda000000 0x4000000>;
  			no-map;
  		};
@@ -1093,10 +1092,10 @@ index aa98012fd3..c7d65a65e4 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157d-ed1.dts b/arch/arm/boot/dts/stm32mp157d-ed1.dts
-index aaf9adf51c..ee55ac8f33 100644
+index aaf9adf51..ee55ac8f3 100644
 --- a/arch/arm/boot/dts/stm32mp157d-ed1.dts
 +++ b/arch/arm/boot/dts/stm32mp157d-ed1.dts
-@@ -30,6 +30,11 @@ gpu_reserved: gpu@f6000000 {
+@@ -30,6 +30,11 @@
  			reg = <0xf6000000 0x8000000>;
  			no-map;
  		};
@@ -1108,7 +1107,7 @@ index aaf9adf51c..ee55ac8f33 100644
  	};
  };
  
-@@ -41,3 +46,7 @@ &gpu {
+@@ -41,3 +46,7 @@
  	contiguous-area = <&gpu_reserved>;
  	status = "okay";
  };
@@ -1117,10 +1116,10 @@ index aaf9adf51c..ee55ac8f33 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157f-dk2-a7-examples.dts b/arch/arm/boot/dts/stm32mp157f-dk2-a7-examples.dts
-index 8dcb52fedb..2a8c46059c 100644
+index 8dcb52fed..2a8c46059 100644
 --- a/arch/arm/boot/dts/stm32mp157f-dk2-a7-examples.dts
 +++ b/arch/arm/boot/dts/stm32mp157f-dk2-a7-examples.dts
-@@ -15,12 +15,6 @@ / {
+@@ -15,12 +15,6 @@
  
  &adc {
  	status = "okay";
@@ -1133,7 +1132,7 @@ index 8dcb52fedb..2a8c46059c 100644
  };
  
  &i2c5 {
-@@ -50,11 +44,3 @@ &timers6 {
+@@ -50,11 +44,3 @@
  &timers12 {
  	status = "okay";
  };
@@ -1146,10 +1145,10 @@ index 8dcb52fedb..2a8c46059c 100644
 -	status = "okay";
 -};
 diff --git a/arch/arm/boot/dts/stm32mp157f-dk2.dts b/arch/arm/boot/dts/stm32mp157f-dk2.dts
-index 1123d0f3ed..b57db3037d 100644
+index 1123d0f3e..b57db3037 100644
 --- a/arch/arm/boot/dts/stm32mp157f-dk2.dts
 +++ b/arch/arm/boot/dts/stm32mp157f-dk2.dts
-@@ -34,6 +34,12 @@ gpu_reserved: gpu@da000000 {
+@@ -34,6 +34,12 @@
  			reg = <0xda000000 0x4000000>;
  			no-map;
  		};
@@ -1162,7 +1161,7 @@ index 1123d0f3ed..b57db3037d 100644
  	};
  
  	wifi_pwrseq: wifi-pwrseq {
-@@ -169,3 +175,11 @@ bluetooth {
+@@ -169,3 +175,11 @@
  		vddio-supply = <&v3v3>;
  	};
  };
@@ -1175,10 +1174,10 @@ index 1123d0f3ed..b57db3037d 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157f-ed1.dts b/arch/arm/boot/dts/stm32mp157f-ed1.dts
-index 7ddb96a0ef..65380693c8 100644
+index 7ddb96a0e..65380693c 100644
 --- a/arch/arm/boot/dts/stm32mp157f-ed1.dts
 +++ b/arch/arm/boot/dts/stm32mp157f-ed1.dts
-@@ -30,6 +30,11 @@ gpu_reserved: gpu@f6000000 {
+@@ -30,6 +30,11 @@
  			reg = <0xf6000000 0x8000000>;
  			no-map;
  		};
@@ -1190,7 +1189,7 @@ index 7ddb96a0ef..65380693c8 100644
  	};
  };
  
-@@ -45,3 +50,7 @@ &gpu {
+@@ -45,3 +50,7 @@
  	contiguous-area = <&gpu_reserved>;
  	status = "okay";
  };
@@ -1199,10 +1198,10 @@ index 7ddb96a0ef..65380693c8 100644
 +	status = "okay";
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157f-ev1-a7-examples.dts b/arch/arm/boot/dts/stm32mp157f-ev1-a7-examples.dts
-index 3d51e48d14..17d92b7beb 100644
+index 3d51e48d1..17d92b7be 100644
 --- a/arch/arm/boot/dts/stm32mp157f-ev1-a7-examples.dts
 +++ b/arch/arm/boot/dts/stm32mp157f-ev1-a7-examples.dts
-@@ -51,7 +51,3 @@ &timers8 {
+@@ -51,7 +51,3 @@
  &timers12 {
  	status = "okay";
  };
@@ -1211,10 +1210,10 @@ index 3d51e48d14..17d92b7beb 100644
 -	status = "okay";
 -};
 diff --git a/arch/arm/boot/dts/stm32mp15xd.dtsi b/arch/arm/boot/dts/stm32mp15xd.dtsi
-index e2f8b1297c..faa039ea24 100644
+index e2f8b1297..faa039ea2 100644
 --- a/arch/arm/boot/dts/stm32mp15xd.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15xd.dtsi
-@@ -27,7 +27,7 @@ cpu-crit {
+@@ -27,7 +27,7 @@
  		};
  
  		cpu_alert: cpu-alert {
@@ -1224,10 +1223,10 @@ index e2f8b1297c..faa039ea24 100644
  			type = "passive";
  		};
 diff --git a/arch/arm/boot/dts/stm32mp15xx-dkx.dtsi b/arch/arm/boot/dts/stm32mp15xx-dkx.dtsi
-index 072b911035..fed178e90b 100644
+index 072b91103..fed178e90 100644
 --- a/arch/arm/boot/dts/stm32mp15xx-dkx.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15xx-dkx.dtsi
-@@ -103,7 +103,7 @@ &adc {
+@@ -103,7 +103,7 @@
  	vdd-supply = <&vdd>;
  	vdda-supply = <&vdd>;
  	vref-supply = <&vrefbuf>;
@@ -1236,7 +1235,7 @@ index 072b911035..fed178e90b 100644
  	adc1: adc@0 {
  		/*
  		 * Type-C USB_PWR_CC1 & USB_PWR_CC2 on in18 & in19.
-@@ -163,8 +163,6 @@ &ethernet0 {
+@@ -163,8 +163,6 @@
  	phy-mode = "rgmii-id";
  	max-speed = <1000>;
  	phy-handle = <&phy0>;
@@ -1245,7 +1244,7 @@ index 072b911035..fed178e90b 100644
  
  	mdio0 {
  		#address-cells = <1>;
-@@ -387,6 +385,7 @@ vdd_usb: ldo4 {
+@@ -387,6 +385,7 @@
  				regulator-min-microvolt = <3300000>;
  				regulator-max-microvolt = <3300000>;
  				interrupts = <IT_CURLIM_LDO4 0>;
@@ -1254,10 +1253,10 @@ index 072b911035..fed178e90b 100644
  
  			vdda: ldo5 {
 diff --git a/arch/arm/boot/dts/stm32mp15xx-edx.dtsi b/arch/arm/boot/dts/stm32mp15xx-edx.dtsi
-index ff41371684..7ed6b14d77 100644
+index ff4137168..7ed6b14d7 100644
 --- a/arch/arm/boot/dts/stm32mp15xx-edx.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15xx-edx.dtsi
-@@ -241,6 +241,7 @@ vdd_usb: ldo4 {
+@@ -241,6 +241,7 @@
  				regulator-min-microvolt = <3300000>;
  				regulator-max-microvolt = <3300000>;
  				interrupts = <IT_CURLIM_LDO4 0>;
@@ -1265,7 +1264,7 @@ index ff41371684..7ed6b14d77 100644
  			};
  
  			vdd_sd: ldo5 {
-@@ -388,6 +389,7 @@ &uart4 {
+@@ -388,6 +389,7 @@
  	pinctrl-0 = <&uart4_pins_a>;
  	pinctrl-1 = <&uart4_sleep_pins_a>;
  	pinctrl-2 = <&uart4_idle_pins_a>;
@@ -1274,10 +1273,10 @@ index ff41371684..7ed6b14d77 100644
  	/delete-property/dma-names;
  	status = "okay";
 diff --git a/arch/arm/boot/dts/stm32mp15xx-evx.dtsi b/arch/arm/boot/dts/stm32mp15xx-evx.dtsi
-index 1a2b49cada..07cb93db93 100644
+index 1a2b49cad..07cb93db9 100644
 --- a/arch/arm/boot/dts/stm32mp15xx-evx.dtsi
 +++ b/arch/arm/boot/dts/stm32mp15xx-evx.dtsi
-@@ -223,12 +223,11 @@ dfsdm_endpoint0: endpoint {
+@@ -223,12 +223,11 @@
  
  	dfsdm1: filter@1 {
  		compatible = "st,stm32-dfsdm-dmic";
@@ -1291,7 +1290,7 @@ index 1a2b49cada..07cb93db93 100644
  		status = "okay";
  
  		asoc_pdm1: dfsdm-dai {
-@@ -247,11 +246,10 @@ dfsdm_endpoint1: endpoint {
+@@ -247,11 +246,10 @@
  
  	dfsdm2: filter@2 {
  		compatible = "st,stm32-dfsdm-dmic";
@@ -1304,7 +1303,7 @@ index 1a2b49cada..07cb93db93 100644
  		st,filter-order = <3>;
  		status = "okay";
  
-@@ -301,8 +299,6 @@ &ethernet0 {
+@@ -301,8 +299,6 @@
  	phy-mode = "rgmii-id";
  	max-speed = <1000>;
  	phy-handle = <&phy0>;
@@ -1313,7 +1312,7 @@ index 1a2b49cada..07cb93db93 100644
  
  	mdio0 {
  		#address-cells = <1>;
-@@ -319,16 +315,14 @@ &fmc {
+@@ -319,16 +315,14 @@
  	pinctrl-0 = <&fmc_pins_a>;
  	pinctrl-1 = <&fmc_sleep_pins_a>;
  	status = "okay";
@@ -1337,7 +1336,7 @@ index 1a2b49cada..07cb93db93 100644
  	};
  };
  
-@@ -679,7 +673,6 @@ &usbphyc {
+@@ -679,7 +673,6 @@
  
  &usbphyc_port0 {
  	st,phy-tuning = <&usb_phy_tuning>;
@@ -1345,6 +1344,3 @@ index 1a2b49cada..07cb93db93 100644
  };
  
  &usbphyc_port1 {
--- 
-2.43.0
-

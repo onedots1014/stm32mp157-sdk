@@ -1,7 +1,7 @@
-From e1cce6dbbe4cc1c9eb68c54c90fad6c72d72299b Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots@debian.belong>
 Date: Sun, 27 Jul 2025 14:54:35 +0800
-Subject: [PATCH 1/8] arm: fix build against newer host toolchain
+Subject: [PATCH] arm: fix build against newer host toolchain
 
 ---
  arch/arm/boot/compressed/head.S  | 2 +-
@@ -10,7 +10,7 @@ Subject: [PATCH 1/8] arm: fix build against newer host toolchain
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 0a2410adc2..758122edcc 100644
+index 0a2410adc..758122edc 100644
 --- a/arch/arm/boot/compressed/head.S
 +++ b/arch/arm/boot/compressed/head.S
 @@ -140,7 +140,7 @@
@@ -23,7 +23,7 @@ index 0a2410adc2..758122edcc 100644
   * sort out different calling conventions
   */
 diff --git a/arch/arm/boot/compressed/piggy.S b/arch/arm/boot/compressed/piggy.S
-index 0284f84dcf..4e4336c6ea 100644
+index 0284f84dc..4e4336c6e 100644
 --- a/arch/arm/boot/compressed/piggy.S
 +++ b/arch/arm/boot/compressed/piggy.S
 @@ -1,5 +1,5 @@
@@ -34,7 +34,7 @@ index 0284f84dcf..4e4336c6ea 100644
  input_data:
  	.incbin	"arch/arm/boot/compressed/piggy_data"
 diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
-index c4e8006a1a..48e0ef6f0d 100644
+index c4e8006a1..48e0ef6f0 100644
 --- a/arch/arm/mm/proc-v7.S
 +++ b/arch/arm/mm/proc-v7.S
 @@ -644,7 +644,7 @@ __v7_setup_stack:
@@ -46,6 +46,3 @@ index c4e8006a1a..48e0ef6f0d 100644
  
  	/*
  	 * Standard v7 proc info content
--- 
-2.43.0
-

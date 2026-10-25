@@ -1,7 +1,7 @@
-From a68284fede944232ef4db5d3b39787a349296c91 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Mon, 9 Mar 2026 21:02:14 +0800
-Subject: [PATCH 4/5] configs: fix trusted defconfig ENV_OFFSET for larger FIP
+Subject: [PATCH] configs: fix trusted defconfig ENV_OFFSET for larger FIP
  image
 
 ---
@@ -26,6 +26,3 @@ index b5069bc6..c66c2b62 100644
  CONFIG_DISTRO_DEFAULTS=y
  CONFIG_FIT=y
  CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
--- 
-2.43.0
-

@@ -1,7 +1,7 @@
-From 6e287b0953e2eae6786e681c748a0f23d3b90e71 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Fri, 3 Jul 2026 23:48:18 -0700
-Subject: [PATCH 4/8] remoteproc: enable Cortex-M4 core (IPCC/RPMsg reserved
+Subject: [PATCH] remoteproc: enable Cortex-M4 core (IPCC/RPMsg reserved
  memory, resource table)
 
 ---
@@ -11,10 +11,10 @@ Subject: [PATCH 4/8] remoteproc: enable Cortex-M4 core (IPCC/RPMsg reserved
  3 files changed, 38 insertions(+), 21 deletions(-)
 
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-index aa083504e0..bc4298f2ef 100644
+index aa083504e..bc4298f2e 100644
 --- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-@@ -194,17 +194,7 @@ &sdmmc2 {
+@@ -194,17 +194,7 @@
  &gpioi { status = "okay"; };
  &gpioj { status = "okay"; };
  &gpiok { status = "okay"; };
@@ -33,7 +33,7 @@ index aa083504e0..bc4298f2ef 100644
  
  /* Watchdog configuration */
  &iwdg2 {
-@@ -217,13 +207,27 @@ &ipcc {
+@@ -217,13 +207,27 @@
  };
  
  &m4_rproc {
@@ -70,10 +70,10 @@ index aa083504e0..bc4298f2ef 100644
  };
  
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-index 1d6def582f..856d072bc4 100755
+index 1d6def582..856d072bc 100755
 --- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-@@ -117,6 +117,11 @@ pins {
+@@ -117,6 +117,11 @@
  			};
  	};
  
@@ -87,7 +87,7 @@ index 1d6def582f..856d072bc4 100755
  };
  
 diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
-index 203c2ce5c8..7d3deff109 100644
+index 203c2ce5c..7d3deff10 100644
 --- a/arch/arm/configs/onedots_stm32mp157c_defconfig
 +++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
 @@ -1,9 +1,12 @@
@@ -121,6 +121,3 @@ index 203c2ce5c8..7d3deff109 100644
 +CONFIG_RPMSG_TTY=y
  CONFIG_EXT4_FS=y
 +CONFIG_CRYPTO_DEV_VIRTIO=y
--- 
-2.43.0
-

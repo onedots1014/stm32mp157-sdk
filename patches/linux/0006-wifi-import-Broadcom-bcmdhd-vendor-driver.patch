@@ -1,4 +1,4 @@
-From 56824b81eafda3b0ff39a157093ba6d354436833 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sun, 3 May 2026 19:56:19 +0800
 Subject: [PATCH] wifi: import Broadcom bcmdhd vendor driver
@@ -7,9 +7,467 @@ Import the Broadcom bcmdhd FullMAC driver sources (GPLv2, unmodified
 vendor code) under drivers/net/wireless/bcmdhd. Split out from the
 BCM43436 bring-up so the board integration can be reviewed separately.
 ---
+ drivers/net/wireless/bcmdhd/Kconfig           |    62 +
+ drivers/net/wireless/bcmdhd/Makefile          |   205 +
+ drivers/net/wireless/bcmdhd/aiutils.c         |  2098 ++
+ drivers/net/wireless/bcmdhd/bcm_app_utils.c   |  1032 +
+ drivers/net/wireless/bcmdhd/bcmbloom.c        |   242 +
+ drivers/net/wireless/bcmdhd/bcmevent.c        |   395 +
+ drivers/net/wireless/bcmdhd/bcmsdh.c          |   883 +
+ drivers/net/wireless/bcmdhd/bcmsdh_linux.c    |   523 +
+ drivers/net/wireless/bcmdhd/bcmsdh_sdmmc.c    |  1787 ++
+ .../net/wireless/bcmdhd/bcmsdh_sdmmc_linux.c  |   382 +
+ drivers/net/wireless/bcmdhd/bcmsdspi_linux.c  |   437 +
+ drivers/net/wireless/bcmdhd/bcmspibrcm.c      |  1799 ++
+ drivers/net/wireless/bcmdhd/bcmstdlib_s.c     |   306 +
+ drivers/net/wireless/bcmdhd/bcmutils.c        |  4378 +++
+ .../net/wireless/bcmdhd/bcmwifi_channels.c    |  1493 +
+ .../net/wireless/bcmdhd/bcmwifi_channels.h    |   815 +
+ drivers/net/wireless/bcmdhd/bcmwifi_rates.h   |   831 +
+ drivers/net/wireless/bcmdhd/bcmwifi_rspec.h   |   212 +
+ drivers/net/wireless/bcmdhd/bcmxtlv.c         |   622 +
+ drivers/net/wireless/bcmdhd/dbus.c            |  2904 ++
+ drivers/net/wireless/bcmdhd/dbus_usb.c        |  1172 +
+ drivers/net/wireless/bcmdhd/dbus_usb_linux.c  |  3403 +++
+ drivers/net/wireless/bcmdhd/dhd.h             |  3417 +++
+ drivers/net/wireless/bcmdhd/dhd_bus.h         |   351 +
+ drivers/net/wireless/bcmdhd/dhd_buzzz.h       |    37 +
+ drivers/net/wireless/bcmdhd/dhd_ccode.c       |   234 +
+ drivers/net/wireless/bcmdhd/dhd_cdc.c         |   980 +
+ drivers/net/wireless/bcmdhd/dhd_cfg80211.c    |   304 +
+ drivers/net/wireless/bcmdhd/dhd_cfg80211.h    |    54 +
+ drivers/net/wireless/bcmdhd/dhd_common.c      |  7483 +++++
+ drivers/net/wireless/bcmdhd/dhd_config.c      |  3956 +++
+ drivers/net/wireless/bcmdhd/dhd_config.h      |   333 +
+ drivers/net/wireless/bcmdhd/dhd_csi.c         |   220 +
+ drivers/net/wireless/bcmdhd/dhd_csi.h         |    77 +
+ drivers/net/wireless/bcmdhd/dhd_custom_gpio.c |   278 +
+ .../net/wireless/bcmdhd/dhd_custom_hikey.c    |   293 +
+ .../wireless/bcmdhd/dhd_custom_memprealloc.c  |   561 +
+ drivers/net/wireless/bcmdhd/dhd_dbg.h         |   366 +
+ drivers/net/wireless/bcmdhd/dhd_dbg_ring.c    |   425 +
+ drivers/net/wireless/bcmdhd/dhd_dbg_ring.h    |   140 +
+ drivers/net/wireless/bcmdhd/dhd_debug.c       |  2410 ++
+ drivers/net/wireless/bcmdhd/dhd_debug.h       |   852 +
+ drivers/net/wireless/bcmdhd/dhd_debug_linux.c |   511 +
+ drivers/net/wireless/bcmdhd/dhd_flowring.c    |  1236 +
+ drivers/net/wireless/bcmdhd/dhd_flowring.h    |   288 +
+ drivers/net/wireless/bcmdhd/dhd_gpio.c        |   340 +
+ drivers/net/wireless/bcmdhd/dhd_ip.c          |  1427 +
+ drivers/net/wireless/bcmdhd/dhd_ip.h          |    96 +
+ drivers/net/wireless/bcmdhd/dhd_linux.c       | 22027 ++++++++++++++
+ drivers/net/wireless/bcmdhd/dhd_linux.h       |   449 +
+ .../net/wireless/bcmdhd/dhd_linux_exportfs.c  |  1419 +
+ drivers/net/wireless/bcmdhd/dhd_linux_lb.c    |  1323 +
+ .../net/wireless/bcmdhd/dhd_linux_pktdump.c   |  1434 +
+ .../net/wireless/bcmdhd/dhd_linux_pktdump.h   |   124 +
+ .../net/wireless/bcmdhd/dhd_linux_platdev.c   |  1027 +
+ drivers/net/wireless/bcmdhd/dhd_linux_priv.h  |   431 +
+ drivers/net/wireless/bcmdhd/dhd_linux_sched.c |    47 +
+ drivers/net/wireless/bcmdhd/dhd_linux_wq.c    |   396 +
+ drivers/net/wireless/bcmdhd/dhd_linux_wq.h    |    92 +
+ drivers/net/wireless/bcmdhd/dhd_mschdbg.c     |   788 +
+ drivers/net/wireless/bcmdhd/dhd_mschdbg.h     |    39 +
+ drivers/net/wireless/bcmdhd/dhd_msgbuf.c      | 11154 +++++++
+ drivers/net/wireless/bcmdhd/dhd_pcie.c        | 11603 +++++++
+ drivers/net/wireless/bcmdhd/dhd_pcie.h        |   601 +
+ drivers/net/wireless/bcmdhd/dhd_pcie_linux.c  |  2725 ++
+ drivers/net/wireless/bcmdhd/dhd_pno.c         |  4434 +++
+ drivers/net/wireless/bcmdhd/dhd_pno.h         |   584 +
+ drivers/net/wireless/bcmdhd/dhd_proto.h       |   242 +
+ drivers/net/wireless/bcmdhd/dhd_rtt.c         |  4102 +++
+ drivers/net/wireless/bcmdhd/dhd_rtt.h         |   536 +
+ drivers/net/wireless/bcmdhd/dhd_sdio.c        | 10715 +++++++
+ drivers/net/wireless/bcmdhd/dhd_static_buf.c  |   585 +
+ drivers/net/wireless/bcmdhd/dhd_wlfc.c        |  4615 +++
+ drivers/net/wireless/bcmdhd/dhd_wlfc.h        |   569 +
+ drivers/net/wireless/bcmdhd/dngl_stats.h      |   386 +
+ drivers/net/wireless/bcmdhd/dngl_wlhdr.h      |    43 +
+ drivers/net/wireless/bcmdhd/frag.c            |   112 +
+ drivers/net/wireless/bcmdhd/frag.h            |    38 +
+ drivers/net/wireless/bcmdhd/hnd_pktpool.c     |  1427 +
+ drivers/net/wireless/bcmdhd/hnd_pktq.c        |  1428 +
+ drivers/net/wireless/bcmdhd/hndlhl.c          |   537 +
+ drivers/net/wireless/bcmdhd/hndmem.c          |   429 +
+ drivers/net/wireless/bcmdhd/hndpmu.c          |   788 +
+ drivers/net/wireless/bcmdhd/include/802.11.h  |  5363 ++++
+ drivers/net/wireless/bcmdhd/include/802.11e.h |   139 +
+ drivers/net/wireless/bcmdhd/include/802.11s.h |   334 +
+ drivers/net/wireless/bcmdhd/include/802.1d.h  |    53 +
+ drivers/net/wireless/bcmdhd/include/802.3.h   |    55 +
+ drivers/net/wireless/bcmdhd/include/aidmp.h   |   429 +
+ drivers/net/wireless/bcmdhd/include/bcm_cfg.h |    32 +
+ .../wireless/bcmdhd/include/bcm_mpool_pub.h   |   350 +
+ .../net/wireless/bcmdhd/include/bcm_ring.h    |   613 +
+ drivers/net/wireless/bcmdhd/include/bcmarp.h  |    90 +
+ .../net/wireless/bcmdhd/include/bcmbloom.h    |    79 +
+ drivers/net/wireless/bcmdhd/include/bcmcdc.h  |   121 +
+ drivers/net/wireless/bcmdhd/include/bcmdefs.h |   615 +
+ drivers/net/wireless/bcmdhd/include/bcmdevs.h |   944 +
+ drivers/net/wireless/bcmdhd/include/bcmdhcp.h |    92 +
+ .../net/wireless/bcmdhd/include/bcmendian.h   |   416 +
+ drivers/net/wireless/bcmdhd/include/bcmeth.h  |   115 +
+ .../net/wireless/bcmdhd/include/bcmevent.h    |  1296 +
+ drivers/net/wireless/bcmdhd/include/bcmicmp.h |    89 +
+ drivers/net/wireless/bcmdhd/include/bcmiov.h  |   356 +
+ drivers/net/wireless/bcmdhd/include/bcmip.h   |   250 +
+ drivers/net/wireless/bcmdhd/include/bcmipv6.h |   161 +
+ .../net/wireless/bcmdhd/include/bcmmsgbuf.h   |  1394 +
+ .../net/wireless/bcmdhd/include/bcmnvram.h    |   328 +
+ drivers/net/wireless/bcmdhd/include/bcmpcie.h |   536 +
+ .../net/wireless/bcmdhd/include/bcmpcispi.h   |   181 +
+ drivers/net/wireless/bcmdhd/include/bcmperf.h |    39 +
+ .../net/wireless/bcmdhd/include/bcmsdbus.h    |   179 +
+ drivers/net/wireless/bcmdhd/include/bcmsdh.h  |   275 +
+ .../wireless/bcmdhd/include/bcmsdh_sdmmc.h    |   128 +
+ .../net/wireless/bcmdhd/include/bcmsdpcm.h    |   305 +
+ .../net/wireless/bcmdhd/include/bcmsdspi.h    |   138 +
+ .../net/wireless/bcmdhd/include/bcmsdstd.h    |   281 +
+ drivers/net/wireless/bcmdhd/include/bcmspi.h  |    43 +
+ .../net/wireless/bcmdhd/include/bcmspibrcm.h  |   167 +
+ .../net/wireless/bcmdhd/include/bcmsrom_fmt.h |  1013 +
+ .../net/wireless/bcmdhd/include/bcmsrom_tbl.h |  1458 +
+ .../net/wireless/bcmdhd/include/bcmstdlib_s.h |    45 +
+ drivers/net/wireless/bcmdhd/include/bcmtcp.h  |    92 +
+ drivers/net/wireless/bcmdhd/include/bcmtlv.h  |   342 +
+ drivers/net/wireless/bcmdhd/include/bcmudp.h  |    60 +
+ .../net/wireless/bcmdhd/include/bcmutils.h    |  1341 +
+ .../wireless/bcmdhd/include/brcm_nl80211.h    |    72 +
+ drivers/net/wireless/bcmdhd/include/dbus.h    |   598 +
+ .../net/wireless/bcmdhd/include/dhd_daemon.h  |    66 +
+ .../net/wireless/bcmdhd/include/dhdioctl.h    |   276 +
+ .../net/wireless/bcmdhd/include/dnglevent.h   |   141 +
+ drivers/net/wireless/bcmdhd/include/eapol.h   |   282 +
+ drivers/net/wireless/bcmdhd/include/epivers.h |    51 +
+ drivers/net/wireless/bcmdhd/include/etd.h     |   625 +
+ .../net/wireless/bcmdhd/include/ethernet.h    |   224 +
+ .../net/wireless/bcmdhd/include/event_log.h   |   422 +
+ .../bcmdhd/include/event_log_payload.h        |  1016 +
+ .../wireless/bcmdhd/include/event_log_set.h   |   123 +
+ .../wireless/bcmdhd/include/event_log_tag.h   |   478 +
+ .../net/wireless/bcmdhd/include/event_trace.h |   123 +
+ drivers/net/wireless/bcmdhd/include/fils.h    |   294 +
+ .../net/wireless/bcmdhd/include/hnd_armtrap.h |    89 +
+ .../net/wireless/bcmdhd/include/hnd_cons.h    |    86 +
+ .../net/wireless/bcmdhd/include/hnd_debug.h   |   168 +
+ .../net/wireless/bcmdhd/include/hnd_pktpool.h |   243 +
+ .../net/wireless/bcmdhd/include/hnd_pktq.h    |   325 +
+ .../net/wireless/bcmdhd/include/hnd_trap.h    |    39 +
+ .../net/wireless/bcmdhd/include/hndchipc.h    |    53 +
+ drivers/net/wireless/bcmdhd/include/hndlhl.h  |    61 +
+ drivers/net/wireless/bcmdhd/include/hndmem.h  |    80 +
+ drivers/net/wireless/bcmdhd/include/hndoobr.h |    75 +
+ drivers/net/wireless/bcmdhd/include/hndpmu.h  |    79 +
+ drivers/net/wireless/bcmdhd/include/hndsoc.h  |   350 +
+ .../net/wireless/bcmdhd/include/linux_osl.h   |   634 +
+ .../net/wireless/bcmdhd/include/linux_pkt.h   |   233 +
+ .../net/wireless/bcmdhd/include/linuxver.h    |   884 +
+ drivers/net/wireless/bcmdhd/include/lpflags.h |    45 +
+ drivers/net/wireless/bcmdhd/include/mbo.h     |   285 +
+ drivers/net/wireless/bcmdhd/include/miniopt.h |    79 +
+ drivers/net/wireless/bcmdhd/include/msf.h     |    66 +
+ .../net/wireless/bcmdhd/include/msgtrace.h    |    62 +
+ drivers/net/wireless/bcmdhd/include/nan.h     |  1558 +
+ drivers/net/wireless/bcmdhd/include/osl.h     |   377 +
+ .../net/wireless/bcmdhd/include/osl_decl.h    |    37 +
+ drivers/net/wireless/bcmdhd/include/osl_ext.h |   765 +
+ drivers/net/wireless/bcmdhd/include/p2p.h     |   701 +
+ .../bcmdhd/include/packed_section_end.h       |    59 +
+ .../bcmdhd/include/packed_section_start.h     |   104 +
+ drivers/net/wireless/bcmdhd/include/pcicfg.h  |   401 +
+ .../net/wireless/bcmdhd/include/pcie_core.h   |  1192 +
+ .../net/wireless/bcmdhd/include/rte_ioctl.h   |   103 +
+ drivers/net/wireless/bcmdhd/include/sbchipc.h |  4618 +++
+ .../net/wireless/bcmdhd/include/sbconfig.h    |   285 +
+ drivers/net/wireless/bcmdhd/include/sbgci.h   |   273 +
+ .../net/wireless/bcmdhd/include/sbhndarm.h    |   141 +
+ .../net/wireless/bcmdhd/include/sbhnddma.h    |   449 +
+ .../net/wireless/bcmdhd/include/sbpcmcia.h    |   137 +
+ drivers/net/wireless/bcmdhd/include/sbsdio.h  |   188 +
+ .../net/wireless/bcmdhd/include/sbsdpcmdev.h  |   309 +
+ .../net/wireless/bcmdhd/include/sbsocram.h    |   204 +
+ .../net/wireless/bcmdhd/include/sbsysmem.h    |   180 +
+ drivers/net/wireless/bcmdhd/include/sdio.h    |   625 +
+ drivers/net/wireless/bcmdhd/include/sdioh.h   |   450 +
+ drivers/net/wireless/bcmdhd/include/sdiovar.h |   124 +
+ drivers/net/wireless/bcmdhd/include/sdspi.h   |    78 +
+ drivers/net/wireless/bcmdhd/include/siutils.h |   809 +
+ drivers/net/wireless/bcmdhd/include/spid.h    |   168 +
+ drivers/net/wireless/bcmdhd/include/trxhdr.h  |    95 +
+ .../net/wireless/bcmdhd/include/typedefs.h    |   367 +
+ drivers/net/wireless/bcmdhd/include/usbrdl.h  |   134 +
+ drivers/net/wireless/bcmdhd/include/vlan.h    |    97 +
+ .../net/wireless/bcmdhd/include/wlfc_proto.h  |   413 +
+ drivers/net/wireless/bcmdhd/include/wlioctl.h | 20751 +++++++++++++
+ .../wireless/bcmdhd/include/wlioctl_defs.h    |  2465 ++
+ .../wireless/bcmdhd/include/wlioctl_utils.h   |    61 +
+ drivers/net/wireless/bcmdhd/include/wpa.h     |   311 +
+ drivers/net/wireless/bcmdhd/include/wps.h     |   385 +
+ drivers/net/wireless/bcmdhd/linux_osl.c       |  2110 ++
+ drivers/net/wireless/bcmdhd/linux_osl_priv.h  |   184 +
+ drivers/net/wireless/bcmdhd/linux_pkt.c       |   625 +
+ drivers/net/wireless/bcmdhd/otpdefs.h         |   121 +
+ drivers/net/wireless/bcmdhd/pcie_core.c       |   158 +
+ drivers/net/wireless/bcmdhd/sbutils.c         |  1093 +
+ drivers/net/wireless/bcmdhd/siutils.c         |  3800 +++
+ drivers/net/wireless/bcmdhd/siutils_priv.h    |   355 +
+ drivers/net/wireless/bcmdhd/wl_android.c      |  6637 ++++
+ drivers/net/wireless/bcmdhd/wl_android.h      |   392 +
+ drivers/net/wireless/bcmdhd/wl_android_ext.c  |  7283 +++++
+ drivers/net/wireless/bcmdhd/wl_cfg80211.c     | 24989 ++++++++++++++++
+ drivers/net/wireless/bcmdhd/wl_cfg80211.h     |  2458 ++
+ drivers/net/wireless/bcmdhd/wl_cfg_btcoex.c   |   568 +
+ drivers/net/wireless/bcmdhd/wl_cfgnan.c       |  8181 +++++
+ drivers/net/wireless/bcmdhd/wl_cfgnan.h       |   898 +
+ drivers/net/wireless/bcmdhd/wl_cfgp2p.c       |  2740 ++
+ drivers/net/wireless/bcmdhd/wl_cfgp2p.h       |   457 +
+ drivers/net/wireless/bcmdhd/wl_cfgscan.c      |  3297 ++
+ drivers/net/wireless/bcmdhd/wl_cfgscan.h      |    95 +
+ drivers/net/wireless/bcmdhd/wl_cfgvendor.c    |  8737 ++++++
+ drivers/net/wireless/bcmdhd/wl_cfgvendor.h    |   720 +
+ drivers/net/wireless/bcmdhd/wl_dbg.h          |   380 +
+ drivers/net/wireless/bcmdhd/wl_escan.c        |  1593 +
+ drivers/net/wireless/bcmdhd/wl_escan.h        |    77 +
+ drivers/net/wireless/bcmdhd/wl_event.c        |   508 +
+ drivers/net/wireless/bcmdhd/wl_iw.c           |  4359 +++
+ drivers/net/wireless/bcmdhd/wl_iw.h           |   177 +
+ drivers/net/wireless/bcmdhd/wl_linux_mon.c    |   406 +
+ drivers/net/wireless/bcmdhd/wl_roam.c         |   374 +
+ drivers/net/wireless/bcmdhd/wldev_common.c    |   534 +
+ drivers/net/wireless/bcmdhd/wldev_common.h    |   134 +
+ 228 files changed, 292817 insertions(+)
+ create mode 100644 drivers/net/wireless/bcmdhd/Kconfig
+ create mode 100644 drivers/net/wireless/bcmdhd/Makefile
+ create mode 100644 drivers/net/wireless/bcmdhd/aiutils.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcm_app_utils.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmbloom.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmevent.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmsdh.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmsdh_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmsdh_sdmmc.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmsdh_sdmmc_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmsdspi_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmspibrcm.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmstdlib_s.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmutils.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmwifi_channels.c
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmwifi_channels.h
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmwifi_rates.h
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmwifi_rspec.h
+ create mode 100644 drivers/net/wireless/bcmdhd/bcmxtlv.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dbus.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dbus_usb.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dbus_usb_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_bus.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_buzzz.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_ccode.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_cdc.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_cfg80211.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_cfg80211.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_common.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_config.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_config.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_csi.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_csi.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_custom_gpio.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_custom_hikey.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_custom_memprealloc.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_dbg.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_dbg_ring.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_dbg_ring.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_debug.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_debug.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_debug_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_flowring.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_flowring.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_gpio.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_ip.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_ip.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_exportfs.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_lb.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_pktdump.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_pktdump.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_platdev.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_priv.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_sched.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_wq.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_linux_wq.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_mschdbg.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_mschdbg.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_msgbuf.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_pcie.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_pcie.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_pcie_linux.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_pno.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_pno.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_proto.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_rtt.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_rtt.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_sdio.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_static_buf.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_wlfc.c
+ create mode 100644 drivers/net/wireless/bcmdhd/dhd_wlfc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dngl_stats.h
+ create mode 100644 drivers/net/wireless/bcmdhd/dngl_wlhdr.h
+ create mode 100644 drivers/net/wireless/bcmdhd/frag.c
+ create mode 100644 drivers/net/wireless/bcmdhd/frag.h
+ create mode 100644 drivers/net/wireless/bcmdhd/hnd_pktpool.c
+ create mode 100644 drivers/net/wireless/bcmdhd/hnd_pktq.c
+ create mode 100644 drivers/net/wireless/bcmdhd/hndlhl.c
+ create mode 100644 drivers/net/wireless/bcmdhd/hndmem.c
+ create mode 100644 drivers/net/wireless/bcmdhd/hndpmu.c
+ create mode 100644 drivers/net/wireless/bcmdhd/include/802.11.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/802.11e.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/802.11s.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/802.1d.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/802.3.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/aidmp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcm_cfg.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcm_mpool_pub.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcm_ring.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmarp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmbloom.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmcdc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmdefs.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmdevs.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmdhcp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmendian.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmeth.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmevent.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmicmp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmiov.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmip.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmipv6.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmmsgbuf.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmnvram.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmpcie.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmpcispi.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmperf.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdbus.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdh.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdh_sdmmc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdpcm.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdspi.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsdstd.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmspi.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmspibrcm.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsrom_fmt.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmsrom_tbl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmstdlib_s.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmtcp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmtlv.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmudp.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/bcmutils.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/brcm_nl80211.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/dbus.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/dhd_daemon.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/dhdioctl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/dnglevent.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/eapol.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/epivers.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/etd.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/ethernet.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/event_log.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/event_log_payload.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/event_log_set.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/event_log_tag.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/event_trace.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/fils.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_armtrap.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_cons.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_debug.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_pktpool.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_pktq.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hnd_trap.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndchipc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndlhl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndmem.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndoobr.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndpmu.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/hndsoc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/linux_osl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/linux_pkt.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/linuxver.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/lpflags.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/mbo.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/miniopt.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/msf.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/msgtrace.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/nan.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/osl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/osl_decl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/osl_ext.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/p2p.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/packed_section_end.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/packed_section_start.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/pcicfg.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/pcie_core.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/rte_ioctl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbchipc.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbconfig.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbgci.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbhndarm.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbhnddma.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbpcmcia.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbsdio.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbsdpcmdev.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbsocram.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sbsysmem.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sdio.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sdioh.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sdiovar.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/sdspi.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/siutils.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/spid.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/trxhdr.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/typedefs.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/usbrdl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/vlan.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wlfc_proto.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wlioctl.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wlioctl_defs.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wlioctl_utils.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wpa.h
+ create mode 100644 drivers/net/wireless/bcmdhd/include/wps.h
+ create mode 100644 drivers/net/wireless/bcmdhd/linux_osl.c
+ create mode 100644 drivers/net/wireless/bcmdhd/linux_osl_priv.h
+ create mode 100644 drivers/net/wireless/bcmdhd/linux_pkt.c
+ create mode 100644 drivers/net/wireless/bcmdhd/otpdefs.h
+ create mode 100644 drivers/net/wireless/bcmdhd/pcie_core.c
+ create mode 100644 drivers/net/wireless/bcmdhd/sbutils.c
+ create mode 100644 drivers/net/wireless/bcmdhd/siutils.c
+ create mode 100644 drivers/net/wireless/bcmdhd/siutils_priv.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_android.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_android.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_android_ext.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfg80211.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfg80211.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfg_btcoex.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgnan.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgnan.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgp2p.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgp2p.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgscan.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgscan.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgvendor.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_cfgvendor.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_dbg.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_escan.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_escan.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_event.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_iw.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_iw.h
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_linux_mon.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wl_roam.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wldev_common.c
+ create mode 100644 drivers/net/wireless/bcmdhd/wldev_common.h
+
 diff --git a/drivers/net/wireless/bcmdhd/Kconfig b/drivers/net/wireless/bcmdhd/Kconfig
 new file mode 100644
-index 0000000000..f90f25731a
+index 000000000..f90f25731
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/Kconfig
 @@ -0,0 +1,62 @@
@@ -77,7 +535,7 @@ index 0000000000..f90f25731a
 +endchoice
 diff --git a/drivers/net/wireless/bcmdhd/Makefile b/drivers/net/wireless/bcmdhd/Makefile
 new file mode 100644
-index 0000000000..6d59ee09d2
+index 000000000..6d59ee09d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/Makefile
 @@ -0,0 +1,205 @@
@@ -288,7 +746,7 @@ index 0000000000..6d59ee09d2
 +endif
 diff --git a/drivers/net/wireless/bcmdhd/aiutils.c b/drivers/net/wireless/bcmdhd/aiutils.c
 new file mode 100644
-index 0000000000..665b9f714e
+index 000000000..665b9f714
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/aiutils.c
 @@ -0,0 +1,2098 @@
@@ -2392,7 +2850,7 @@ index 0000000000..665b9f714e
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcm_app_utils.c b/drivers/net/wireless/bcmdhd/bcm_app_utils.c
 new file mode 100644
-index 0000000000..893c7b6591
+index 000000000..893c7b659
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcm_app_utils.c
 @@ -0,0 +1,1032 @@
@@ -3430,7 +3888,7 @@ index 0000000000..893c7b6591
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmbloom.c b/drivers/net/wireless/bcmdhd/bcmbloom.c
 new file mode 100644
-index 0000000000..211df5f2be
+index 000000000..211df5f2b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmbloom.c
 @@ -0,0 +1,242 @@
@@ -3678,7 +4136,7 @@ index 0000000000..211df5f2be
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmevent.c b/drivers/net/wireless/bcmdhd/bcmevent.c
 new file mode 100644
-index 0000000000..502247907a
+index 000000000..502247907
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmevent.c
 @@ -0,0 +1,395 @@
@@ -4079,7 +4537,7 @@ index 0000000000..502247907a
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmsdh.c b/drivers/net/wireless/bcmdhd/bcmsdh.c
 new file mode 100644
-index 0000000000..96b62be93a
+index 000000000..96b62be93
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmsdh.c
 @@ -0,0 +1,883 @@
@@ -4968,7 +5426,7 @@ index 0000000000..96b62be93a
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmsdh_linux.c b/drivers/net/wireless/bcmdhd/bcmsdh_linux.c
 new file mode 100644
-index 0000000000..54b05435c9
+index 000000000..54b05435c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmsdh_linux.c
 @@ -0,0 +1,523 @@
@@ -5497,7 +5955,7 @@ index 0000000000..54b05435c9
 +#endif /* BCMSDH_MODULE */
 diff --git a/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc.c b/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc.c
 new file mode 100644
-index 0000000000..099f0af5a9
+index 000000000..099f0af5a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc.c
 @@ -0,0 +1,1787 @@
@@ -7290,7 +7748,7 @@ index 0000000000..099f0af5a9
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc_linux.c b/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc_linux.c
 new file mode 100644
-index 0000000000..0864e0403e
+index 000000000..0864e0403
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmsdh_sdmmc_linux.c
 @@ -0,0 +1,382 @@
@@ -7678,7 +8136,7 @@ index 0000000000..0864e0403e
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmsdspi_linux.c b/drivers/net/wireless/bcmdhd/bcmsdspi_linux.c
 new file mode 100644
-index 0000000000..768ccbd3a9
+index 000000000..768ccbd3a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmsdspi_linux.c
 @@ -0,0 +1,437 @@
@@ -8121,7 +8579,7 @@ index 0000000000..768ccbd3a9
 +#endif /* !BCMSPI_ANDROID */
 diff --git a/drivers/net/wireless/bcmdhd/bcmspibrcm.c b/drivers/net/wireless/bcmdhd/bcmspibrcm.c
 new file mode 100644
-index 0000000000..3a852b1855
+index 000000000..3a852b185
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmspibrcm.c
 @@ -0,0 +1,1799 @@
@@ -9926,7 +10384,7 @@ index 0000000000..3a852b1855
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmstdlib_s.c b/drivers/net/wireless/bcmdhd/bcmstdlib_s.c
 new file mode 100644
-index 0000000000..05c3e48319
+index 000000000..05c3e4831
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmstdlib_s.c
 @@ -0,0 +1,306 @@
@@ -10238,7 +10696,7 @@ index 0000000000..05c3e48319
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmutils.c b/drivers/net/wireless/bcmdhd/bcmutils.c
 new file mode 100644
-index 0000000000..2e9253afda
+index 000000000..2e9253afd
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmutils.c
 @@ -0,0 +1,4378 @@
@@ -14622,7 +15080,7 @@ index 0000000000..2e9253afda
 +}	
 diff --git a/drivers/net/wireless/bcmdhd/bcmwifi_channels.c b/drivers/net/wireless/bcmdhd/bcmwifi_channels.c
 new file mode 100644
-index 0000000000..0c8b1cd5a0
+index 000000000..0c8b1cd5a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmwifi_channels.c
 @@ -0,0 +1,1493 @@
@@ -16121,7 +16579,7 @@ index 0000000000..0c8b1cd5a0
 +}
 diff --git a/drivers/net/wireless/bcmdhd/bcmwifi_channels.h b/drivers/net/wireless/bcmdhd/bcmwifi_channels.h
 new file mode 100644
-index 0000000000..2e0d07e7f3
+index 000000000..2e0d07e7f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmwifi_channels.h
 @@ -0,0 +1,815 @@
@@ -16942,7 +17400,7 @@ index 0000000000..2e0d07e7f3
 +#endif	/* _bcmwifi_channels_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/bcmwifi_rates.h b/drivers/net/wireless/bcmdhd/bcmwifi_rates.h
 new file mode 100644
-index 0000000000..95b90a7e23
+index 000000000..95b90a7e2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmwifi_rates.h
 @@ -0,0 +1,831 @@
@@ -17779,7 +18237,7 @@ index 0000000000..95b90a7e23
 +#endif /* _bcmwifi_rates_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/bcmwifi_rspec.h b/drivers/net/wireless/bcmdhd/bcmwifi_rspec.h
 new file mode 100644
-index 0000000000..3b7685feec
+index 000000000..3b7685fee
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmwifi_rspec.h
 @@ -0,0 +1,212 @@
@@ -17997,7 +18455,7 @@ index 0000000000..3b7685feec
 +#endif /* _bcmwifi_rspec_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/bcmxtlv.c b/drivers/net/wireless/bcmdhd/bcmxtlv.c
 new file mode 100644
-index 0000000000..8e4a3361cb
+index 000000000..8e4a3361c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/bcmxtlv.c
 @@ -0,0 +1,622 @@
@@ -18625,7 +19083,7 @@ index 0000000000..8e4a3361cb
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dbus.c b/drivers/net/wireless/bcmdhd/dbus.c
 new file mode 100644
-index 0000000000..a62642e9b1
+index 000000000..a62642e9b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dbus.c
 @@ -0,0 +1,2904 @@
@@ -21535,7 +21993,7 @@ index 0000000000..a62642e9b1
 +#endif  /* #ifdef LINUX_EXTERNAL_MODULE_DBUS */
 diff --git a/drivers/net/wireless/bcmdhd/dbus_usb.c b/drivers/net/wireless/bcmdhd/dbus_usb.c
 new file mode 100644
-index 0000000000..8a496dd1e8
+index 000000000..8a496dd1e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dbus_usb.c
 @@ -0,0 +1,1172 @@
@@ -22713,7 +23171,7 @@ index 0000000000..8a496dd1e8
 +} /* dbus_bus_fw_get */
 diff --git a/drivers/net/wireless/bcmdhd/dbus_usb_linux.c b/drivers/net/wireless/bcmdhd/dbus_usb_linux.c
 new file mode 100644
-index 0000000000..10927d8946
+index 000000000..10927d894
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dbus_usb_linux.c
 @@ -0,0 +1,3403 @@
@@ -26122,7 +26580,7 @@ index 0000000000..10927d8946
 +#endif /* BCMUSBDEV_COMPOSITE */
 diff --git a/drivers/net/wireless/bcmdhd/dhd.h b/drivers/net/wireless/bcmdhd/dhd.h
 new file mode 100644
-index 0000000000..8b3580dbe5
+index 000000000..8b3580dbe
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd.h
 @@ -0,0 +1,3417 @@
@@ -29545,7 +30003,7 @@ index 0000000000..8b3580dbe5
 +#endif /* _dhd_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_bus.h b/drivers/net/wireless/bcmdhd/dhd_bus.h
 new file mode 100644
-index 0000000000..d020783af7
+index 000000000..d020783af
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_bus.h
 @@ -0,0 +1,351 @@
@@ -29902,7 +30360,7 @@ index 0000000000..d020783af7
 +#endif /* _dhd_bus_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_buzzz.h b/drivers/net/wireless/bcmdhd/dhd_buzzz.h
 new file mode 100644
-index 0000000000..8c03605c8c
+index 000000000..8c03605c8
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_buzzz.h
 @@ -0,0 +1,37 @@
@@ -29945,7 +30403,7 @@ index 0000000000..8c03605c8c
 +#endif /* _DHD_BUZZZ_H_INCLUDED_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_ccode.c b/drivers/net/wireless/bcmdhd/dhd_ccode.c
 new file mode 100644
-index 0000000000..763e92da37
+index 000000000..763e92da3
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_ccode.c
 @@ -0,0 +1,234 @@
@@ -30185,7 +30643,7 @@ index 0000000000..763e92da37
 +#endif
 diff --git a/drivers/net/wireless/bcmdhd/dhd_cdc.c b/drivers/net/wireless/bcmdhd/dhd_cdc.c
 new file mode 100644
-index 0000000000..395bfd8c22
+index 000000000..395bfd8c2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_cdc.c
 @@ -0,0 +1,980 @@
@@ -31171,7 +31629,7 @@ index 0000000000..395bfd8c22
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_cfg80211.c b/drivers/net/wireless/bcmdhd/dhd_cfg80211.c
 new file mode 100644
-index 0000000000..9d664f1f39
+index 000000000..9d664f1f3
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_cfg80211.c
 @@ -0,0 +1,304 @@
@@ -31481,7 +31939,7 @@ index 0000000000..9d664f1f39
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_cfg80211.h b/drivers/net/wireless/bcmdhd/dhd_cfg80211.h
 new file mode 100644
-index 0000000000..dd0766a298
+index 000000000..dd0766a29
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_cfg80211.h
 @@ -0,0 +1,54 @@
@@ -31541,7 +31999,7 @@ index 0000000000..dd0766a298
 +#endif /* __DHD_CFG80211__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_common.c b/drivers/net/wireless/bcmdhd/dhd_common.c
 new file mode 100644
-index 0000000000..813833d35e
+index 000000000..813833d35
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_common.c
 @@ -0,0 +1,7483 @@
@@ -39030,7 +39488,7 @@ index 0000000000..813833d35e
 +#endif /* DISABLE_HE_ENAB || CUSTOM_CONTROL_HE_ENAB */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_config.c b/drivers/net/wireless/bcmdhd/dhd_config.c
 new file mode 100644
-index 0000000000..489fe7f5b6
+index 000000000..489fe7f5b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_config.c
 @@ -0,0 +1,3956 @@
@@ -42992,7 +43450,7 @@ index 0000000000..489fe7f5b6
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_config.h b/drivers/net/wireless/bcmdhd/dhd_config.h
 new file mode 100644
-index 0000000000..cdd76c42ab
+index 000000000..cdd76c42a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_config.h
 @@ -0,0 +1,333 @@
@@ -43331,7 +43789,7 @@ index 0000000000..cdd76c42ab
 +#endif /* _dhd_config_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_csi.c b/drivers/net/wireless/bcmdhd/dhd_csi.c
 new file mode 100644
-index 0000000000..dd1a0681bf
+index 000000000..dd1a0681b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_csi.c
 @@ -0,0 +1,220 @@
@@ -43557,7 +44015,7 @@ index 0000000000..dd1a0681bf
 +
 diff --git a/drivers/net/wireless/bcmdhd/dhd_csi.h b/drivers/net/wireless/bcmdhd/dhd_csi.h
 new file mode 100644
-index 0000000000..bcc712c299
+index 000000000..bcc712c29
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_csi.h
 @@ -0,0 +1,77 @@
@@ -43640,7 +44098,7 @@ index 0000000000..bcc712c299
 +
 diff --git a/drivers/net/wireless/bcmdhd/dhd_custom_gpio.c b/drivers/net/wireless/bcmdhd/dhd_custom_gpio.c
 new file mode 100644
-index 0000000000..f3facfd7f9
+index 000000000..f3facfd7f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_custom_gpio.c
 @@ -0,0 +1,278 @@
@@ -43924,7 +44382,7 @@ index 0000000000..f3facfd7f9
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_custom_hikey.c b/drivers/net/wireless/bcmdhd/dhd_custom_hikey.c
 new file mode 100644
-index 0000000000..38673ae1b6
+index 000000000..38673ae1b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_custom_hikey.c
 @@ -0,0 +1,293 @@
@@ -44223,7 +44681,7 @@ index 0000000000..38673ae1b6
 +#endif /* BOARD_HIKEY_MODULAR */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_custom_memprealloc.c b/drivers/net/wireless/bcmdhd/dhd_custom_memprealloc.c
 new file mode 100644
-index 0000000000..ef9f91022d
+index 000000000..ef9f91022
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_custom_memprealloc.c
 @@ -0,0 +1,561 @@
@@ -44790,7 +45248,7 @@ index 0000000000..ef9f91022d
 +#endif /* CONFIG_BROADCOM_WIFI_RESERVED_MEM */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_dbg.h b/drivers/net/wireless/bcmdhd/dhd_dbg.h
 new file mode 100644
-index 0000000000..5c84497387
+index 000000000..5c8449738
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_dbg.h
 @@ -0,0 +1,366 @@
@@ -45162,7 +45620,7 @@ index 0000000000..5c84497387
 +#endif /* _dhd_dbg_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_dbg_ring.c b/drivers/net/wireless/bcmdhd/dhd_dbg_ring.c
 new file mode 100644
-index 0000000000..d1e84e1011
+index 000000000..d1e84e101
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_dbg_ring.c
 @@ -0,0 +1,425 @@
@@ -45593,7 +46051,7 @@ index 0000000000..d1e84e1011
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_dbg_ring.h b/drivers/net/wireless/bcmdhd/dhd_dbg_ring.h
 new file mode 100644
-index 0000000000..ed83466f3c
+index 000000000..ed83466f3
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_dbg_ring.h
 @@ -0,0 +1,140 @@
@@ -45739,7 +46197,7 @@ index 0000000000..ed83466f3c
 +#endif /* __DHD_DBG_RING_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_debug.c b/drivers/net/wireless/bcmdhd/dhd_debug.c
 new file mode 100644
-index 0000000000..bd3398b80d
+index 000000000..bd3398b80
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_debug.c
 @@ -0,0 +1,2410 @@
@@ -48155,7 +48613,7 @@ index 0000000000..bd3398b80d
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_debug.h b/drivers/net/wireless/bcmdhd/dhd_debug.h
 new file mode 100644
-index 0000000000..22c0adafe4
+index 000000000..22c0adafe
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_debug.h
 @@ -0,0 +1,852 @@
@@ -49013,7 +49471,7 @@ index 0000000000..22c0adafe4
 +#endif /* _dhd_debug_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_debug_linux.c b/drivers/net/wireless/bcmdhd/dhd_debug_linux.c
 new file mode 100644
-index 0000000000..44934454b2
+index 000000000..44934454b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_debug_linux.c
 @@ -0,0 +1,511 @@
@@ -49530,7 +49988,7 @@ index 0000000000..44934454b2
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_flowring.c b/drivers/net/wireless/bcmdhd/dhd_flowring.c
 new file mode 100644
-index 0000000000..55a03159ff
+index 000000000..55a03159f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_flowring.c
 @@ -0,0 +1,1236 @@
@@ -50772,7 +51230,7 @@ index 0000000000..55a03159ff
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_flowring.h b/drivers/net/wireless/bcmdhd/dhd_flowring.h
 new file mode 100644
-index 0000000000..b205d9f4c8
+index 000000000..b205d9f4c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_flowring.h
 @@ -0,0 +1,288 @@
@@ -51066,7 +51524,7 @@ index 0000000000..b205d9f4c8
 +#endif /* _dhd_flowrings_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_gpio.c b/drivers/net/wireless/bcmdhd/dhd_gpio.c
 new file mode 100644
-index 0000000000..adce42ffa4
+index 000000000..adce42ffa
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_gpio.c
 @@ -0,0 +1,340 @@
@@ -51412,7 +51870,7 @@ index 0000000000..adce42ffa4
 +
 diff --git a/drivers/net/wireless/bcmdhd/dhd_ip.c b/drivers/net/wireless/bcmdhd/dhd_ip.c
 new file mode 100644
-index 0000000000..d2009872e3
+index 000000000..d2009872e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_ip.c
 @@ -0,0 +1,1427 @@
@@ -52845,7 +53303,7 @@ index 0000000000..d2009872e3
 +#endif /* DHDTCPSYNC_FLOOD_BLK */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_ip.h b/drivers/net/wireless/bcmdhd/dhd_ip.h
 new file mode 100644
-index 0000000000..6bda8149e2
+index 000000000..6bda8149e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_ip.h
 @@ -0,0 +1,96 @@
@@ -52947,7 +53405,7 @@ index 0000000000..6bda8149e2
 +#endif /* _dhd_ip_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux.c b/drivers/net/wireless/bcmdhd/dhd_linux.c
 new file mode 100644
-index 0000000000..c81d948654
+index 000000000..c81d94865
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux.c
 @@ -0,0 +1,22027 @@
@@ -74980,7 +75438,7 @@ index 0000000000..c81d948654
 +#endif /* defiend(WLDWDS) && defined(FOURADDR_AUTO_BRG) */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux.h b/drivers/net/wireless/bcmdhd/dhd_linux.h
 new file mode 100644
-index 0000000000..2f2097de5a
+index 000000000..2f2097de5
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux.h
 @@ -0,0 +1,449 @@
@@ -75435,7 +75893,7 @@ index 0000000000..2f2097de5a
 +#endif /* __DHD_LINUX_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_exportfs.c b/drivers/net/wireless/bcmdhd/dhd_linux_exportfs.c
 new file mode 100644
-index 0000000000..fc9326dd57
+index 000000000..fc9326dd5
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_exportfs.c
 @@ -0,0 +1,1419 @@
@@ -76860,7 +77318,7 @@ index 0000000000..fc9326dd57
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_lb.c b/drivers/net/wireless/bcmdhd/dhd_linux_lb.c
 new file mode 100644
-index 0000000000..103fd7099e
+index 000000000..103fd7099
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_lb.c
 @@ -0,0 +1,1323 @@
@@ -78189,7 +78647,7 @@ index 0000000000..103fd7099e
 +#endif /* DHD_LB_TXP */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.c b/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.c
 new file mode 100644
-index 0000000000..aa6857014f
+index 000000000..aa6857014
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.c
 @@ -0,0 +1,1434 @@
@@ -79629,7 +80087,7 @@ index 0000000000..aa6857014f
 +#endif /* DHD_RX_DUMP */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.h b/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.h
 new file mode 100644
-index 0000000000..cac2af25ed
+index 000000000..cac2af25e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_pktdump.h
 @@ -0,0 +1,124 @@
@@ -79759,7 +80217,7 @@ index 0000000000..cac2af25ed
 +#endif /* __DHD_LINUX_PKTDUMP_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_platdev.c b/drivers/net/wireless/bcmdhd/dhd_linux_platdev.c
 new file mode 100644
-index 0000000000..197bc5f3e0
+index 000000000..197bc5f3e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_platdev.c
 @@ -0,0 +1,1027 @@
@@ -80792,7 +81250,7 @@ index 0000000000..197bc5f3e0
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_priv.h b/drivers/net/wireless/bcmdhd/dhd_linux_priv.h
 new file mode 100644
-index 0000000000..c317fca6a4
+index 000000000..c317fca6a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_priv.h
 @@ -0,0 +1,431 @@
@@ -81229,7 +81687,7 @@ index 0000000000..c317fca6a4
 +#endif /* __DHD_LINUX_PRIV_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_sched.c b/drivers/net/wireless/bcmdhd/dhd_linux_sched.c
 new file mode 100644
-index 0000000000..fb76b3f0c9
+index 000000000..fb76b3f0c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_sched.c
 @@ -0,0 +1,47 @@
@@ -81282,7 +81740,7 @@ index 0000000000..fb76b3f0c9
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_wq.c b/drivers/net/wireless/bcmdhd/dhd_linux_wq.c
 new file mode 100644
-index 0000000000..c5f57bb8fa
+index 000000000..c5f57bb8f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_wq.c
 @@ -0,0 +1,396 @@
@@ -81684,7 +82142,7 @@ index 0000000000..c5f57bb8fa
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_linux_wq.h b/drivers/net/wireless/bcmdhd/dhd_linux_wq.h
 new file mode 100644
-index 0000000000..add9416ce7
+index 000000000..add9416ce
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_linux_wq.h
 @@ -0,0 +1,92 @@
@@ -81782,7 +82240,7 @@ index 0000000000..add9416ce7
 +#endif /* _dhd_linux_wq_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_mschdbg.c b/drivers/net/wireless/bcmdhd/dhd_mschdbg.c
 new file mode 100644
-index 0000000000..bef05b67db
+index 000000000..bef05b67d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_mschdbg.c
 @@ -0,0 +1,788 @@
@@ -82576,7 +83034,7 @@ index 0000000000..bef05b67db
 +#endif /* SHOW_LOGTRACE */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_mschdbg.h b/drivers/net/wireless/bcmdhd/dhd_mschdbg.h
 new file mode 100644
-index 0000000000..8cb28c480f
+index 000000000..8cb28c480
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_mschdbg.h
 @@ -0,0 +1,39 @@
@@ -82621,7 +83079,7 @@ index 0000000000..8cb28c480f
 +#endif /* _dhd_mschdbg_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_msgbuf.c b/drivers/net/wireless/bcmdhd/dhd_msgbuf.c
 new file mode 100644
-index 0000000000..41e883066e
+index 000000000..41e883066
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_msgbuf.c
 @@ -0,0 +1,11154 @@
@@ -93781,7 +94239,7 @@ index 0000000000..41e883066e
 +#endif /* DHD_MAP_LOGGING */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_pcie.c b/drivers/net/wireless/bcmdhd/dhd_pcie.c
 new file mode 100644
-index 0000000000..ff69b1387a
+index 000000000..ff69b1387
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_pcie.c
 @@ -0,0 +1,11603 @@
@@ -105390,7 +105848,7 @@ index 0000000000..ff69b1387a
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_pcie.h b/drivers/net/wireless/bcmdhd/dhd_pcie.h
 new file mode 100644
-index 0000000000..88964e3fda
+index 000000000..88964e3fd
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_pcie.h
 @@ -0,0 +1,601 @@
@@ -105997,7 +106455,7 @@ index 0000000000..88964e3fda
 +#endif /* dhd_pcie_h */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_pcie_linux.c b/drivers/net/wireless/bcmdhd/dhd_pcie_linux.c
 new file mode 100644
-index 0000000000..701f975b7f
+index 000000000..701f975b7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_pcie_linux.c
 @@ -0,0 +1,2725 @@
@@ -108728,7 +109186,7 @@ index 0000000000..701f975b7f
 +EXPORT_SYMBOL(dhd_bus_check_driver_up);
 diff --git a/drivers/net/wireless/bcmdhd/dhd_pno.c b/drivers/net/wireless/bcmdhd/dhd_pno.c
 new file mode 100644
-index 0000000000..6bb2fa4034
+index 000000000..6bb2fa403
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_pno.c
 @@ -0,0 +1,4434 @@
@@ -113168,7 +113626,7 @@ index 0000000000..6bb2fa4034
 +#endif /* PNO_SUPPORT */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_pno.h b/drivers/net/wireless/bcmdhd/dhd_pno.h
 new file mode 100644
-index 0000000000..fa4e24510a
+index 000000000..fa4e24510
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_pno.h
 @@ -0,0 +1,584 @@
@@ -113758,7 +114216,7 @@ index 0000000000..fa4e24510a
 +#endif /* __DHD_PNO_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_proto.h b/drivers/net/wireless/bcmdhd/dhd_proto.h
 new file mode 100644
-index 0000000000..b607478a78
+index 000000000..b607478a7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_proto.h
 @@ -0,0 +1,242 @@
@@ -114006,7 +114464,7 @@ index 0000000000..b607478a78
 +#endif /* _dhd_proto_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_rtt.c b/drivers/net/wireless/bcmdhd/dhd_rtt.c
 new file mode 100644
-index 0000000000..a983a15c24
+index 000000000..a983a15c2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_rtt.c
 @@ -0,0 +1,4102 @@
@@ -118114,7 +118572,7 @@ index 0000000000..a983a15c24
 +}
 diff --git a/drivers/net/wireless/bcmdhd/dhd_rtt.h b/drivers/net/wireless/bcmdhd/dhd_rtt.h
 new file mode 100644
-index 0000000000..14d89268cc
+index 000000000..14d89268c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_rtt.h
 @@ -0,0 +1,536 @@
@@ -118656,7 +119114,7 @@ index 0000000000..14d89268cc
 +#endif /* __DHD_RTT_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_sdio.c b/drivers/net/wireless/bcmdhd/dhd_sdio.c
 new file mode 100644
-index 0000000000..231eba0f8a
+index 000000000..231eba0f8
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_sdio.c
 @@ -0,0 +1,10715 @@
@@ -129378,7 +129836,7 @@ index 0000000000..231eba0f8a
 \ No newline at end of file
 diff --git a/drivers/net/wireless/bcmdhd/dhd_static_buf.c b/drivers/net/wireless/bcmdhd/dhd_static_buf.c
 new file mode 100644
-index 0000000000..fb68b01fb6
+index 000000000..fb68b01fb
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_static_buf.c
 @@ -0,0 +1,585 @@
@@ -129969,7 +130427,7 @@ index 0000000000..fb68b01fb6
 +module_exit(dhd_static_buf_exit);
 diff --git a/drivers/net/wireless/bcmdhd/dhd_wlfc.c b/drivers/net/wireless/bcmdhd/dhd_wlfc.c
 new file mode 100644
-index 0000000000..a54ed81243
+index 000000000..a54ed8124
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_wlfc.c
 @@ -0,0 +1,4615 @@
@@ -134590,7 +135048,7 @@ index 0000000000..a54ed81243
 +#endif /* PROP_TXSTATUS */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_wlfc.h b/drivers/net/wireless/bcmdhd/dhd_wlfc.h
 new file mode 100644
-index 0000000000..7ca1968a4e
+index 000000000..7ca1968a4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_wlfc.h
 @@ -0,0 +1,569 @@
@@ -135165,7 +135623,7 @@ index 0000000000..7ca1968a4e
 +#endif /* __wlfc_host_driver_definitions_h__ */
 diff --git a/drivers/net/wireless/bcmdhd/dngl_stats.h b/drivers/net/wireless/bcmdhd/dngl_stats.h
 new file mode 100644
-index 0000000000..a570f978c8
+index 000000000..a570f978c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dngl_stats.h
 @@ -0,0 +1,386 @@
@@ -135557,7 +136015,7 @@ index 0000000000..a570f978c8
 +#endif /* _dngl_stats_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dngl_wlhdr.h b/drivers/net/wireless/bcmdhd/dngl_wlhdr.h
 new file mode 100644
-index 0000000000..ca367ad1ee
+index 000000000..ca367ad1e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dngl_wlhdr.h
 @@ -0,0 +1,43 @@
@@ -135606,7 +136064,7 @@ index 0000000000..ca367ad1ee
 +#endif /* _dngl_wlhdr_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/frag.c b/drivers/net/wireless/bcmdhd/frag.c
 new file mode 100644
-index 0000000000..de6f98c7db
+index 000000000..de6f98c7d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/frag.c
 @@ -0,0 +1,112 @@
@@ -135724,7 +136182,7 @@ index 0000000000..de6f98c7db
 +}
 diff --git a/drivers/net/wireless/bcmdhd/frag.h b/drivers/net/wireless/bcmdhd/frag.h
 new file mode 100644
-index 0000000000..b415047145
+index 000000000..b41504714
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/frag.h
 @@ -0,0 +1,38 @@
@@ -135768,7 +136226,7 @@ index 0000000000..b415047145
 +#endif /* __FRAG_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/hnd_pktpool.c b/drivers/net/wireless/bcmdhd/hnd_pktpool.c
 new file mode 100644
-index 0000000000..3bbe7dc1ca
+index 000000000..3bbe7dc1c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/hnd_pktpool.c
 @@ -0,0 +1,1427 @@
@@ -137201,7 +137659,7 @@ index 0000000000..3bbe7dc1ca
 +#endif /* BCMPKTPOOL */
 diff --git a/drivers/net/wireless/bcmdhd/hnd_pktq.c b/drivers/net/wireless/bcmdhd/hnd_pktq.c
 new file mode 100644
-index 0000000000..5d88483af9
+index 000000000..5d88483af
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/hnd_pktq.c
 @@ -0,0 +1,1428 @@
@@ -138635,7 +139093,7 @@ index 0000000000..5d88483af9
 +#endif	/* HND_PKTQ_THREAD_SAFE */
 diff --git a/drivers/net/wireless/bcmdhd/hndlhl.c b/drivers/net/wireless/bcmdhd/hndlhl.c
 new file mode 100644
-index 0000000000..f563e71707
+index 000000000..f563e7170
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/hndlhl.c
 @@ -0,0 +1,537 @@
@@ -139178,7 +139636,7 @@ index 0000000000..f563e71707
 +}
 diff --git a/drivers/net/wireless/bcmdhd/hndmem.c b/drivers/net/wireless/bcmdhd/hndmem.c
 new file mode 100644
-index 0000000000..7ad6323be0
+index 000000000..7ad6323be
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/hndmem.c
 @@ -0,0 +1,429 @@
@@ -139613,7 +140071,7 @@ index 0000000000..7ad6323be0
 +}
 diff --git a/drivers/net/wireless/bcmdhd/hndpmu.c b/drivers/net/wireless/bcmdhd/hndpmu.c
 new file mode 100644
-index 0000000000..4cf392dd45
+index 000000000..4cf392dd4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/hndpmu.c
 @@ -0,0 +1,788 @@
@@ -140407,7 +140865,7 @@ index 0000000000..4cf392dd45
 +#endif /* BCMPMU_STATS */
 diff --git a/drivers/net/wireless/bcmdhd/include/802.11.h b/drivers/net/wireless/bcmdhd/include/802.11.h
 new file mode 100644
-index 0000000000..5f8be4ed09
+index 000000000..5f8be4ed0
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/802.11.h
 @@ -0,0 +1,5363 @@
@@ -145776,7 +146234,7 @@ index 0000000000..5f8be4ed09
 +#endif /* _802_11_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/802.11e.h b/drivers/net/wireless/bcmdhd/include/802.11e.h
 new file mode 100644
-index 0000000000..7a0e2d45ec
+index 000000000..7a0e2d45e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/802.11e.h
 @@ -0,0 +1,139 @@
@@ -145921,7 +146379,7 @@ index 0000000000..7a0e2d45ec
 +#endif /* _802_11e_CAC_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/802.11s.h b/drivers/net/wireless/bcmdhd/include/802.11s.h
 new file mode 100644
-index 0000000000..6ceabb7a5f
+index 000000000..6ceabb7a5
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/802.11s.h
 @@ -0,0 +1,334 @@
@@ -146261,7 +146719,7 @@ index 0000000000..6ceabb7a5f
 +#endif  /* #ifndef _802_11s_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/802.1d.h b/drivers/net/wireless/bcmdhd/include/802.1d.h
 new file mode 100644
-index 0000000000..31a251f671
+index 000000000..31a251f67
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/802.1d.h
 @@ -0,0 +1,53 @@
@@ -146320,7 +146778,7 @@ index 0000000000..31a251f671
 +#endif /* _802_1_D__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/802.3.h b/drivers/net/wireless/bcmdhd/include/802.3.h
 new file mode 100644
-index 0000000000..dee50a9c26
+index 000000000..dee50a9c2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/802.3.h
 @@ -0,0 +1,55 @@
@@ -146381,7 +146839,7 @@ index 0000000000..dee50a9c26
 +#endif	/* #ifndef _802_3_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/aidmp.h b/drivers/net/wireless/bcmdhd/include/aidmp.h
 new file mode 100644
-index 0000000000..0007f8356e
+index 000000000..0007f8356
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/aidmp.h
 @@ -0,0 +1,429 @@
@@ -146816,7 +147274,7 @@ index 0000000000..0007f8356e
 +#endif	/* _AIDMP_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcm_cfg.h b/drivers/net/wireless/bcmdhd/include/bcm_cfg.h
 new file mode 100644
-index 0000000000..07e20870b0
+index 000000000..07e20870b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcm_cfg.h
 @@ -0,0 +1,32 @@
@@ -146854,7 +147312,7 @@ index 0000000000..07e20870b0
 +#endif /* _bcm_cfg_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcm_mpool_pub.h b/drivers/net/wireless/bcmdhd/include/bcm_mpool_pub.h
 new file mode 100644
-index 0000000000..755a51b2d0
+index 000000000..755a51b2d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcm_mpool_pub.h
 @@ -0,0 +1,350 @@
@@ -147210,7 +147668,7 @@ index 0000000000..755a51b2d0
 +#endif /* _BCM_MPOOL_PUB_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcm_ring.h b/drivers/net/wireless/bcmdhd/include/bcm_ring.h
 new file mode 100644
-index 0000000000..beb9660761
+index 000000000..beb966076
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcm_ring.h
 @@ -0,0 +1,613 @@
@@ -147829,7 +148287,7 @@ index 0000000000..beb9660761
 +#endif /* ! __bcm_ring_h_included__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmarp.h b/drivers/net/wireless/bcmdhd/include/bcmarp.h
 new file mode 100644
-index 0000000000..4ebb21d4f0
+index 000000000..4ebb21d4f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmarp.h
 @@ -0,0 +1,90 @@
@@ -147925,7 +148383,7 @@ index 0000000000..4ebb21d4f0
 +#endif	/* !defined(_bcmarp_h_) */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmbloom.h b/drivers/net/wireless/bcmdhd/include/bcmbloom.h
 new file mode 100644
-index 0000000000..bb41cdcbb7
+index 000000000..bb41cdcbb
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmbloom.h
 @@ -0,0 +1,79 @@
@@ -148010,7 +148468,7 @@ index 0000000000..bb41cdcbb7
 +#endif /* _bcmbloom_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmcdc.h b/drivers/net/wireless/bcmdhd/include/bcmcdc.h
 new file mode 100644
-index 0000000000..8ec17cadd2
+index 000000000..8ec17cadd
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmcdc.h
 @@ -0,0 +1,121 @@
@@ -148137,7 +148595,7 @@ index 0000000000..8ec17cadd2
 +#endif /* _bcmcdc_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmdefs.h b/drivers/net/wireless/bcmdhd/include/bcmdefs.h
 new file mode 100644
-index 0000000000..c6440d8340
+index 000000000..c6440d834
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmdefs.h
 @@ -0,0 +1,615 @@
@@ -148758,7 +149216,7 @@ index 0000000000..c6440d8340
 +#endif /* _bcmdefs_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmdevs.h b/drivers/net/wireless/bcmdhd/include/bcmdevs.h
 new file mode 100644
-index 0000000000..edb9c40c68
+index 000000000..edb9c40c6
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmdevs.h
 @@ -0,0 +1,944 @@
@@ -149708,7 +150166,7 @@ index 0000000000..edb9c40c68
 +#endif /* _BCMDEVS_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmdhcp.h b/drivers/net/wireless/bcmdhd/include/bcmdhcp.h
 new file mode 100644
-index 0000000000..8d973860a5
+index 000000000..8d973860a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmdhcp.h
 @@ -0,0 +1,92 @@
@@ -149806,7 +150264,7 @@ index 0000000000..8d973860a5
 +#endif	/* #ifndef _bcmdhcp_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmendian.h b/drivers/net/wireless/bcmdhd/include/bcmendian.h
 new file mode 100644
-index 0000000000..4ce0595208
+index 000000000..4ce059520
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmendian.h
 @@ -0,0 +1,416 @@
@@ -150228,7 +150686,7 @@ index 0000000000..4ce0595208
 +#endif /* !_BCMENDIAN_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmeth.h b/drivers/net/wireless/bcmdhd/include/bcmeth.h
 new file mode 100644
-index 0000000000..e2189e4985
+index 000000000..e2189e498
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmeth.h
 @@ -0,0 +1,115 @@
@@ -150349,7 +150807,7 @@ index 0000000000..e2189e4985
 +#endif	/*  _BCMETH_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmevent.h b/drivers/net/wireless/bcmdhd/include/bcmevent.h
 new file mode 100644
-index 0000000000..97adab151c
+index 000000000..97adab151
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmevent.h
 @@ -0,0 +1,1296 @@
@@ -151651,7 +152109,7 @@ index 0000000000..97adab151c
 +#endif /* _BCMEVENT_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmicmp.h b/drivers/net/wireless/bcmdhd/include/bcmicmp.h
 new file mode 100644
-index 0000000000..373190372b
+index 000000000..373190372
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmicmp.h
 @@ -0,0 +1,89 @@
@@ -151746,7 +152204,7 @@ index 0000000000..373190372b
 +#endif	/* #ifndef _bcmicmp_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmiov.h b/drivers/net/wireless/bcmdhd/include/bcmiov.h
 new file mode 100644
-index 0000000000..28e01fe2f4
+index 000000000..28e01fe2f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmiov.h
 @@ -0,0 +1,356 @@
@@ -152108,7 +152566,7 @@ index 0000000000..28e01fe2f4
 +#endif /* _bcmiov_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmip.h b/drivers/net/wireless/bcmdhd/include/bcmip.h
 new file mode 100644
-index 0000000000..b5940af8cd
+index 000000000..b5940af8c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmip.h
 @@ -0,0 +1,250 @@
@@ -152364,7 +152822,7 @@ index 0000000000..b5940af8cd
 +#endif	/* _bcmip_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmipv6.h b/drivers/net/wireless/bcmdhd/include/bcmipv6.h
 new file mode 100644
-index 0000000000..4955d21b1a
+index 000000000..4955d21b1
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmipv6.h
 @@ -0,0 +1,161 @@
@@ -152531,7 +152989,7 @@ index 0000000000..4955d21b1a
 +#endif	/* !defined(_bcmipv6_h_) */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmmsgbuf.h b/drivers/net/wireless/bcmdhd/include/bcmmsgbuf.h
 new file mode 100644
-index 0000000000..6c9eaa0874
+index 000000000..6c9eaa087
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmmsgbuf.h
 @@ -0,0 +1,1394 @@
@@ -153931,7 +154389,7 @@ index 0000000000..6c9eaa0874
 +#endif /* _bcmmsgbuf_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmnvram.h b/drivers/net/wireless/bcmdhd/include/bcmnvram.h
 new file mode 100644
-index 0000000000..6b5a75f9be
+index 000000000..6b5a75f9b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmnvram.h
 @@ -0,0 +1,328 @@
@@ -154265,7 +154723,7 @@ index 0000000000..6b5a75f9be
 +#endif /* _bcmnvram_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmpcie.h b/drivers/net/wireless/bcmdhd/include/bcmpcie.h
 new file mode 100644
-index 0000000000..6fed0a60f3
+index 000000000..6fed0a60f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmpcie.h
 @@ -0,0 +1,536 @@
@@ -154807,7 +155265,7 @@ index 0000000000..6fed0a60f3
 +#endif	/* _bcmpcie_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmpcispi.h b/drivers/net/wireless/bcmdhd/include/bcmpcispi.h
 new file mode 100644
-index 0000000000..8a8da0714b
+index 000000000..8a8da0714
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmpcispi.h
 @@ -0,0 +1,181 @@
@@ -154994,7 +155452,7 @@ index 0000000000..8a8da0714b
 +#endif /* _BCM_PCI_SPI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmperf.h b/drivers/net/wireless/bcmdhd/include/bcmperf.h
 new file mode 100644
-index 0000000000..4bd807d5e6
+index 000000000..4bd807d5e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmperf.h
 @@ -0,0 +1,39 @@
@@ -155039,7 +155497,7 @@ index 0000000000..4bd807d5e6
 +#endif /* _BCMPERF_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdbus.h b/drivers/net/wireless/bcmdhd/include/bcmsdbus.h
 new file mode 100644
-index 0000000000..d85f144c7e
+index 000000000..d85f144c7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdbus.h
 @@ -0,0 +1,179 @@
@@ -155224,7 +155682,7 @@ index 0000000000..d85f144c7e
 +#endif /* _sdio_api_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdh.h b/drivers/net/wireless/bcmdhd/include/bcmsdh.h
 new file mode 100644
-index 0000000000..9be228d081
+index 000000000..9be228d08
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdh.h
 @@ -0,0 +1,275 @@
@@ -155505,7 +155963,7 @@ index 0000000000..9be228d081
 +#endif	/* _bcmsdh_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdh_sdmmc.h b/drivers/net/wireless/bcmdhd/include/bcmsdh_sdmmc.h
 new file mode 100644
-index 0000000000..51e6f891cd
+index 000000000..51e6f891c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdh_sdmmc.h
 @@ -0,0 +1,128 @@
@@ -155639,7 +156097,7 @@ index 0000000000..51e6f891cd
 +#endif /* __BCMSDH_SDMMC_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdpcm.h b/drivers/net/wireless/bcmdhd/include/bcmsdpcm.h
 new file mode 100644
-index 0000000000..855dd6830a
+index 000000000..855dd6830
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdpcm.h
 @@ -0,0 +1,305 @@
@@ -155950,7 +156408,7 @@ index 0000000000..855dd6830a
 +#endif	/* _bcmsdpcm_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdspi.h b/drivers/net/wireless/bcmdhd/include/bcmsdspi.h
 new file mode 100644
-index 0000000000..1c82867fef
+index 000000000..1c82867fe
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdspi.h
 @@ -0,0 +1,138 @@
@@ -156094,7 +156552,7 @@ index 0000000000..1c82867fef
 +#endif /* _BCM_SD_SPI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsdstd.h b/drivers/net/wireless/bcmdhd/include/bcmsdstd.h
 new file mode 100644
-index 0000000000..8e2dc95d64
+index 000000000..8e2dc95d6
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsdstd.h
 @@ -0,0 +1,281 @@
@@ -156381,7 +156839,7 @@ index 0000000000..8e2dc95d64
 +#endif /* _BCM_SD_STD_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmspi.h b/drivers/net/wireless/bcmdhd/include/bcmspi.h
 new file mode 100644
-index 0000000000..737e479954
+index 000000000..737e47995
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmspi.h
 @@ -0,0 +1,43 @@
@@ -156430,7 +156888,7 @@ index 0000000000..737e479954
 +#endif /* _BCM_SPI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmspibrcm.h b/drivers/net/wireless/bcmdhd/include/bcmspibrcm.h
 new file mode 100644
-index 0000000000..6ce5c8879e
+index 000000000..6ce5c8879
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmspibrcm.h
 @@ -0,0 +1,167 @@
@@ -156603,7 +157061,7 @@ index 0000000000..6ce5c8879e
 +#endif /* _BCM_SPI_BRCM_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsrom_fmt.h b/drivers/net/wireless/bcmdhd/include/bcmsrom_fmt.h
 new file mode 100644
-index 0000000000..0fcf97a631
+index 000000000..0fcf97a63
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsrom_fmt.h
 @@ -0,0 +1,1013 @@
@@ -157622,7 +158080,7 @@ index 0000000000..0fcf97a631
 +#endif	/* _bcmsrom_fmt_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmsrom_tbl.h b/drivers/net/wireless/bcmdhd/include/bcmsrom_tbl.h
 new file mode 100644
-index 0000000000..d2294d15b6
+index 000000000..d2294d15b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmsrom_tbl.h
 @@ -0,0 +1,1458 @@
@@ -159086,7 +159544,7 @@ index 0000000000..d2294d15b6
 +#endif /* _bcmsrom_tbl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmstdlib_s.h b/drivers/net/wireless/bcmdhd/include/bcmstdlib_s.h
 new file mode 100644
-index 0000000000..a364f6bcf3
+index 000000000..a364f6bcf
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmstdlib_s.h
 @@ -0,0 +1,45 @@
@@ -159137,7 +159595,7 @@ index 0000000000..a364f6bcf3
 +#endif /* _bcmstdlib_s_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmtcp.h b/drivers/net/wireless/bcmdhd/include/bcmtcp.h
 new file mode 100644
-index 0000000000..22d319a15a
+index 000000000..22d319a15
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmtcp.h
 @@ -0,0 +1,92 @@
@@ -159235,7 +159693,7 @@ index 0000000000..22d319a15a
 +#endif	/* #ifndef _bcmtcp_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmtlv.h b/drivers/net/wireless/bcmdhd/include/bcmtlv.h
 new file mode 100644
-index 0000000000..421df10b7d
+index 000000000..421df10b7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmtlv.h
 @@ -0,0 +1,342 @@
@@ -159583,7 +160041,7 @@ index 0000000000..421df10b7d
 +#endif	/* _bcmtlv_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmudp.h b/drivers/net/wireless/bcmdhd/include/bcmudp.h
 new file mode 100644
-index 0000000000..0da97757fd
+index 000000000..0da97757f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmudp.h
 @@ -0,0 +1,60 @@
@@ -159649,7 +160107,7 @@ index 0000000000..0da97757fd
 +#endif	/* #ifndef _bcmudp_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/bcmutils.h b/drivers/net/wireless/bcmdhd/include/bcmutils.h
 new file mode 100644
-index 0000000000..443f7bfb5b
+index 000000000..443f7bfb5
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/bcmutils.h
 @@ -0,0 +1,1341 @@
@@ -160996,7 +161454,7 @@ index 0000000000..443f7bfb5b
 +#endif	/* _bcmutils_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/brcm_nl80211.h b/drivers/net/wireless/bcmdhd/include/brcm_nl80211.h
 new file mode 100644
-index 0000000000..c585b0efc7
+index 000000000..c585b0efc
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/brcm_nl80211.h
 @@ -0,0 +1,72 @@
@@ -161074,7 +161532,7 @@ index 0000000000..c585b0efc7
 +#endif /* _brcm_nl80211_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/dbus.h b/drivers/net/wireless/bcmdhd/include/dbus.h
 new file mode 100644
-index 0000000000..ff629ef1ce
+index 000000000..ff629ef1c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/dbus.h
 @@ -0,0 +1,598 @@
@@ -161678,7 +162136,7 @@ index 0000000000..ff629ef1ce
 +#endif /* __DBUS_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/dhd_daemon.h b/drivers/net/wireless/bcmdhd/include/dhd_daemon.h
 new file mode 100644
-index 0000000000..b324b51197
+index 000000000..b324b5119
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/dhd_daemon.h
 @@ -0,0 +1,66 @@
@@ -161750,7 +162208,7 @@ index 0000000000..b324b51197
 +#endif /* __BCM_DHDD_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/dhdioctl.h b/drivers/net/wireless/bcmdhd/include/dhdioctl.h
 new file mode 100644
-index 0000000000..fa2675d3d3
+index 000000000..fa2675d3d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/dhdioctl.h
 @@ -0,0 +1,276 @@
@@ -162032,7 +162490,7 @@ index 0000000000..fa2675d3d3
 +#endif /* _dhdioctl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/dnglevent.h b/drivers/net/wireless/bcmdhd/include/dnglevent.h
 new file mode 100644
-index 0000000000..77c3f50ab9
+index 000000000..77c3f50ab
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/dnglevent.h
 @@ -0,0 +1,141 @@
@@ -162179,7 +162637,7 @@ index 0000000000..77c3f50ab9
 +#endif /* _DNGLEVENT_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/eapol.h b/drivers/net/wireless/bcmdhd/include/eapol.h
 new file mode 100644
-index 0000000000..ace6fda1e3
+index 000000000..ace6fda1e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/eapol.h
 @@ -0,0 +1,282 @@
@@ -162467,7 +162925,7 @@ index 0000000000..ace6fda1e3
 +#endif /* _eapol_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/epivers.h b/drivers/net/wireless/bcmdhd/include/epivers.h
 new file mode 100644
-index 0000000000..db6ea090de
+index 000000000..db6ea090d
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/epivers.h
 @@ -0,0 +1,51 @@
@@ -162524,7 +162982,7 @@ index 0000000000..db6ea090de
 +#endif /* _epivers_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/etd.h b/drivers/net/wireless/bcmdhd/include/etd.h
 new file mode 100644
-index 0000000000..764af85248
+index 000000000..764af8524
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/etd.h
 @@ -0,0 +1,625 @@
@@ -163155,7 +163613,7 @@ index 0000000000..764af85248
 +#endif /* _ETD_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/ethernet.h b/drivers/net/wireless/bcmdhd/include/ethernet.h
 new file mode 100644
-index 0000000000..9e0b9617c8
+index 000000000..9e0b9617c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/ethernet.h
 @@ -0,0 +1,224 @@
@@ -163385,7 +163843,7 @@ index 0000000000..9e0b9617c8
 +#endif /* _NET_ETHERNET_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/event_log.h b/drivers/net/wireless/bcmdhd/include/event_log.h
 new file mode 100644
-index 0000000000..9e0b4b0812
+index 000000000..9e0b4b081
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/event_log.h
 @@ -0,0 +1,422 @@
@@ -163813,7 +164271,7 @@ index 0000000000..9e0b4b0812
 +#endif /* _EVENT_LOG_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/event_log_payload.h b/drivers/net/wireless/bcmdhd/include/event_log_payload.h
 new file mode 100644
-index 0000000000..f1f4cf3f4e
+index 000000000..f1f4cf3f4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/event_log_payload.h
 @@ -0,0 +1,1016 @@
@@ -164835,7 +165293,7 @@ index 0000000000..f1f4cf3f4e
 +#endif /* _EVENT_LOG_PAYLOAD_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/event_log_set.h b/drivers/net/wireless/bcmdhd/include/event_log_set.h
 new file mode 100644
-index 0000000000..d559c5dec6
+index 000000000..d559c5dec
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/event_log_set.h
 @@ -0,0 +1,123 @@
@@ -164964,7 +165422,7 @@ index 0000000000..d559c5dec6
 +#endif /* _EVENT_LOG_SET_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/event_log_tag.h b/drivers/net/wireless/bcmdhd/include/event_log_tag.h
 new file mode 100644
-index 0000000000..e202216359
+index 000000000..e20221635
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/event_log_tag.h
 @@ -0,0 +1,478 @@
@@ -165448,7 +165906,7 @@ index 0000000000..e202216359
 +#endif /* _EVENT_LOG_TAG_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/event_trace.h b/drivers/net/wireless/bcmdhd/include/event_trace.h
 new file mode 100644
-index 0000000000..fe9bb3580e
+index 000000000..fe9bb3580
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/event_trace.h
 @@ -0,0 +1,123 @@
@@ -165577,7 +166035,7 @@ index 0000000000..fe9bb3580e
 +#endif	/* _WL_DIAG_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/fils.h b/drivers/net/wireless/bcmdhd/include/fils.h
 new file mode 100644
-index 0000000000..0f033f1a4e
+index 000000000..0f033f1a4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/fils.h
 @@ -0,0 +1,294 @@
@@ -165877,7 +166335,7 @@ index 0000000000..0f033f1a4e
 +#endif /* __FILSAUTH_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_armtrap.h b/drivers/net/wireless/bcmdhd/include/hnd_armtrap.h
 new file mode 100644
-index 0000000000..184a7ddc8c
+index 000000000..184a7ddc8
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_armtrap.h
 @@ -0,0 +1,89 @@
@@ -165972,7 +166430,7 @@ index 0000000000..184a7ddc8c
 +#endif	/* _hnd_armtrap_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_cons.h b/drivers/net/wireless/bcmdhd/include/hnd_cons.h
 new file mode 100644
-index 0000000000..879906dafe
+index 000000000..879906daf
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_cons.h
 @@ -0,0 +1,86 @@
@@ -166064,7 +166522,7 @@ index 0000000000..879906dafe
 +#endif /* _hnd_cons_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_debug.h b/drivers/net/wireless/bcmdhd/include/hnd_debug.h
 new file mode 100644
-index 0000000000..a16123ebfc
+index 000000000..a16123ebf
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_debug.h
 @@ -0,0 +1,168 @@
@@ -166238,7 +166696,7 @@ index 0000000000..a16123ebfc
 +#endif /* _HND_DEBUG_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_pktpool.h b/drivers/net/wireless/bcmdhd/include/hnd_pktpool.h
 new file mode 100644
-index 0000000000..caa436c105
+index 000000000..caa436c10
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_pktpool.h
 @@ -0,0 +1,243 @@
@@ -166487,7 +166945,7 @@ index 0000000000..caa436c105
 +#endif /* _hnd_pktpool_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_pktq.h b/drivers/net/wireless/bcmdhd/include/hnd_pktq.h
 new file mode 100644
-index 0000000000..a7af8ef6f1
+index 000000000..a7af8ef6f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_pktq.h
 @@ -0,0 +1,325 @@
@@ -166818,7 +167276,7 @@ index 0000000000..a7af8ef6f1
 +#endif /* _hnd_pktq_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hnd_trap.h b/drivers/net/wireless/bcmdhd/include/hnd_trap.h
 new file mode 100644
-index 0000000000..02561f34ad
+index 000000000..02561f34a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hnd_trap.h
 @@ -0,0 +1,39 @@
@@ -166863,7 +167321,7 @@ index 0000000000..02561f34ad
 +#endif	/* _hnd_trap_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndchipc.h b/drivers/net/wireless/bcmdhd/include/hndchipc.h
 new file mode 100644
-index 0000000000..971311d436
+index 000000000..971311d43
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndchipc.h
 @@ -0,0 +1,53 @@
@@ -166922,7 +167380,7 @@ index 0000000000..971311d436
 +#endif /* _hndchipc_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndlhl.h b/drivers/net/wireless/bcmdhd/include/hndlhl.h
 new file mode 100644
-index 0000000000..8e75e3970e
+index 000000000..8e75e3970
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndlhl.h
 @@ -0,0 +1,61 @@
@@ -166989,7 +167447,7 @@ index 0000000000..8e75e3970e
 +#endif /* _hndlhl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndmem.h b/drivers/net/wireless/bcmdhd/include/hndmem.h
 new file mode 100644
-index 0000000000..f3f3a23725
+index 000000000..f3f3a2372
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndmem.h
 @@ -0,0 +1,80 @@
@@ -167075,7 +167533,7 @@ index 0000000000..f3f3a23725
 +#endif /* _HNDMEM_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndoobr.h b/drivers/net/wireless/bcmdhd/include/hndoobr.h
 new file mode 100644
-index 0000000000..4e672ccc80
+index 000000000..4e672ccc8
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndoobr.h
 @@ -0,0 +1,75 @@
@@ -167156,7 +167614,7 @@ index 0000000000..4e672ccc80
 +#endif /* _hndoobr_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndpmu.h b/drivers/net/wireless/bcmdhd/include/hndpmu.h
 new file mode 100644
-index 0000000000..2abff465af
+index 000000000..2abff465a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndpmu.h
 @@ -0,0 +1,79 @@
@@ -167241,7 +167699,7 @@ index 0000000000..2abff465af
 +#endif /* _hndpmu_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/hndsoc.h b/drivers/net/wireless/bcmdhd/include/hndsoc.h
 new file mode 100644
-index 0000000000..35574ea8a2
+index 000000000..35574ea8a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/hndsoc.h
 @@ -0,0 +1,350 @@
@@ -167597,7 +168055,7 @@ index 0000000000..35574ea8a2
 +#endif /* _HNDSOC_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/linux_osl.h b/drivers/net/wireless/bcmdhd/include/linux_osl.h
 new file mode 100644
-index 0000000000..8d6fc34f20
+index 000000000..8d6fc34f2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/linux_osl.h
 @@ -0,0 +1,634 @@
@@ -168237,7 +168695,7 @@ index 0000000000..8d6fc34f20
 +#endif	/* _linux_osl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/linux_pkt.h b/drivers/net/wireless/bcmdhd/include/linux_pkt.h
 new file mode 100644
-index 0000000000..beb4963662
+index 000000000..beb496366
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/linux_pkt.h
 @@ -0,0 +1,233 @@
@@ -168476,7 +168934,7 @@ index 0000000000..beb4963662
 +#endif	/* _linux_pkt_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/linuxver.h b/drivers/net/wireless/bcmdhd/include/linuxver.h
 new file mode 100644
-index 0000000000..75b16aa3c1
+index 000000000..75b16aa3c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/linuxver.h
 @@ -0,0 +1,884 @@
@@ -169366,7 +169824,7 @@ index 0000000000..75b16aa3c1
 +#endif /* _linuxver_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/lpflags.h b/drivers/net/wireless/bcmdhd/include/lpflags.h
 new file mode 100644
-index 0000000000..b27013294d
+index 000000000..b27013294
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/lpflags.h
 @@ -0,0 +1,45 @@
@@ -169417,7 +169875,7 @@ index 0000000000..b27013294d
 +#endif /* _lpflags_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/mbo.h b/drivers/net/wireless/bcmdhd/include/mbo.h
 new file mode 100644
-index 0000000000..aed093ce7a
+index 000000000..aed093ce7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/mbo.h
 @@ -0,0 +1,285 @@
@@ -169708,7 +170166,7 @@ index 0000000000..aed093ce7a
 +#endif /* __MBO_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/miniopt.h b/drivers/net/wireless/bcmdhd/include/miniopt.h
 new file mode 100644
-index 0000000000..4a99e70831
+index 000000000..4a99e7083
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/miniopt.h
 @@ -0,0 +1,79 @@
@@ -169793,7 +170251,7 @@ index 0000000000..4a99e70831
 +#endif  /* MINI_OPT_H  */
 diff --git a/drivers/net/wireless/bcmdhd/include/msf.h b/drivers/net/wireless/bcmdhd/include/msf.h
 new file mode 100644
-index 0000000000..3a782a61a8
+index 000000000..3a782a61a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/msf.h
 @@ -0,0 +1,66 @@
@@ -169865,7 +170323,7 @@ index 0000000000..3a782a61a8
 +#endif /* _WLC_MSF_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/msgtrace.h b/drivers/net/wireless/bcmdhd/include/msgtrace.h
 new file mode 100644
-index 0000000000..1c684fd115
+index 000000000..1c684fd11
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/msgtrace.h
 @@ -0,0 +1,62 @@
@@ -169933,7 +170391,7 @@ index 0000000000..1c684fd115
 +#endif	/* _MSGTRACE_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/nan.h b/drivers/net/wireless/bcmdhd/include/nan.h
 new file mode 100644
-index 0000000000..488473ce43
+index 000000000..488473ce4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/nan.h
 @@ -0,0 +1,1558 @@
@@ -171497,7 +171955,7 @@ index 0000000000..488473ce43
 +#endif /* _NAN_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/osl.h b/drivers/net/wireless/bcmdhd/include/osl.h
 new file mode 100644
-index 0000000000..68cde0d533
+index 000000000..68cde0d53
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/osl.h
 @@ -0,0 +1,377 @@
@@ -171880,7 +172338,7 @@ index 0000000000..68cde0d533
 +#endif	/* _osl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/osl_decl.h b/drivers/net/wireless/bcmdhd/include/osl_decl.h
 new file mode 100644
-index 0000000000..652b3191ac
+index 000000000..652b3191a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/osl_decl.h
 @@ -0,0 +1,37 @@
@@ -171923,7 +172381,7 @@ index 0000000000..652b3191ac
 +#endif // endif
 diff --git a/drivers/net/wireless/bcmdhd/include/osl_ext.h b/drivers/net/wireless/bcmdhd/include/osl_ext.h
 new file mode 100644
-index 0000000000..da2eb6e1f5
+index 000000000..da2eb6e1f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/osl_ext.h
 @@ -0,0 +1,765 @@
@@ -172694,7 +173152,7 @@ index 0000000000..da2eb6e1f5
 +#endif	/* _osl_ext_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/p2p.h b/drivers/net/wireless/bcmdhd/include/p2p.h
 new file mode 100644
-index 0000000000..fc3032fa93
+index 000000000..fc3032fa9
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/p2p.h
 @@ -0,0 +1,701 @@
@@ -173401,7 +173859,7 @@ index 0000000000..fc3032fa93
 +#endif /* _P2P_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/packed_section_end.h b/drivers/net/wireless/bcmdhd/include/packed_section_end.h
 new file mode 100644
-index 0000000000..3fedac454b
+index 000000000..3fedac454
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/packed_section_end.h
 @@ -0,0 +1,59 @@
@@ -173466,7 +173924,7 @@ index 0000000000..3fedac454b
 +#undef	BWL_POST_PACKED_STRUCT
 diff --git a/drivers/net/wireless/bcmdhd/include/packed_section_start.h b/drivers/net/wireless/bcmdhd/include/packed_section_start.h
 new file mode 100644
-index 0000000000..abb2cffeb9
+index 000000000..abb2cffeb
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/packed_section_start.h
 @@ -0,0 +1,104 @@
@@ -173576,7 +174034,7 @@ index 0000000000..abb2cffeb9
 +#endif // endif
 diff --git a/drivers/net/wireless/bcmdhd/include/pcicfg.h b/drivers/net/wireless/bcmdhd/include/pcicfg.h
 new file mode 100644
-index 0000000000..af491449f8
+index 000000000..af491449f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/pcicfg.h
 @@ -0,0 +1,401 @@
@@ -173983,7 +174441,7 @@ index 0000000000..af491449f8
 +#endif	/* _h_pcicfg_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/pcie_core.h b/drivers/net/wireless/bcmdhd/include/pcie_core.h
 new file mode 100644
-index 0000000000..18905a0e05
+index 000000000..18905a0e0
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/pcie_core.h
 @@ -0,0 +1,1192 @@
@@ -175181,7 +175639,7 @@ index 0000000000..18905a0e05
 +#endif	/* _PCIE_CORE_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/rte_ioctl.h b/drivers/net/wireless/bcmdhd/include/rte_ioctl.h
 new file mode 100644
-index 0000000000..18900ab645
+index 000000000..18900ab64
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/rte_ioctl.h
 @@ -0,0 +1,103 @@
@@ -175290,7 +175748,7 @@ index 0000000000..18900ab645
 +#endif /* _rte_ioctl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbchipc.h b/drivers/net/wireless/bcmdhd/include/sbchipc.h
 new file mode 100644
-index 0000000000..abd7aaf96c
+index 000000000..abd7aaf96
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbchipc.h
 @@ -0,0 +1,4618 @@
@@ -179914,7 +180372,7 @@ index 0000000000..abd7aaf96c
 +#endif	/* _SBCHIPC_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbconfig.h b/drivers/net/wireless/bcmdhd/include/sbconfig.h
 new file mode 100644
-index 0000000000..05c337a4ab
+index 000000000..05c337a4a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbconfig.h
 @@ -0,0 +1,285 @@
@@ -180205,7 +180663,7 @@ index 0000000000..05c337a4ab
 +#endif	/* _SBCONFIG_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbgci.h b/drivers/net/wireless/bcmdhd/include/sbgci.h
 new file mode 100644
-index 0000000000..3fd6dca90a
+index 000000000..3fd6dca90
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbgci.h
 @@ -0,0 +1,273 @@
@@ -180484,7 +180942,7 @@ index 0000000000..3fd6dca90a
 +#endif	/* _SBGCI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbhndarm.h b/drivers/net/wireless/bcmdhd/include/sbhndarm.h
 new file mode 100644
-index 0000000000..1aa46070b6
+index 000000000..1aa46070b
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbhndarm.h
 @@ -0,0 +1,141 @@
@@ -180631,7 +181089,7 @@ index 0000000000..1aa46070b6
 +#endif	/* _sbhndarm_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbhnddma.h b/drivers/net/wireless/bcmdhd/include/sbhnddma.h
 new file mode 100644
-index 0000000000..862a1dc3ac
+index 000000000..862a1dc3a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbhnddma.h
 @@ -0,0 +1,449 @@
@@ -181086,7 +181544,7 @@ index 0000000000..862a1dc3ac
 +#endif	/* _sbhnddma_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbpcmcia.h b/drivers/net/wireless/bcmdhd/include/sbpcmcia.h
 new file mode 100644
-index 0000000000..5e422486cf
+index 000000000..5e422486c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbpcmcia.h
 @@ -0,0 +1,137 @@
@@ -181229,7 +181687,7 @@ index 0000000000..5e422486cf
 +#endif	/* _SBPCMCIA_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbsdio.h b/drivers/net/wireless/bcmdhd/include/sbsdio.h
 new file mode 100644
-index 0000000000..38fee229e2
+index 000000000..38fee229e
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbsdio.h
 @@ -0,0 +1,188 @@
@@ -181423,7 +181881,7 @@ index 0000000000..38fee229e2
 +#endif	/* _SBSDIO_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbsdpcmdev.h b/drivers/net/wireless/bcmdhd/include/sbsdpcmdev.h
 new file mode 100644
-index 0000000000..fba8ad7bce
+index 000000000..fba8ad7bc
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbsdpcmdev.h
 @@ -0,0 +1,309 @@
@@ -181738,7 +182196,7 @@ index 0000000000..fba8ad7bce
 +#endif	/* _sbsdpcmdev_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbsocram.h b/drivers/net/wireless/bcmdhd/include/sbsocram.h
 new file mode 100644
-index 0000000000..6cb24141a8
+index 000000000..6cb24141a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbsocram.h
 @@ -0,0 +1,204 @@
@@ -181948,7 +182406,7 @@ index 0000000000..6cb24141a8
 +#endif	/* _SBSOCRAM_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sbsysmem.h b/drivers/net/wireless/bcmdhd/include/sbsysmem.h
 new file mode 100644
-index 0000000000..bd347cc848
+index 000000000..bd347cc84
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sbsysmem.h
 @@ -0,0 +1,180 @@
@@ -182134,7 +182592,7 @@ index 0000000000..bd347cc848
 +#endif	/* _SBSYSMEM_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sdio.h b/drivers/net/wireless/bcmdhd/include/sdio.h
 new file mode 100644
-index 0000000000..90eddcc138
+index 000000000..90eddcc13
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sdio.h
 @@ -0,0 +1,625 @@
@@ -182765,7 +183223,7 @@ index 0000000000..90eddcc138
 +#endif /* _SDIO_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sdioh.h b/drivers/net/wireless/bcmdhd/include/sdioh.h
 new file mode 100644
-index 0000000000..907b3f6bcc
+index 000000000..907b3f6bc
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sdioh.h
 @@ -0,0 +1,450 @@
@@ -183221,7 +183679,7 @@ index 0000000000..907b3f6bcc
 +#endif /* _SDIOH_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/sdiovar.h b/drivers/net/wireless/bcmdhd/include/sdiovar.h
 new file mode 100644
-index 0000000000..8dea70a795
+index 000000000..8dea70a79
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sdiovar.h
 @@ -0,0 +1,124 @@
@@ -183351,7 +183809,7 @@ index 0000000000..8dea70a795
 +#endif /* _sdiovar_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/sdspi.h b/drivers/net/wireless/bcmdhd/include/sdspi.h
 new file mode 100644
-index 0000000000..23f32b2c0b
+index 000000000..23f32b2c0
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/sdspi.h
 @@ -0,0 +1,78 @@
@@ -183435,7 +183893,7 @@ index 0000000000..23f32b2c0b
 +#endif /* _SD_SPI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/siutils.h b/drivers/net/wireless/bcmdhd/include/siutils.h
 new file mode 100644
-index 0000000000..670e5e5555
+index 000000000..670e5e555
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/siutils.h
 @@ -0,0 +1,809 @@
@@ -184250,7 +184708,7 @@ index 0000000000..670e5e5555
 +#endif	/* _siutils_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/spid.h b/drivers/net/wireless/bcmdhd/include/spid.h
 new file mode 100644
-index 0000000000..dc3897e065
+index 000000000..dc3897e06
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/spid.h
 @@ -0,0 +1,168 @@
@@ -184424,7 +184882,7 @@ index 0000000000..dc3897e065
 +#endif /* _SPI_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/trxhdr.h b/drivers/net/wireless/bcmdhd/include/trxhdr.h
 new file mode 100644
-index 0000000000..9a299a93ae
+index 000000000..9a299a93a
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/trxhdr.h
 @@ -0,0 +1,95 @@
@@ -184525,7 +184983,7 @@ index 0000000000..9a299a93ae
 +#endif /* _TRX_HDR_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/typedefs.h b/drivers/net/wireless/bcmdhd/include/typedefs.h
 new file mode 100644
-index 0000000000..c862f4919d
+index 000000000..c862f4919
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/typedefs.h
 @@ -0,0 +1,367 @@
@@ -184898,7 +185356,7 @@ index 0000000000..c862f4919d
 +#endif /* _TYPEDEFS_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/usbrdl.h b/drivers/net/wireless/bcmdhd/include/usbrdl.h
 new file mode 100644
-index 0000000000..be5bd69232
+index 000000000..be5bd6923
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/usbrdl.h
 @@ -0,0 +1,134 @@
@@ -185038,7 +185496,7 @@ index 0000000000..be5bd69232
 +#endif  /* _USB_RDL_H */
 diff --git a/drivers/net/wireless/bcmdhd/include/vlan.h b/drivers/net/wireless/bcmdhd/include/vlan.h
 new file mode 100644
-index 0000000000..6862e3e783
+index 000000000..6862e3e78
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/vlan.h
 @@ -0,0 +1,97 @@
@@ -185141,7 +185599,7 @@ index 0000000000..6862e3e783
 +#endif /* _vlan_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/wlfc_proto.h b/drivers/net/wireless/bcmdhd/include/wlfc_proto.h
 new file mode 100644
-index 0000000000..0e10e97ab7
+index 000000000..0e10e97ab
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wlfc_proto.h
 @@ -0,0 +1,413 @@
@@ -185560,7 +186018,7 @@ index 0000000000..0e10e97ab7
 +#endif /* __wlfc_proto_definitions_h__ */
 diff --git a/drivers/net/wireless/bcmdhd/include/wlioctl.h b/drivers/net/wireless/bcmdhd/include/wlioctl.h
 new file mode 100644
-index 0000000000..16aefaf61c
+index 000000000..16aefaf61
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wlioctl.h
 @@ -0,0 +1,20751 @@
@@ -206317,7 +206775,7 @@ index 0000000000..16aefaf61c
 +#endif /* _wlioctl_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/wlioctl_defs.h b/drivers/net/wireless/bcmdhd/include/wlioctl_defs.h
 new file mode 100644
-index 0000000000..4f0ee1dfe1
+index 000000000..4f0ee1dfe
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wlioctl_defs.h
 @@ -0,0 +1,2465 @@
@@ -208788,7 +209246,7 @@ index 0000000000..4f0ee1dfe1
 +#endif /* wlioctl_defs_h */
 diff --git a/drivers/net/wireless/bcmdhd/include/wlioctl_utils.h b/drivers/net/wireless/bcmdhd/include/wlioctl_utils.h
 new file mode 100644
-index 0000000000..e3926fdb41
+index 000000000..e3926fdb4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wlioctl_utils.h
 @@ -0,0 +1,61 @@
@@ -208855,7 +209313,7 @@ index 0000000000..e3926fdb41
 +#endif /* _wlioctl_utils_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/wpa.h b/drivers/net/wireless/bcmdhd/include/wpa.h
 new file mode 100644
-index 0000000000..9d8db99f1e
+index 000000000..9d8db99f1
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wpa.h
 @@ -0,0 +1,311 @@
@@ -209172,7 +209630,7 @@ index 0000000000..9d8db99f1e
 +#endif /* _proto_wpa_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/include/wps.h b/drivers/net/wireless/bcmdhd/include/wps.h
 new file mode 100644
-index 0000000000..bceedb1c46
+index 000000000..bceedb1c4
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/include/wps.h
 @@ -0,0 +1,385 @@
@@ -209563,7 +210021,7 @@ index 0000000000..bceedb1c46
 +#endif /* _WPS_ */
 diff --git a/drivers/net/wireless/bcmdhd/linux_osl.c b/drivers/net/wireless/bcmdhd/linux_osl.c
 new file mode 100644
-index 0000000000..e48c0c8985
+index 000000000..e48c0c898
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/linux_osl.c
 @@ -0,0 +1,2110 @@
@@ -211680,7 +212138,7 @@ index 0000000000..e48c0c8985
 \ No newline at end of file
 diff --git a/drivers/net/wireless/bcmdhd/linux_osl_priv.h b/drivers/net/wireless/bcmdhd/linux_osl_priv.h
 new file mode 100644
-index 0000000000..7dfb96c695
+index 000000000..7dfb96c69
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/linux_osl_priv.h
 @@ -0,0 +1,184 @@
@@ -211870,7 +212328,7 @@ index 0000000000..7dfb96c695
 +#endif /* _LINUX_OSL_PRIV_H_ */
 diff --git a/drivers/net/wireless/bcmdhd/linux_pkt.c b/drivers/net/wireless/bcmdhd/linux_pkt.c
 new file mode 100644
-index 0000000000..fe65534402
+index 000000000..fe6553440
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/linux_pkt.c
 @@ -0,0 +1,625 @@
@@ -212501,7 +212959,7 @@ index 0000000000..fe65534402
 +#endif /* LINUX_VERSION >= 3.6.0 && TSQ_MULTIPLIER */
 diff --git a/drivers/net/wireless/bcmdhd/otpdefs.h b/drivers/net/wireless/bcmdhd/otpdefs.h
 new file mode 100644
-index 0000000000..ed50b1555e
+index 000000000..ed50b1555
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/otpdefs.h
 @@ -0,0 +1,121 @@
@@ -212628,7 +213086,7 @@ index 0000000000..ed50b1555e
 +#endif /* _OTPDEFS_H */
 diff --git a/drivers/net/wireless/bcmdhd/pcie_core.c b/drivers/net/wireless/bcmdhd/pcie_core.c
 new file mode 100644
-index 0000000000..39b0c6b944
+index 000000000..39b0c6b94
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/pcie_core.c
 @@ -0,0 +1,158 @@
@@ -212792,7 +213250,7 @@ index 0000000000..39b0c6b944
 +#endif /* BCMDRIVER */
 diff --git a/drivers/net/wireless/bcmdhd/sbutils.c b/drivers/net/wireless/bcmdhd/sbutils.c
 new file mode 100644
-index 0000000000..68961eeac3
+index 000000000..68961eeac
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/sbutils.c
 @@ -0,0 +1,1093 @@
@@ -213891,7 +214349,7 @@ index 0000000000..68961eeac3
 +#endif // endif
 diff --git a/drivers/net/wireless/bcmdhd/siutils.c b/drivers/net/wireless/bcmdhd/siutils.c
 new file mode 100644
-index 0000000000..994430f15c
+index 000000000..994430f15
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/siutils.c
 @@ -0,0 +1,3800 @@
@@ -217697,7 +218155,7 @@ index 0000000000..994430f15c
 +}
 diff --git a/drivers/net/wireless/bcmdhd/siutils_priv.h b/drivers/net/wireless/bcmdhd/siutils_priv.h
 new file mode 100644
-index 0000000000..983619b0c9
+index 000000000..983619b0c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/siutils_priv.h
 @@ -0,0 +1,355 @@
@@ -218058,7 +218516,7 @@ index 0000000000..983619b0c9
 +#endif	/* _siutils_priv_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_android.c b/drivers/net/wireless/bcmdhd/wl_android.c
 new file mode 100644
-index 0000000000..86c70989fc
+index 000000000..86c70989f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_android.c
 @@ -0,0 +1,6637 @@
@@ -224701,7 +225159,7 @@ index 0000000000..86c70989fc
 +#endif /* WL_STATIC_IF */
 diff --git a/drivers/net/wireless/bcmdhd/wl_android.h b/drivers/net/wireless/bcmdhd/wl_android.h
 new file mode 100644
-index 0000000000..f05470dffd
+index 000000000..f05470dff
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_android.h
 @@ -0,0 +1,392 @@
@@ -225099,7 +225557,7 @@ index 0000000000..f05470dffd
 +#endif /* _wl_android_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_android_ext.c b/drivers/net/wireless/bcmdhd/wl_android_ext.c
 new file mode 100644
-index 0000000000..dde787ccb1
+index 000000000..dde787ccb
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_android_ext.c
 @@ -0,0 +1,7283 @@
@@ -232388,7 +232846,7 @@ index 0000000000..dde787ccb1
 +
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfg80211.c b/drivers/net/wireless/bcmdhd/wl_cfg80211.c
 new file mode 100644
-index 0000000000..27bdc6162f
+index 000000000..27bdc6162
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfg80211.c
 @@ -0,0 +1,24989 @@
@@ -257383,7 +257841,7 @@ index 0000000000..27bdc6162f
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfg80211.h b/drivers/net/wireless/bcmdhd/wl_cfg80211.h
 new file mode 100644
-index 0000000000..0aefc1c079
+index 000000000..0aefc1c07
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfg80211.h
 @@ -0,0 +1,2458 @@
@@ -259847,7 +260305,7 @@ index 0000000000..0aefc1c079
 +#endif /* _wl_cfg80211_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfg_btcoex.c b/drivers/net/wireless/bcmdhd/wl_cfg_btcoex.c
 new file mode 100644
-index 0000000000..735abe04cb
+index 000000000..735abe04c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfg_btcoex.c
 @@ -0,0 +1,568 @@
@@ -260421,7 +260879,7 @@ index 0000000000..735abe04cb
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgnan.c b/drivers/net/wireless/bcmdhd/wl_cfgnan.c
 new file mode 100644
-index 0000000000..dbdddf93c8
+index 000000000..dbdddf93c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgnan.c
 @@ -0,0 +1,8181 @@
@@ -268608,7 +269066,7 @@ index 0000000000..dbdddf93c8
 +#endif /* WL_NAN */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgnan.h b/drivers/net/wireless/bcmdhd/wl_cfgnan.h
 new file mode 100644
-index 0000000000..59e6d4fcd5
+index 000000000..59e6d4fcd
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgnan.h
 @@ -0,0 +1,898 @@
@@ -269512,7 +269970,7 @@ index 0000000000..59e6d4fcd5
 +#endif	/* _wl_cfgnan_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgp2p.c b/drivers/net/wireless/bcmdhd/wl_cfgp2p.c
 new file mode 100644
-index 0000000000..edcedc6712
+index 000000000..edcedc671
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgp2p.c
 @@ -0,0 +1,2740 @@
@@ -272258,7 +272716,7 @@ index 0000000000..edcedc6712
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgp2p.h b/drivers/net/wireless/bcmdhd/wl_cfgp2p.h
 new file mode 100644
-index 0000000000..f4186ae6fb
+index 000000000..f4186ae6f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgp2p.h
 @@ -0,0 +1,457 @@
@@ -272721,7 +273179,7 @@ index 0000000000..f4186ae6fb
 +#endif				/* _wl_cfgp2p_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgscan.c b/drivers/net/wireless/bcmdhd/wl_cfgscan.c
 new file mode 100644
-index 0000000000..7ab8712a22
+index 000000000..7ab8712a2
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgscan.c
 @@ -0,0 +1,3297 @@
@@ -276024,7 +276482,7 @@ index 0000000000..7ab8712a22
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgscan.h b/drivers/net/wireless/bcmdhd/wl_cfgscan.h
 new file mode 100644
-index 0000000000..1116d7aa6a
+index 000000000..1116d7aa6
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgscan.h
 @@ -0,0 +1,95 @@
@@ -276125,7 +276583,7 @@ index 0000000000..1116d7aa6a
 +#endif /* _wl_cfgscan_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgvendor.c b/drivers/net/wireless/bcmdhd/wl_cfgvendor.c
 new file mode 100644
-index 0000000000..157bb80ae7
+index 000000000..157bb80ae
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgvendor.c
 @@ -0,0 +1,8737 @@
@@ -284868,7 +285326,7 @@ index 0000000000..157bb80ae7
 +#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(3, 13, 0)) || defined(WL_VENDOR_EXT_SUPPORT) */
 diff --git a/drivers/net/wireless/bcmdhd/wl_cfgvendor.h b/drivers/net/wireless/bcmdhd/wl_cfgvendor.h
 new file mode 100644
-index 0000000000..ec3ab455c3
+index 000000000..ec3ab455c
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_cfgvendor.h
 @@ -0,0 +1,720 @@
@@ -285594,7 +286052,7 @@ index 0000000000..ec3ab455c3
 +#endif /* _wl_cfgvendor_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_dbg.h b/drivers/net/wireless/bcmdhd/wl_dbg.h
 new file mode 100644
-index 0000000000..5414aa9d6f
+index 000000000..5414aa9d6
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_dbg.h
 @@ -0,0 +1,380 @@
@@ -285980,7 +286438,7 @@ index 0000000000..5414aa9d6f
 +#endif /* _wl_dbg_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_escan.c b/drivers/net/wireless/bcmdhd/wl_escan.c
 new file mode 100644
-index 0000000000..2775379c7d
+index 000000000..2775379c7
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_escan.c
 @@ -0,0 +1,1593 @@
@@ -287579,7 +288037,7 @@ index 0000000000..2775379c7d
 +
 diff --git a/drivers/net/wireless/bcmdhd/wl_escan.h b/drivers/net/wireless/bcmdhd/wl_escan.h
 new file mode 100644
-index 0000000000..080f333f5c
+index 000000000..080f333f5
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_escan.h
 @@ -0,0 +1,77 @@
@@ -287662,7 +288120,7 @@ index 0000000000..080f333f5c
 +
 diff --git a/drivers/net/wireless/bcmdhd/wl_event.c b/drivers/net/wireless/bcmdhd/wl_event.c
 new file mode 100644
-index 0000000000..5f75d6571f
+index 000000000..5f75d6571
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_event.c
 @@ -0,0 +1,508 @@
@@ -288176,7 +288634,7 @@ index 0000000000..5f75d6571f
 +#endif
 diff --git a/drivers/net/wireless/bcmdhd/wl_iw.c b/drivers/net/wireless/bcmdhd/wl_iw.c
 new file mode 100644
-index 0000000000..4f926c73fb
+index 000000000..4f926c73f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_iw.c
 @@ -0,0 +1,4359 @@
@@ -292541,7 +292999,7 @@ index 0000000000..4f926c73fb
 +#endif /* USE_IW */
 diff --git a/drivers/net/wireless/bcmdhd/wl_iw.h b/drivers/net/wireless/bcmdhd/wl_iw.h
 new file mode 100644
-index 0000000000..31d581152d
+index 000000000..31d581152
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_iw.h
 @@ -0,0 +1,177 @@
@@ -292724,7 +293182,7 @@ index 0000000000..31d581152d
 +#endif /* _wl_iw_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/wl_linux_mon.c b/drivers/net/wireless/bcmdhd/wl_linux_mon.c
 new file mode 100644
-index 0000000000..4ab4f7edde
+index 000000000..4ab4f7edd
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_linux_mon.c
 @@ -0,0 +1,406 @@
@@ -293136,7 +293594,7 @@ index 0000000000..4ab4f7edde
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wl_roam.c b/drivers/net/wireless/bcmdhd/wl_roam.c
 new file mode 100644
-index 0000000000..1b3aea2638
+index 000000000..1b3aea263
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wl_roam.c
 @@ -0,0 +1,374 @@
@@ -293516,7 +293974,7 @@ index 0000000000..1b3aea2638
 +#endif /* ESCAN_CHANNEL_CACHE */
 diff --git a/drivers/net/wireless/bcmdhd/wldev_common.c b/drivers/net/wireless/bcmdhd/wldev_common.c
 new file mode 100644
-index 0000000000..4181b28098
+index 000000000..4181b2809
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wldev_common.c
 @@ -0,0 +1,534 @@
@@ -294056,7 +294514,7 @@ index 0000000000..4181b28098
 +}
 diff --git a/drivers/net/wireless/bcmdhd/wldev_common.h b/drivers/net/wireless/bcmdhd/wldev_common.h
 new file mode 100644
-index 0000000000..2bd0791d9f
+index 000000000..2bd0791d9
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/wldev_common.h
 @@ -0,0 +1,134 @@
@@ -294194,7 +294652,3 @@ index 0000000000..2bd0791d9f
 +int wldev_set_band(struct net_device *dev, uint band);
 +
 +#endif /* __WLDEV_COMMON_H__ */
-
--- 
-2.43.0
-

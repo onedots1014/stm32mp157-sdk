@@ -1,7 +1,7 @@
-From 7849451bacb5dcf27985f401293f7a596d948a9d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 14 Mar 2026 22:25:56 +0800
-Subject: [PATCH 2/5] fix(clk): clear HSEBYP in digbyp mode to allow HSERDY to
+Subject: [PATCH] fix(clk): clear HSEBYP in digbyp mode to allow HSERDY to
  assert
 
 ---
@@ -30,6 +30,3 @@ index f0201f3..05f13e7 100644
  	}
  
  	stm32mp1_hs_ocs_set(true, RCC_OCENR_HSEON);
--- 
-2.43.0
-

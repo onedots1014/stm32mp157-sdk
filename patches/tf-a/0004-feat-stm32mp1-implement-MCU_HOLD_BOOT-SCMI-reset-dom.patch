@@ -1,8 +1,8 @@
-From bfb52974b88e88e590ddf916fea5d83e567c5f9d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Wed, 4 Mar 2026 22:26:36 +0800
-Subject: [PATCH 4/5] feat(stm32mp1): implement MCU_HOLD_BOOT SCMI reset domain
- for M4 remoteproc
+Subject: [PATCH] feat(stm32mp1): implement MCU_HOLD_BOOT SCMI reset domain for
+ M4 remoteproc
 
 ---
  plat/st/stm32mp1/stm32mp1_scmi.c             | 18 +++++++++++++++++-
@@ -65,6 +65,3 @@ index a0ca697..3b40050 100644
  	case MDMA_R:
  		shres_id = STM32MP1_SHRES_MDMA;
  		break;
--- 
-2.43.0
-

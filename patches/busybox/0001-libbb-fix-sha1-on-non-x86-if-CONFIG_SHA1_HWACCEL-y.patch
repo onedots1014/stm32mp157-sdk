@@ -1,7 +1,7 @@
-From 69c7b5bfb435653e55bb5f84e4df6be996ea4f91 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 24 Oct 2026 23:10:00 +0800
-Subject: [PATCH] libbb: fix sha1 on !x86 if CONFIG_SHA1_HWACCEL=y
+Subject: [PATCH] libbb: fix sha1 on non-x86 if CONFIG_SHA1_HWACCEL=y
 
 Backport of upstream commit bf57f732a5b6 ("libbb: fix sha1 on !x86 if
 CONFIG_SHA1_HWACCEL=y", Rudi Heitbaum, 2024-09-29). The fix landed two
@@ -35,6 +35,3 @@ index 57a8014..75a61c3 100644
  #endif
  	) {
  		hash_size = 5;
--- 
-2.43.0
-

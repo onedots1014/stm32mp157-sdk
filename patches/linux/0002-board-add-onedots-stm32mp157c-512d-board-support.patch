@@ -1,7 +1,7 @@
-From 97f0e01db9b6a25cfeadcac10b1a7f0a2c0f2043 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Fri, 3 Jul 2026 23:47:58 -0700
-Subject: [PATCH 2/8] board: add onedots stm32mp157c-512d board support
+Subject: [PATCH] board: add onedots stm32mp157c-512d board support
 
 ---
  arch/arm/boot/dts/Makefile                    |   3 +-
@@ -18,7 +18,7 @@ Subject: [PATCH 2/8] board: add onedots stm32mp157c-512d board support
  create mode 100644 arch/arm/configs/onedots_stm32mp157c_defconfig
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 1c5d5b0278..2b7813574f 100644
+index 1c5d5b027..2b7813574 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
 @@ -1039,7 +1039,8 @@ dtb-$(CONFIG_ARCH_STM32) += \
@@ -33,7 +33,7 @@ index 1c5d5b0278..2b7813574f 100644
  	sun4i-a10-a1000.dtb \
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 new file mode 100644
-index 0000000000..ccd8d86452
+index 000000000..ccd8d8645
 --- /dev/null
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 @@ -0,0 +1,156 @@
@@ -195,7 +195,7 @@ index 0000000000..ccd8d86452
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
 new file mode 100755
-index 0000000000..1d6def582f
+index 000000000..1d6def582
 --- /dev/null
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
 @@ -0,0 +1,122 @@
@@ -323,7 +323,7 @@ index 0000000000..1d6def582f
 +
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots.dtsi b/arch/arm/boot/dts/stm32mp157-onedots.dtsi
 new file mode 100644
-index 0000000000..25979dfbb0
+index 000000000..25979dfbb
 --- /dev/null
 +++ b/arch/arm/boot/dts/stm32mp157-onedots.dtsi
 @@ -0,0 +1,494 @@
@@ -823,7 +823,7 @@ index 0000000000..25979dfbb0
 +};
 diff --git a/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 new file mode 100755
-index 0000000000..76bd154df3
+index 000000000..76bd154df
 --- /dev/null
 +++ b/arch/arm/boot/dts/stm32mp157c-onedots-512d-v1.dts
 @@ -0,0 +1,30 @@
@@ -859,7 +859,7 @@ index 0000000000..76bd154df3
 +};
 diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
 new file mode 100644
-index 0000000000..203c2ce5c8
+index 000000000..203c2ce5c
 --- /dev/null
 +++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
 @@ -0,0 +1,21 @@
@@ -884,6 +884,3 @@ index 0000000000..203c2ce5c8
 +CONFIG_STM32_RPROC=y
 +CONFIG_RPMSG_VIRTIO=y
 +CONFIG_EXT4_FS=y
--- 
-2.43.0
-

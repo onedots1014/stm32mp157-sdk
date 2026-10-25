@@ -1,8 +1,8 @@
-From aa59a25af2a9f9d051f54c8fb9375c6024ec587d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sun, 15 Mar 2026 18:16:10 +0800
-Subject: [PATCH 3/5] fix(stm32mp1): init TAMP NVRAM in SP_MIN so PSCI CPU_ON
- does not abort
+Subject: [PATCH] fix(stm32mp1): init TAMP NVRAM in SP_MIN so PSCI CPU_ON does
+ not abort
 
 ---
  plat/st/stm32mp1/sp_min/sp_min_setup.c | 13 +++++++++++--
@@ -39,6 +39,3 @@ index f54fe5f..3854c85 100644
  	(void)stm32mp_uart_console_setup();
  
  	stm32mp1_etzpc_early_setup();
--- 
-2.43.0
-

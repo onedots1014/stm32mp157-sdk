@@ -49,8 +49,18 @@ cd stm32mp157-sdk
 scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
 ```
 
-脚本会按官方 tag 浅克隆 ST 的 Linux / U-Boot / TF-A 和 BusyBox 1.37.0，校验 tag 对应的 commit，
-再用 `git am` 打上补丁，输出到 `sources/<组件>/`。
+脚本会按 [`scripts/sources.list`](scripts/sources.list) 中的官方 tag 浅克隆 ST 的 Linux / U-Boot / TF-A 和 BusyBox 1.37.0，
+校验 tag 对应的 commit，再用 `git am` 打上补丁，输出到 `sources/<组件>/`。
+
+**修改补丁**：补丁打上后就是 `sources/<组件>/` 里的普通 git 提交，直接在上面开发，再导回 `patches/`：
+
+```bash
+cd sources/linux && <修改> && git commit       # 或 git rebase -i 改标题、拆分、调整顺序
+cd ../.. && scripts/export-patches.sh linux    # 重写 patches/linux/，未改动的补丁不会产生 diff
+git add patches/linux && git commit
+```
+
+`export-patches.sh` 会检查 `sources/<组件>/` 是否基于 `sources.list` 中的 tag、是否有未提交的修改。
 
 ### 2. 构建（build.sh）
 
@@ -118,7 +128,7 @@ stm32mp157-sdk/
 ├── firmware/m4/              Cortex-M4 FreeRTOS 固件（STM32CubeIDE 工程）
 ├── app/                      CA7 侧 KWS 结果侦听脚本、LED 驱动示例
 ├── tools/kws_training/       唤醒词模型训练流水线（TTS 合成 → 特征 → DS-CNN → 量化 → 导出给 M4）
-├── scripts/fetch-sources.sh  拉取 ST / BusyBox 官方源码并打补丁
+├── scripts/                  fetch-sources.sh（拉源码 + 打补丁）、export-patches.sh（导回补丁）、sources.list
 └── docs/                     调试与根因分析记录
 ```
 

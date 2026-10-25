@@ -1,7 +1,7 @@
-From 3449b223548d7fdefaf1ef28a1eaf6d11f4116b2 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sun, 23 Nov 2025 09:52:30 +0800
-Subject: [PATCH 3/5] board: add ATK stm32mp157d config
+Subject: [PATCH] board: add ATK stm32mp157d config
 
 ---
  arch/arm/dts/Makefile                    |   3 +-
@@ -1028,6 +1028,3 @@ index 00000000..e248b7d1
 +CONFIG_WDT_STM32MP=y
 +CONFIG_ERRNO_STR=y
 +CONFIG_FDT_FIXUP_PARTITIONS=y
--- 
-2.43.0
-

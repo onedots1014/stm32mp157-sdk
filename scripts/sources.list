@@ -1,0 +1,8 @@
+# Upstream sources this SDK builds on. Read by fetch-sources.sh and
+# export-patches.sh; patches for <name> live in patches/<name>/.
+#
+# name     repository                                                  tag                     commit the tag must resolve to
+linux      https://github.com/STMicroelectronics/linux.git                v5.4-stm32mp-r2.4       c60f477af944f846e85dc7f066c101eba0005b9f
+u-boot     https://github.com/STMicroelectronics/u-boot.git               v2020.01-stm32mp-r2.2   d543131c5835b2ca010d8169a06dbca3014355fd
+tf-a       https://github.com/STMicroelectronics/arm-trusted-firmware.git v2.10-stm32mp-r3        41575b25c972b6f8958c101458d06ed23e38442b
+busybox    https://git.busybox.net/busybox                                1_37_0                  be7d1b7b1701d225379bc1665487ed0871b592a5

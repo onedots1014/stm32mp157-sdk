@@ -1,7 +1,7 @@
-From 3fd415b472a14a3e2061e548a2cfc91c3d2b9269 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Fri, 3 Jul 2026 22:12:55 -0700
-Subject: [PATCH 1/5] board: add onedots stm32mp157c-512d board support
+Subject: [PATCH] board: add onedots stm32mp157c-512d board support
 
 ---
  arch/arm/dts/Makefile                         |    3 +-
@@ -3479,6 +3479,3 @@ index 00000000..97a83bf2
 +
 +
 +
--- 
-2.43.0
-

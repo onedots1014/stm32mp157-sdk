@@ -1,4 +1,4 @@
-From 56824b81eafda3b0ff39a157093ba6d354436833 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sun, 3 May 2026 19:56:19 +0800
 Subject: [PATCH] wifi: bring up BCM43436 on onedots board
@@ -7,8 +7,15 @@ Hook bcmdhd into the wireless Kconfig/Makefile, add SDMMC3 (SDIO)
 and WiFi power-control GPIO pinctrl plus board nodes, and enable the
 driver in onedots_stm32mp157c_defconfig.
 ---
+ .../boot/dts/stm32mp157-onedots-board.dtsi    |  57 +++++++++-
+ .../boot/dts/stm32mp157-onedots-pinctrl.dtsi  | 103 +++++++++++++++++-
+ .../arm/configs/onedots_stm32mp157c_defconfig |  32 ++++++
+ drivers/net/wireless/Kconfig                  |  63 +++++++++++
+ drivers/net/wireless/Makefile                 |   1 +
+ 5 files changed, 253 insertions(+), 3 deletions(-)
+
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
-index 48dbed737a..515e1715ef 100644
+index 48dbed737..515e1715e 100644
 --- a/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-board.dtsi
 @@ -13,7 +13,7 @@
@@ -20,7 +27,7 @@ index 48dbed737a..515e1715ef 100644
  	};
  	memory@c0000000 {
  		device_type = "memory";
-@@ -145,6 +145,24 @@ vbus_sw: pwr_sw2 {
+@@ -145,6 +145,24 @@
  				regulator-active-discharge = <1>;
  			 };
  	};
@@ -45,7 +52,7 @@ index 48dbed737a..515e1715ef 100644
  };
  
  &cpu0{
-@@ -193,7 +211,7 @@ &sdmmc2 {
+@@ -193,7 +211,7 @@
  &gpioi { status = "okay"; };
  &gpioj { status = "okay"; };
  &gpiok { status = "okay"; };
@@ -54,7 +61,7 @@ index 48dbed737a..515e1715ef 100644
  
  /* Watchdog configuration */
  &iwdg2 {
-@@ -241,3 +259,38 @@ m4_led: m4_led {
+@@ -241,3 +259,38 @@
      };
  };
  
@@ -94,10 +101,10 @@ index 48dbed737a..515e1715ef 100644
 +};
 +
 diff --git a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-index 55ecf501e9..72dbd71592 100755
+index 55ecf501e..72dbd7159 100755
 --- a/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157-onedots-pinctrl.dtsi
-@@ -177,6 +177,107 @@ pins {
+@@ -177,6 +177,107 @@
  		};
  	};
  
@@ -207,7 +214,7 @@ index 55ecf501e9..72dbd71592 100755
  };
  
 diff --git a/arch/arm/configs/onedots_stm32mp157c_defconfig b/arch/arm/configs/onedots_stm32mp157c_defconfig
-index 47ba56b6d6..f6862bd98e 100644
+index 47ba56b6d..f6862bd98 100644
 --- a/arch/arm/configs/onedots_stm32mp157c_defconfig
 +++ b/arch/arm/configs/onedots_stm32mp157c_defconfig
 @@ -4,6 +4,15 @@ CONFIG_ARM_SCMI_PROTOCOL=y
@@ -254,7 +261,7 @@ index 47ba56b6d6..f6862bd98e 100644
 +CONFIG_BT_HCIUART_H4=y
 +CONFIG_BT_HCIUART_BCM=y
 diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
-index 1c98d781ae..9f7333d4f7 100644
+index 1c98d781a..9f7333d4f 100644
 --- a/drivers/net/wireless/Kconfig
 +++ b/drivers/net/wireless/Kconfig
 @@ -123,3 +123,66 @@ config VIRT_WIFI
@@ -325,7 +332,7 @@ index 1c98d781ae..9f7333d4f7 100644
 +	  Interrupt from SDIO DAT[1]
 +endchoice
 diff --git a/drivers/net/wireless/Makefile b/drivers/net/wireless/Makefile
-index 6cfe74515c..2e72749dbb 100644
+index 6cfe74515..2e72749db 100644
 --- a/drivers/net/wireless/Makefile
 +++ b/drivers/net/wireless/Makefile
 @@ -29,3 +29,4 @@ obj-$(CONFIG_USB_NET_RNDIS_WLAN)	+= rndis_wlan.o
@@ -333,7 +340,3 @@ index 6cfe74515c..2e72749dbb 100644
  
  obj-$(CONFIG_VIRT_WIFI)	+= virt_wifi.o
 +obj-$(CONFIG_BCMDHD) += bcmdhd/
-
--- 
-2.43.0
-

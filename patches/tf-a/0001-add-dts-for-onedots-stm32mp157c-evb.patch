@@ -1,7 +1,7 @@
-From 58e8fb8cfa50f8ac604b21cec482ac43e59a8abd Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 14 Mar 2026 14:48:08 +0800
-Subject: [PATCH 1/5] add dts for onedots-stm32mp157c-evb
+Subject: [PATCH] add dts for onedots-stm32mp157c-evb
 
 ---
  fdts/onedots-stm32mp157c-evb-fw-config.dts    |   7 +
@@ -423,6 +423,3 @@ index 0000000..bf9f1a0
 +#define DDR_DX3DQSTR 0x3DB02000
 +
 +#include "stm32mp15-ddr.dtsi"
--- 
-2.43.0
-

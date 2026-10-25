@@ -1,21 +1,17 @@
 #!/usr/bin/env bash
-# Fetch ST vendor sources at the exact release tags this SDK is based on,
-# verify the tag commits, and apply the board patch series on top.
+# Fetch upstream sources at the exact release tags in scripts/sources.list,
+# verify each tag's commit, and apply the patch series from patches/<name>/.
 #
 # Usage: scripts/fetch-sources.sh [linux|u-boot|tf-a|busybox|all]   (default: all)
-# Output: sources/<component>/ with patches applied as git commits.
+# Output: sources/<name>/ with patches applied as git commits.
+#
+# To change a component: edit and commit in sources/<name>/, then run
+# scripts/export-patches.sh <name> to write the series back to patches/.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC_DIR="${SRC_DIR:-$ROOT/sources}"
-
-#  component  repo                                                      tag                      expected commit
-COMPONENTS=(
-  "linux  https://github.com/STMicroelectronics/linux.git                v5.4-stm32mp-r2.4      c60f477af944f846e85dc7f066c101eba0005b9f"
-  "u-boot https://github.com/STMicroelectronics/u-boot.git               v2020.01-stm32mp-r2.2  d543131c5835b2ca010d8169a06dbca3014355fd"
-  "tf-a   https://github.com/STMicroelectronics/arm-trusted-firmware.git v2.10-stm32mp-r3       41575b25c972b6f8958c101458d06ed23e38442b"
-  "busybox https://git.busybox.net/busybox                               1_37_0                 be7d1b7b1701d225379bc1665487ed0871b592a5"
-)
+LIST="$ROOT/scripts/sources.list"
 
 log() { printf '\033[0;34m[INFO]\033[0m %s\n' "$*"; }
 die() { printf '\033[0;31m[ERROR]\033[0m %s\n' "$*" >&2; exit 1; }
@@ -48,9 +44,12 @@ fetch_one() {
 
 want=${1:-all}
 mkdir -p "$SRC_DIR"
-for entry in "${COMPONENTS[@]}"; do
-  read -r name url tag sha <<<"$entry"
+found=false
+while read -r name url tag sha; do
+  [[ -z "$name" || "$name" == \#* ]] && continue
   if [[ "$want" == all || "$want" == "$name" ]]; then
+    found=true
     fetch_one "$name" "$url" "$tag" "$sha"
   fi
-done
+done < "$LIST"
+$found || die "unknown component '$want' (see $LIST)"

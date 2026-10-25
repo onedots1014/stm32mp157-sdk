@@ -1,4 +1,4 @@
-From 8d2b42fa684188600d2ef9293523b4073b3a6d26 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots0@outlook.com>
 Date: Sat, 29 Aug 2026 06:45:51 -0700
 Subject: [PATCH] pm: let CA7 enter s2idle while M4 keeps capturing audio
@@ -132,6 +132,3 @@ index 2a1de15cd..e2d7644a0 100644
  	KCLK(SAI2_K, "sai2_k", sai2_src, 0, G_SAI2, M_SAI2),
  	KCLK(SAI3_K, "sai3_k", sai_src, 0, G_SAI3, M_SAI3),
  	KCLK(SAI4_K, "sai4_k", sai_src, 0, G_SAI4, M_SAI4),
--- 
-2.43.0
-

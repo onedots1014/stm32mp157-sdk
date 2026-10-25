@@ -1,7 +1,7 @@
-From 9c7c97543cf5f170e9c3f4419e22042e98214451 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: onedots <onedots@debian.belong>
 Date: Sun, 27 Jul 2025 15:32:51 +0800
-Subject: [PATCH 2/5] dtc: fix lexer build against newer host toolchain
+Subject: [PATCH] dtc: fix lexer build against newer host toolchain
 
 ---
  scripts/dtc/dtc-lexer.l | 4 ++--
@@ -22,6 +22,3 @@ index fd825ebb..5515b0b6 100644
  extern bool treesource_error;
  
  /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
--- 
-2.43.0
-
