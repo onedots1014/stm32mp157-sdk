@@ -65,6 +65,9 @@ scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
 
 产物输出到 `output/<板名>/`。`build.sh` 默认从 `sources/` 读取源码，可用 `SRC_DIR` 覆盖。
 
+> M4 固件的代码区（`SRAM1_text`，160 KB）余量很小：用 Ubuntu 的 arm-none-eabi-gcc 13.2 以 `-O0` 编译会超出约 700 字节，
+> `-Os` 时约 118 KB。请使用 STM32CubeIDE 自带的工具链；改动较大时注意检查链接结果。
+
 ### 3. 仓库里没有、需要自行准备的文件
 
 为避免分发厂商二进制，下列文件没有放进仓库：

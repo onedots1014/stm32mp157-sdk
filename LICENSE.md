@@ -10,7 +10,7 @@
 | `patches/busybox/` | GPL-2.0（与 BusyBox 一致） |
 | `firmware/m4/Drivers/`、`firmware/m4/Middlewares/` | 以各目录内 LICENSE 文件为准（ST CMSIS / HAL、OpenAMP、libmetal 等） |
 | `firmware/m4/**/NetworkRuntime1200_CM4_GCC.a` | ST 软件包许可协议 SLA0104（同目录 `LICENSE.txt`），**不属于**本仓库的开源许可范围，不得以任何开源许可再分发 |
-| `firmware/m4/micro_speech/`、`firmware/m4/CM4/micro_speech/` | 同目录 `LICENSE.txt` 所述（X-CUBE-AI 生成代码） |
+| `firmware/m4/micro_speech/` | 同目录 `LICENSE.txt` 所述（X-CUBE-AI 生成代码） |
 | `app/sample_led/` | 基于百问网（100ASK）教程示例改写；`led_drv.c` 为内核模块，GPL（见 `MODULE_LICENSE`） |
 | 其余原创内容（`build.sh`、`boards/`、`scripts/`、`app/kws_listener.py`、`tools/`、`docs/`、`firmware/m4` 中的原创源文件） | MIT，见下文 |
 

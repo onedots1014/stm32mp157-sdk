@@ -15,5 +15,3 @@ CM4/Release/
 .build/
 micro_speech/stdout.txt
 micro_speech/stderr.txt
-CM4/micro_speech/stdout.txt
-CM4/micro_speech/stderr.txt
