@@ -3,9 +3,10 @@ From: onedots <onedots0@outlook.com>
 Date: Sun, 3 May 2026 19:56:19 +0800
 Subject: [PATCH] wifi: import Broadcom bcmdhd vendor driver
 
-Import the Broadcom bcmdhd FullMAC driver sources (GPLv2, unmodified
-vendor code) under drivers/net/wireless/bcmdhd. Split out from the
-BCM43436 bring-up so the board integration can be reviewed separately.
+Import the Broadcom bcmdhd FullMAC driver, version 100.10.545.11
+(r826445-20200610-1), under drivers/net/wireless/bcmdhd. GPLv2 vendor
+code; the board GPIOs and the BCM43436 bring-up fixes are in the next
+patch so they can be reviewed on their own.
 ---
  drivers/net/wireless/bcmdhd/Kconfig           |    62 +
  drivers/net/wireless/bcmdhd/Makefile          |   205 +
@@ -77,7 +78,7 @@ BCM43436 bring-up so the board integration can be reviewed separately.
  drivers/net/wireless/bcmdhd/dhd_proto.h       |   242 +
  drivers/net/wireless/bcmdhd/dhd_rtt.c         |  4102 +++
  drivers/net/wireless/bcmdhd/dhd_rtt.h         |   536 +
- drivers/net/wireless/bcmdhd/dhd_sdio.c        | 10715 +++++++
+ drivers/net/wireless/bcmdhd/dhd_sdio.c        | 10579 +++++++
  drivers/net/wireless/bcmdhd/dhd_static_buf.c  |   585 +
  drivers/net/wireless/bcmdhd/dhd_wlfc.c        |  4615 +++
  drivers/net/wireless/bcmdhd/dhd_wlfc.h        |   569 +
@@ -235,7 +236,7 @@ BCM43436 bring-up so the board integration can be reviewed separately.
  drivers/net/wireless/bcmdhd/wl_roam.c         |   374 +
  drivers/net/wireless/bcmdhd/wldev_common.c    |   534 +
  drivers/net/wireless/bcmdhd/wldev_common.h    |   134 +
- 228 files changed, 292817 insertions(+)
+ 228 files changed, 292681 insertions(+)
  create mode 100644 drivers/net/wireless/bcmdhd/Kconfig
  create mode 100644 drivers/net/wireless/bcmdhd/Makefile
  create mode 100644 drivers/net/wireless/bcmdhd/aiutils.c
@@ -51524,7 +51525,7 @@ index 000000000..b205d9f4c
 +#endif /* _dhd_flowrings_h_ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_gpio.c b/drivers/net/wireless/bcmdhd/dhd_gpio.c
 new file mode 100644
-index 000000000..adce42ffa
+index 000000000..c184d812f
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_gpio.c
 @@ -0,0 +1,340 @@
@@ -51544,9 +51545,9 @@ index 000000000..adce42ffa
 +extern void *dhd_wlan_mem_prealloc(int section, unsigned long size);
 +#endif /* CONFIG_DHD_USE_STATIC_BUF */
 +
-+static int gpio_wl_reg_on =131; // WL_REG_ON is input pin of WLAN module
++static int gpio_wl_reg_on = -1; // WL_REG_ON is input pin of WLAN module
 +#ifdef CUSTOMER_OOB
-+static int gpio_wl_host_wake = 56; // WL_HOST_WAKE is output pin of WLAN module
++static int gpio_wl_host_wake = -1; // WL_HOST_WAKE is output pin of WLAN module
 +#endif
 +
 +static int
@@ -51779,9 +51780,9 @@ index 000000000..adce42ffa
 +	/* Please check your schematic and fill right GPIO number which connected to
 +	* WL_REG_ON and WL_HOST_WAKE.
 +	*/
-+	gpio_wl_reg_on = 131;
++	gpio_wl_reg_on = -1;
 +#ifdef CUSTOMER_OOB
-+	gpio_wl_host_wake = 56;
++	gpio_wl_host_wake = -1;
 +#endif
 +
 +	if (gpio_wl_reg_on >= 0) {
@@ -119114,10 +119115,10 @@ index 000000000..14d89268c
 +#endif /* __DHD_RTT_H__ */
 diff --git a/drivers/net/wireless/bcmdhd/dhd_sdio.c b/drivers/net/wireless/bcmdhd/dhd_sdio.c
 new file mode 100644
-index 000000000..231eba0f8
+index 000000000..b1281e060
 --- /dev/null
 +++ b/drivers/net/wireless/bcmdhd/dhd_sdio.c
-@@ -0,0 +1,10715 @@
+@@ -0,0 +1,10579 @@
 +/*
 + * DHD Bus Module for SDIO
 + *
@@ -119854,7 +119855,6 @@ index 000000000..231eba0f8
 +#endif /* DHD_FW_COREDUMP */
 +static int dhdsdio_devcap_set(dhd_bus_t *bus, uint8 cap);
 +static int dhdsdio_download_state(dhd_bus_t *bus, bool enter);
-+static int dhdsdio_membytes(dhd_bus_t *bus, bool write, uint32 address, uint8 *data, uint size);
 +
 +static void dhdsdio_release(dhd_bus_t *bus, osl_t *osh);
 +static void dhdsdio_release_malloc(dhd_bus_t *bus, osl_t *osh);
@@ -120588,69 +120588,7 @@ index 000000000..231eba0f8
 +		if (!SBSDIO_CLKAV(clkctl, bus->alp_only)) {
 +			DHD_ERROR(("%s: HT Avail timeout (%d): clkctl 0x%02x\n",
 +			           __FUNCTION__, PMU_MAX_TRANSITION_DLY, clkctl));
-+			/* Fallback: try FORCE_HT to bypass firmware PMU dependency */
-+			DHD_ERROR(("%s: Trying SBSDIO_FORCE_HT bypass\n", __FUNCTION__));
-+			bcmsdh_cfg_write(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR,
-+				(SBSDIO_HT_AVAIL_REQ | SBSDIO_FORCE_HT), &err);
-+			OSL_DELAY(50000); /* 50ms for PLL to stabilize */
-+			clkctl = bcmsdh_cfg_read(sdh, SDIO_FUNC_1,
-+				SBSDIO_FUNC1_CHIPCLKCSR, &err);
-+			DHD_ERROR(("%s: After FORCE_HT: clkctl 0x%02x\n",
-+				__FUNCTION__, clkctl));
-+			if (!SBSDIO_CLKAV(clkctl, bus->alp_only)) {
-+				DHD_ERROR(("%s: FORCE_HT also failed: clkctl 0x%02x\n",
-+					__FUNCTION__, clkctl));
-+				/* Poll CHIPCLKCSR for 500ms to see if firmware changes it.
-+				 * Uses only CMD52 (safe even if AXI bus is stalled).
-+				 * If clkctl changes, firmware IS running; if stuck, firmware not running.
-+				 */
-+				{
-+					int _pi;
-+					uint8 _prev = clkctl;
-+					DHD_ERROR(("%s: polling CSR for 500ms...\n", __FUNCTION__));
-+					for (_pi = 0; _pi < 50; _pi++) {
-+						uint8 _c;
-+						int _e = 0;
-+						OSL_DELAY(10000); /* 10ms */
-+						_c = bcmsdh_cfg_read(sdh, SDIO_FUNC_1,
-+							SBSDIO_FUNC1_CHIPCLKCSR, &_e);
-+						if (_c != _prev) {
-+							DHD_ERROR(("%s: CSR changed at %dms: 0x%02x\n",
-+								__FUNCTION__, (_pi+1)*10, _c));
-+							_prev = _c;
-+						}
-+					}
-+					DHD_ERROR(("%s: final CSR after 500ms: 0x%02x\n",
-+						__FUNCTION__, _prev));
-+				}
-+				/* Dump PMU registers to understand why HT is unavailable */
-+				{
-+					uint _pmucap = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, pmucapabilities), 0, 0);
-+					uint _pmust  = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, pmustatus), 0, 0);
-+					uint _resst  = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, res_state), 0, 0);
-+					uint _minres = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, min_res_mask), 0, 0);
-+					uint _maxres = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, max_res_mask), 0, 0);
-+					uint _reqmsk = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, res_req_mask), 0, 0);
-+					uint _xtalfq = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, pmu_xtalfreq), 0, 0);
-+					uint _clkst  = si_corereg(bus->sih, SI_CC_IDX,
-+						OFFSETOF(chipcregs_t, clk_ctl_st), 0, 0);
-+					DHD_ERROR(("PMU: cap=0x%x stat=0x%x res_state=0x%x\n",
-+						_pmucap, _pmust, _resst));
-+					DHD_ERROR(("PMU: min_res=0x%x max_res=0x%x req_mask=0x%x\n",
-+						_minres, _maxres, _reqmsk));
-+					DHD_ERROR(("PMU: xtalfreq=0x%x clk_ctl_st=0x%x\n",
-+						_xtalfq, _clkst));
-+				}
-+				return BCME_ERROR;
-+			}
-+			DHD_ERROR(("%s: FORCE_HT succeeded\n", __FUNCTION__));
++			return BCME_ERROR;
 +		}
 +#endif /* BCMSDIOLITE */
 +		/* Mark clock available */
@@ -123906,17 +123844,6 @@ index 000000000..231eba0f8
 +				goto fail;
 +			}
 +
-+			/* Keep D11/802.11 MAC core fully in reset (disabled) during firmware
-+			 * download and startup. si_core_disable holds resetctrl=1 while
-+			 * enabling the clock so the core is accessible but cannot issue
-+			 * any AXI transactions that could stall the ARM CM3 before it
-+			 * reaches PMU initialization.
-+			 */
-+			if (si_setcore(bus->sih, D11_CORE_ID, 0)) {
-+				si_core_disable(bus->sih, 0);
-+				DHD_ERROR(("D11 core disabled (fully in reset)\n"));
-+			}
-+
 +			if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
 +				DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
 +				bcmerror = BCME_ERROR;
@@ -124002,32 +123929,11 @@ index 000000000..231eba0f8
 +#endif // endif
 +			W_SDREG(0xFFFFFFFF, &bus->regs->intstatus, retries);
 +
-+			if (si_setcore(bus->sih, ARM7S_CORE_ID, 0)) {
-+				DHD_ERROR(("ARM core found: ARM7S\n"));
-+			} else if (si_setcore(bus->sih, ARMCM3_CORE_ID, 0)) {
-+				DHD_ERROR(("ARM core found: ARMCM3\n"));
-+			} else {
++			if (!(si_setcore(bus->sih, ARM7S_CORE_ID, 0)) &&
++			    !(si_setcore(bus->sih, ARMCM3_CORE_ID, 0))) {
 +				DHD_ERROR(("%s: Failed to find ARM core!\n", __FUNCTION__));
 +				bcmerror = BCME_ERROR;
 +				goto fail;
-+			}
-+			/* Read SRAM[0..7] to verify firmware content */
-+			{
-+				uint32 sram0[2] = {0, 0};
-+				dhdsdio_membytes(bus, FALSE, 0, (uint8 *)sram0, 8);
-+				DHD_ERROR(("SRAM[0]=0x%08x SRAM[4]=0x%08x\n",
-+					sram0[0], sram0[1]));
-+			}
-+			/* Dump all enumerated cores to diagnose missing D11 */
-+			{
-+#define SI_MAXCORES_DIAG 32
-+				uint _clist[SI_MAXCORES_DIAG];
-+				uint _nc = si_corelist(bus->sih, _clist);
-+				uint _ci;
-+				DHD_ERROR(("SI cores (%u):", _nc));
-+				for (_ci = 0; _ci < _nc && _ci < SI_MAXCORES_DIAG; _ci++)
-+					DHD_ERROR((" 0x%03x", _clist[_ci]));
-+				DHD_ERROR(("\n"));
 +			}
 +		} else {
 +			/* cr4 has no socram, but tcm's */
@@ -124089,49 +123995,8 @@ index 000000000..231eba0f8
 +			goto fail;
 +		}
 +
-+		/* Diagnostic: check ARM CM3 AI wrapper state right after si_core_reset */
-+		{
-+			uint _ioctrl = si_wrapperreg(bus->sih, 0x408, 0, 0);
-+			uint _resetctrl = si_wrapperreg(bus->sih, 0x800, 0, 0);
-+			DHD_ERROR(("ARM CM3 wrapper: ioctrl=0x%x resetctrl=0x%x isup=%d\n",
-+				_ioctrl, _resetctrl, si_iscoreup(bus->sih)));
-+
-+			/* If ARM CM3 is still in reset (si_core_reset loop timed out),
-+			 * force-clear resetctrl and re-enable clock via AI wrapper registers.
-+			 */
-+			if (!si_iscoreup(bus->sih)) {
-+				DHD_ERROR(("%s: ARM CM3 stuck in reset, force-releasing\n",
-+					__FUNCTION__));
-+				/* Clear resetctrl: AIRC_RESET = 1 → write 0 */
-+				si_wrapperreg(bus->sih, 0x800, ~0u, 0);
-+				OSL_DELAY(1000);
-+				/* Set ioctrl = SICF_CLOCK_EN only (no FGC) */
-+				si_wrapperreg(bus->sih, 0x408, ~0u, SICF_CLOCK_EN);
-+				OSL_DELAY(1000);
-+				DHD_ERROR(("%s: After force: ioctrl=0x%x resetctrl=0x%x isup=%d\n",
-+					__FUNCTION__,
-+					si_wrapperreg(bus->sih, 0x408, 0, 0),
-+					si_wrapperreg(bus->sih, 0x800, 0, 0),
-+					si_iscoreup(bus->sih)));
-+			}
-+		}
-+
-+		/* BCM43436b0 (26MHz xtal) requires firmware to configure the PMU PLL
-+		 * before HT becomes available. Stay in ALP-only mode so dhd_bus_init
-+		 * succeeds immediately; the firmware will enable HT once running.
-+		 */
-+		/* bus->alp_only = FALSE; -- deferred until firmware enables HT PLL */
-+
-+		/* Diagnostic: read CHIPCLKCSR and SLEEPCSR right after ARM release */
-+		{
-+			int _err = 0;
-+			uint8 _csr = bcmsdh_cfg_read(bus->sdh, SDIO_FUNC_1,
-+				SBSDIO_FUNC1_CHIPCLKCSR, &_err);
-+			uint8 _sleep = bcmsdh_cfg_read(bus->sdh, SDIO_FUNC_1,
-+				SBSDIO_FUNC1_SLEEPCSR, &_err);
-+			DHD_ERROR(("ARM released: CHIPCLKCSR=0x%02x SLEEPCSR=0x%02x\n",
-+				_csr, _sleep));
-+		}
++		/* Allow HT Clock now that the ARM is running. */
++		bus->alp_only = FALSE;
 +
 +		bus->dhd->busstate = DHD_BUS_LOAD;
 +	}

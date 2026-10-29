@@ -4,7 +4,7 @@
 
 | 路径 | 许可证 |
 | --- | --- |
-| `patches/linux/` | GPL-2.0（与 Linux 内核一致）；`0006` 中的 Broadcom bcmdhd 驱动按其文件头所述，以 GPL-2.0 提供 |
+| `patches/linux/` | GPL-2.0（与 Linux 内核一致）；`0006`、`0007` 中的 Broadcom bcmdhd 驱动按其文件头所述，以 GPL-2.0 提供 |
 | `patches/u-boot/` | GPL-2.0+（与 U-Boot 一致） |
 | `patches/tf-a/` | BSD-3-Clause（与 Trusted Firmware-A 一致） |
 | `patches/busybox/` | GPL-2.0（与 BusyBox 一致） |

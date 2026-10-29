@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sun, 3 May 2026 19:56:19 +0800
+Subject: [PATCH] wifi: bcmdhd: fix BCM43436 firmware download on onedots board
+
+- dhd_gpio.c: WL_REG_ON is GPIO 131 and WL_HOST_WAKE is GPIO 56 on
+  this board.
+- dhd_sdio.c: the BCM43436b0 here runs from a 26 MHz crystal and only
+  gets HT clock after the firmware has programmed the PMU PLL. Leaving
+  ALP-only mode right after releasing the ARM made dhd_bus_init() wait
+  for HT and time out ("HT Avail timeout"). Stay ALP-only and let the
+  firmware enable HT once it runs.
+- dhd_sdio.c: keep the D11 core in reset during firmware download so it
+  cannot touch the backplane before the PMU is set up.
+---
+ drivers/net/wireless/bcmdhd/dhd_gpio.c |  8 ++++----
+ drivers/net/wireless/bcmdhd/dhd_sdio.c | 14 ++++++++++++--
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/bcmdhd/dhd_gpio.c b/drivers/net/wireless/bcmdhd/dhd_gpio.c
+index c184d812f..dbd11f248 100644
+--- a/drivers/net/wireless/bcmdhd/dhd_gpio.c
++++ b/drivers/net/wireless/bcmdhd/dhd_gpio.c
+@@ -14,9 +14,9 @@
+ extern void *dhd_wlan_mem_prealloc(int section, unsigned long size);
+ #endif /* CONFIG_DHD_USE_STATIC_BUF */
+ 
+-static int gpio_wl_reg_on = -1; // WL_REG_ON is input pin of WLAN module
++static int gpio_wl_reg_on = 131; // WL_REG_ON is input pin of WLAN module
+ #ifdef CUSTOMER_OOB
+-static int gpio_wl_host_wake = -1; // WL_HOST_WAKE is output pin of WLAN module
++static int gpio_wl_host_wake = 56; // WL_HOST_WAKE is output pin of WLAN module
+ #endif
+ 
+ static int
+@@ -249,9 +249,9 @@ int dhd_wlan_init_gpio(void)
+ 	/* Please check your schematic and fill right GPIO number which connected to
+ 	* WL_REG_ON and WL_HOST_WAKE.
+ 	*/
+-	gpio_wl_reg_on = -1;
++	gpio_wl_reg_on = 131;
+ #ifdef CUSTOMER_OOB
+-	gpio_wl_host_wake = -1;
++	gpio_wl_host_wake = 56;
+ #endif
+ 
+ 	if (gpio_wl_reg_on >= 0) {
+diff --git a/drivers/net/wireless/bcmdhd/dhd_sdio.c b/drivers/net/wireless/bcmdhd/dhd_sdio.c
+index b1281e060..3402a7c99 100644
+--- a/drivers/net/wireless/bcmdhd/dhd_sdio.c
++++ b/drivers/net/wireless/bcmdhd/dhd_sdio.c
+@@ -4723,6 +4723,13 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
+ 				goto fail;
+ 			}
+ 
++			/* Keep the D11 (802.11 MAC) core in reset during firmware download
++			 * and startup, so it cannot issue backplane transactions before the
++			 * firmware has initialised the PMU.
++			 */
++			if (si_setcore(bus->sih, D11_CORE_ID, 0))
++				si_core_disable(bus->sih, 0);
++
+ 			if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
+ 				DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
+ 				bcmerror = BCME_ERROR;
+@@ -4874,8 +4881,11 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
+ 			goto fail;
+ 		}
+ 
+-		/* Allow HT Clock now that the ARM is running. */
+-		bus->alp_only = FALSE;
++		/* BCM43436b0 (26 MHz crystal): HT only becomes available once the
++		 * firmware has programmed the PMU PLL. Stay ALP-only here so
++		 * dhd_bus_init() does not time out waiting for HT; the firmware
++		 * enables HT itself once it is running.
++		 */
+ 
+ 		bus->dhd->busstate = DHD_BUS_LOAD;
+ 	}
