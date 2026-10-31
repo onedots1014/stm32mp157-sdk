@@ -46,7 +46,7 @@ git add patches/linux && git commit
 | 新增的独立驱动（自己写的或厂商的） | 优先作为外部模块放在仓库里，用 `make -C <内核> M=<目录>` 构建；不要把大段新代码塞进补丁 |
 | 用户态程序、服务、配置 | `boards/.../buildroot/`（BR2_EXTERNAL）或 `rootfs-overlay/` |
 | M4 固件 | `firmware/m4/` |
-| 厂商二进制（WiFi/BT 固件、ST 运行库以外的 blob） | 不进仓库，在 README 里写明从哪获取 |
+| 厂商二进制（WiFi/BT 固件、ST 运行库以外的 blob） | 不进仓库：在 `scripts/firmware.list` 里登记固定的公开下载地址和 SHA256，由 `scripts/fetch-firmware.sh` 下载校验 |
 
 ## 构建与验证
 

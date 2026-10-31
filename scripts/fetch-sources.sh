@@ -2,8 +2,10 @@
 # Fetch upstream sources at the exact release tags in scripts/sources.list,
 # verify each tag's commit, and apply the patch series from patches/<name>/.
 #
-# Usage: scripts/fetch-sources.sh [linux|u-boot|tf-a|busybox|all]   (default: all)
+# Usage: scripts/fetch-sources.sh [linux|u-boot|tf-a|busybox|firmware|all]   (default: all)
 # Output: sources/<name>/ with patches applied as git commits.
+# "firmware" (also part of "all") runs scripts/fetch-firmware.sh for the
+# vendor firmware listed in scripts/firmware.list.
 #
 # To change a component: edit and commit in sources/<name>/, then run
 # scripts/export-patches.sh <name> to write the series back to patches/.
@@ -45,6 +47,10 @@ fetch_one() {
 want=${1:-all}
 mkdir -p "$SRC_DIR"
 found=false
+if [[ "$want" == all || "$want" == firmware ]]; then
+  found=true
+  "$ROOT/scripts/fetch-firmware.sh"
+fi
 while read -r name url tag sha; do
   [[ -z "$name" || "$name" == \#* ]] && continue
   if [[ "$want" == all || "$want" == "$name" ]]; then

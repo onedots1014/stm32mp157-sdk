@@ -47,11 +47,12 @@ Linux 补丁 `0006` 是 Broadcom bcmdhd 100.10.545.11 驱动的导入（GPLv2 �
 ```bash
 git clone https://github.com/onedots1014/stm32mp157-sdk.git
 cd stm32mp157-sdk
-scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox
+scripts/fetch-sources.sh          # 或单独：linux | u-boot | tf-a | busybox | firmware
 ```
 
 脚本会按 [`scripts/sources.list`](scripts/sources.list) 中的官方 tag 浅克隆 ST 的 Linux / U-Boot / TF-A 和 BusyBox 1.37.0，
 校验 tag 对应的 commit，再用 `git am` 打上补丁，输出到 `sources/<组件>/`。
+同时会按 [`scripts/firmware.list`](scripts/firmware.list) 下载 WiFi 固件到 `sources/firmware/`（见下文「厂商固件」）。
 
 **修改补丁**：补丁打上后就是 `sources/<组件>/` 里的普通 git 提交，直接在上面开发，再导回 `patches/`：
 
@@ -85,11 +86,44 @@ git add patches/linux && git commit
 
 | 文件 | 用途 | 放到哪里 |
 | --- | --- | --- |
-| BCM43436 / AP6236 WiFi 固件（`fw_bcm43436b0.bin`、`brcmfmac43430-sdio.bin`）和蓝牙 `BCM.hcd` | WiFi / BT | `boards/stm32mp157/onedots_stm32mp157/rootfs-overlay/lib/firmware/`（已在 .gitignore 中） |
+| AP6236 蓝牙固件 `BCM.hcd` | 蓝牙（当前未启用） | `boards/stm32mp157/onedots_stm32mp157/rootfs-overlay/lib/firmware/`（已在 .gitignore 中） |
 | ALSA 用户态（`alsa-lib`、`aplay`、`amixer` 等）和 i2c-tools | BusyBox rootfs 下的音频调试 | 运行一次 `bash boards/stm32mp157/onedots_stm32mp157/scripts/setup-audio.sh`，交叉编译后装进 rootfs overlay |
 | `stm32wrapper4dbg`（可选） | 生成带调试头的 TF-A 镜像 | 从 [STMicroelectronics/stm32wrapper4dbg](https://github.com/STMicroelectronics/stm32wrapper4dbg) 编译，放到 `boards/stm32mp157/common/build_script/tfa/` |
 
-`rootfs-overlay/etc/wpa_supplicant.conf` 里的 `YOUR_SSID` / `YOUR_PASSWORD` 需改成自己的 WiFi。
+**厂商固件（WiFi）**：AP6236（BCM43436B0）的 bcmdhd 固件是 AMPAK 闭源二进制，不放进仓库。
+`scripts/fetch-firmware.sh`（`fetch-sources.sh` 会自动调用）从 [`scripts/firmware.list`](scripts/firmware.list)
+里固定的公开地址下载 `fw_bcm43436b0.bin`（9.88.4.16，Radxa `rkwifibt` 固定 commit），校验 SHA256 后放到
+`sources/firmware/lib/firmware/`，构建 rootfs 时装进板上的 `/lib/firmware/`。nvram 配置 `nvram_ap6236.txt` 在 rootfs overlay 里。
+
+想用自己验证过的固件版本：把文件按同名放进一个目录，再运行
+`LOCAL_FIRMWARE_DIR=<目录> scripts/fetch-firmware.sh`（不做 SHA256 校验，会打印警告）。
+
+**WiFi 首次配置**：没有已保存配置时，开机在板子的串口终端输入 WiFi 名称（15 秒超时）和密码（隐藏输入，30 秒超时）。
+任一项直接回车、超时或没有交互终端，都会跳过连接，不启动 WiFi 驱动、wpa_supplicant 或 DHCP。
+当前仅连接带密码的 WPA/WPA2 网络；密码为 8–63 个字符，空密码表示跳过，不连接开放网络。
+
+首次关联成功后，将 SSID 和派生的 PSK 保存到板上 `/etc/wpa_supplicant.saved.conf`（权限 `600`），
+移除明文密码注释并同步到存储；之后断电重启自动连接，无需再次输入，也不要求交互终端。
+该配置包含可用于连接的密钥，不要复制进仓库或镜像；原 `/etc/wpa_supplicant.conf` 保持占位配置。
+若保存失败会提示，下次启动仍需输入。重新烧写 rootfs 会清除已保存配置。
+跳过后可在板上手动运行：
+
+```sh
+/etc/init.d/S50wifi start
+```
+
+更换 WiFi 或密码时，在板上执行：
+
+```sh
+/etc/init.d/S50wifi stop
+rm -f /etc/wpa_supplicant.saved.conf
+sync
+/etc/init.d/S50wifi start
+```
+
+WiFi 关联最多等待 15 秒，失败时不会继续请求 DHCP，也不会保存本次输入。
+已保存的配置关联失败时仍会保留，可按上述步骤重新配置。
+此改动已做 Shell 语法及模拟流程检查，**未上板验证**。
 
 ### Buildroot（可选）
 
@@ -129,7 +163,7 @@ stm32mp157-sdk/
 ├── firmware/m4/              Cortex-M4 FreeRTOS 固件（STM32CubeIDE 工程）
 ├── app/                      CA7 侧 KWS 结果侦听脚本、LED 驱动示例
 ├── tools/kws_training/       唤醒词模型训练流水线（TTS 合成 → 特征 → DS-CNN → 量化 → 导出给 M4）
-├── scripts/                  fetch-sources.sh（拉源码 + 打补丁）、export-patches.sh（导回补丁）、sources.list
+├── scripts/                  fetch-sources.sh（拉源码 + 打补丁）、export-patches.sh（导回补丁）、sources.list、fetch-firmware.sh + firmware.list（厂商固件）
 └── docs/                     调试与根因分析记录
 ```
 

@@ -39,6 +39,7 @@ log() {
         INFO)  echo -e "${BLUE}[INFO]${NC} $msg" ;;
         OK)    echo -e "${GREEN}[ OK ]${NC} $msg" ;;
         BUILD) echo -e "${CYAN}[BUILD]${NC} $msg" ;;
+        WARN)  echo -e "\033[0;33m[WARN]${NC} $msg" >&2 ;;
     esac
     return 0
 }
@@ -102,6 +103,14 @@ install_busybox() {
         cp "$BOARD_DIR/M4"/* "$INSTALL_DIR/lib/firmware/" 2>/dev/null || true
         chmod 644 "$INSTALL_DIR/lib/firmware"/* 2>/dev/null || true
         log INFO "Copied M4 firmware to /lib/firmware"
+    fi
+
+    # Vendor firmware fetched by scripts/fetch-firmware.sh (WiFi etc.)
+    if [[ -d "$SRC_DIR/firmware/lib" ]]; then
+        cp -a "$SRC_DIR/firmware/lib/." "$INSTALL_DIR/lib/"
+        log INFO "Copied vendor firmware from $SRC_DIR/firmware"
+    else
+        log WARN "No vendor firmware in $SRC_DIR/firmware: WiFi will not start (run scripts/fetch-firmware.sh)"
     fi
 
     # Copy custom applications
@@ -169,8 +178,12 @@ build_kws_listener() {
 # Step 3.5a: cross-compile wpa_supplicant (WEXT driver + internal crypto, no libnl/OpenSSL)
 build_wpa_supplicant() {
     local wpa_dir="$WPA_SRC_DIR/wpa_supplicant"
+    # The BusyBox rootfs has no C library (BusyBox itself is static), so
+    # wpa_supplicant must be linked statically too. The stamp makes trees
+    # built before this change rebuild instead of reusing a dynamic binary.
+    local stamp="$wpa_dir/.sdk-static-build"
 
-    if [[ ! -f "$wpa_dir/wpa_supplicant" ]]; then
+    if [[ ! -f "$wpa_dir/wpa_supplicant" || ! -f "$stamp" ]]; then
         if [[ ! -d "$WPA_SRC_DIR" ]]; then
             local tarball="wpa_supplicant-${WPA_VERSION}.tar.gz"
             if [[ ! -f "$ROOT_DIR/${tarball}" ]]; then
@@ -197,11 +210,13 @@ CONFIG_CTRL_IFACE=y
 CONFIG_CTRL_IFACE_UNIX=y
 CONFIG_IEEE8021X_EAPOL=n
 WPACFG
-        make -C "$wpa_dir" CC="${CROSS_COMPILE}gcc" \
+        make -C "$wpa_dir" clean >/dev/null
+        make -C "$wpa_dir" CC="${CROSS_COMPILE}gcc" LDFLAGS=-static \
             BINDIR=/usr/sbin LIBDIR=/usr/lib \
             -j"$(nproc)" wpa_supplicant wpa_passphrase \
             || die "wpa_supplicant build failed"
-        log OK "wpa_supplicant compiled"
+        touch "$stamp"
+        log OK "wpa_supplicant compiled (static)"
     fi
 
     install -D -m 755 "$wpa_dir/wpa_supplicant" "$INSTALL_DIR/usr/sbin/wpa_supplicant"
