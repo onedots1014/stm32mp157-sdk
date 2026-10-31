@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: onedots <onedots0@outlook.com>
+Date: Sat, 31 Oct 2026 21:17:44 +0800
+Subject: [PATCH] board: st: stm32mp1: boot the per-device extlinux file
+
+The SDK's bootfs holds one extlinux file per boot device,
+<boot_device><boot_instance>_extlinux/<board_name>_extlinux.conf, so an
+SD card and the eMMC can pass different root= arguments. Distro boot
+only looks for extlinux/extlinux.conf, so autoboot found nothing,
+loaded the DTB while probing for EFI, and dropped to the prompt.
+
+Set boot_syslinux_conf from board_late_init() when booting from MMC.
+Doing it at run time, not in the default environment, means an
+environment already saved in the eMMC by an older U-Boot cannot hide
+it.
+
+Upstream-Status: Inappropriate [SDK bootfs layout]
+---
+ board/st/stm32mp1/stm32mp1.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/board/st/stm32mp1/stm32mp1.c b/board/st/stm32mp1/stm32mp1.c
+index de15bf22..69758d8b 100644
+--- a/board/st/stm32mp1/stm32mp1.c
++++ b/board/st/stm32mp1/stm32mp1.c
+@@ -755,6 +755,28 @@ int board_init(void)
+ 	return 0;
+ }
+ 
++/*
++ * The bootfs keeps one extlinux file per boot device,
++ * <boot_device><boot_instance>_extlinux/<board_name>_extlinux.conf, so an SD
++ * card and the eMMC can pass different root= arguments. Point distro boot at
++ * it here rather than in the default environment, so that an environment
++ * saved by an older U-Boot cannot hide the setting.
++ */
++static void board_select_extlinux_conf(void)
++{
++	const char *dev = env_get("boot_device");
++	const char *inst = env_get("boot_instance");
++	const char *name = env_get("board_name");
++	char conf[128];
++
++	if (!dev || !inst || !name || strcmp(dev, "mmc"))
++		return;
++
++	snprintf(conf, sizeof(conf), "%s%s_extlinux/%s_extlinux.conf",
++		 dev, inst, name);
++	env_set("boot_syslinux_conf", conf);
++}
++
+ int board_late_init(void)
+ {
+ 	char *boot_device, *boot_instance;
+@@ -811,6 +833,8 @@ int board_late_init(void)
+ 	    (!strcmp(boot_device, "serial") || !strcmp(boot_device, "usb")))
+ 		env_set("bootdelay", "0");
+ 
++	board_select_extlinux_conf();
++
+ 	/* define dynamic variables for FASTBOOT and ANDROID bootargs*/
+ 	if (CONFIG_IS_ENABLED(FASTBOOT_FLASH_MMC) &&
+ 	    boot_device && !strcmp(boot_device, "mmc")) {
