@@ -98,7 +98,32 @@ git add patches/linux && git commit
 想用自己验证过的固件版本：把文件按同名放进一个目录，再运行
 `LOCAL_FIRMWARE_DIR=<目录> scripts/fetch-firmware.sh`（不做 SHA256 校验，会打印警告）。
 
-`rootfs-overlay/etc/wpa_supplicant.conf` 里的 `YOUR_SSID` / `YOUR_PASSWORD` 需改成自己的 WiFi。
+**WiFi 首次配置**：没有已保存配置时，开机在板子的串口终端输入 WiFi 名称（15 秒超时）和密码（隐藏输入，30 秒超时）。
+任一项直接回车、超时或没有交互终端，都会跳过连接，不启动 WiFi 驱动、wpa_supplicant 或 DHCP。
+当前仅连接带密码的 WPA/WPA2 网络；密码为 8–63 个字符，空密码表示跳过，不连接开放网络。
+
+首次关联成功后，将 SSID 和派生的 PSK 保存到板上 `/etc/wpa_supplicant.saved.conf`（权限 `600`），
+移除明文密码注释并同步到存储；之后断电重启自动连接，无需再次输入，也不要求交互终端。
+该配置包含可用于连接的密钥，不要复制进仓库或镜像；原 `/etc/wpa_supplicant.conf` 保持占位配置。
+若保存失败会提示，下次启动仍需输入。重新烧写 rootfs 会清除已保存配置。
+跳过后可在板上手动运行：
+
+```sh
+/etc/init.d/S50wifi start
+```
+
+更换 WiFi 或密码时，在板上执行：
+
+```sh
+/etc/init.d/S50wifi stop
+rm -f /etc/wpa_supplicant.saved.conf
+sync
+/etc/init.d/S50wifi start
+```
+
+WiFi 关联最多等待 15 秒，失败时不会继续请求 DHCP，也不会保存本次输入。
+已保存的配置关联失败时仍会保留，可按上述步骤重新配置。
+此改动已做 Shell 语法及模拟流程检查，**未上板验证**。
 
 ### Buildroot（可选）
 
