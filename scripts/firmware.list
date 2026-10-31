@@ -1,0 +1,10 @@
+# Vendor firmware that cannot be kept in this repository. Each file is
+# downloaded from a fixed commit of a repository that already publishes it,
+# then checked against the SHA256 below. Used by scripts/fetch-firmware.sh.
+#
+# Format: <file name>  <install path in rootfs>  <sha256>  <url>
+#
+# fw_bcm43436b0.bin: AMPAK AP6236 (BCM43436B0) firmware for the bcmdhd driver,
+# version 9.88.4.16 (2018-07-20). The same file ships in Seeed's
+# ODYSSEY-STM32MP157C image (STM32MP157 + AP6236).
+fw_bcm43436b0.bin  lib/firmware/fw_bcm43436b0.bin  37ca6997bd7a40d24058f2e27cead4b12f0348d5b674e2d48ac23027a0a252fc  https://raw.githubusercontent.com/radxa/rkwifibt/b61a1e8499a4f1956ef417cbcfaa6c2cf805ce08/firmware/broadcom/AP6236/wifi/fw_bcm43436b0.bin

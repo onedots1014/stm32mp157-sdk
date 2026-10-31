@@ -39,6 +39,7 @@ log() {
         INFO)  echo -e "${BLUE}[INFO]${NC} $msg" ;;
         OK)    echo -e "${GREEN}[ OK ]${NC} $msg" ;;
         BUILD) echo -e "${CYAN}[BUILD]${NC} $msg" ;;
+        WARN)  echo -e "\033[0;33m[WARN]${NC} $msg" >&2 ;;
     esac
     return 0
 }
@@ -102,6 +103,14 @@ install_busybox() {
         cp "$BOARD_DIR/M4"/* "$INSTALL_DIR/lib/firmware/" 2>/dev/null || true
         chmod 644 "$INSTALL_DIR/lib/firmware"/* 2>/dev/null || true
         log INFO "Copied M4 firmware to /lib/firmware"
+    fi
+
+    # Vendor firmware fetched by scripts/fetch-firmware.sh (WiFi etc.)
+    if [[ -d "$SRC_DIR/firmware/lib" ]]; then
+        cp -a "$SRC_DIR/firmware/lib/." "$INSTALL_DIR/lib/"
+        log INFO "Copied vendor firmware from $SRC_DIR/firmware"
+    else
+        log WARN "No vendor firmware in $SRC_DIR/firmware: WiFi will not start (run scripts/fetch-firmware.sh)"
     fi
 
     # Copy custom applications
