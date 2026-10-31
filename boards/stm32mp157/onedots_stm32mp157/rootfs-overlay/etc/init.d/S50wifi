@@ -5,15 +5,21 @@ case "$1" in
         echo "Starting WiFi..."
         modprobe bcmdhd
         sleep 2
-        ifconfig wlan0 up
+        if ! ifconfig wlan0 up; then
+            echo "WiFi: wlan0 did not come up, skipping wpa_supplicant/udhcpc"
+            exit 1
+        fi
         mkdir -p /var/run/wpa_supplicant
         wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
-        udhcpc -i wlan0
+        # -b: go to the background if no lease yet, so a missing AP or a
+        # down link cannot hold up the rest of boot (and the console)
+        udhcpc -b -i wlan0
         echo "WiFi started."
         ;;
     stop)
         echo "Stopping WiFi..."
         kill $(cat /var/run/wpa_supplicant/wlan0.pid 2>/dev/null) 2>/dev/null
+        killall udhcpc 2>/dev/null
         ifconfig wlan0 down
         rmmod bcmdhd 2>/dev/null
         echo "WiFi stopped."
